@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+# 忽略Node版本锁定文件
+/yarn.lock
+/package-lock.json
+
 # Logs
 logs
 *.log
