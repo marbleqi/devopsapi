@@ -6,6 +6,9 @@
 /yarn.lock
 /package-lock.json
 
+# 忽略配置文件
+/.env
+
 # Logs
 logs
 *.log

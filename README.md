@@ -39,7 +39,8 @@ cd devopsapi
 # 安装@nestjs相关包
 yarn add @nestjs/config @nestjs/axios @nestjs/platform-socket.io @nestjs/websockets @nestjs/bull @nestjs/schedule
 
-
+# 安装验证相关包
+yarn add class-validator class-transformer
 
 # 安装mapped-types
 yarn add @nestjs/mapped-types
