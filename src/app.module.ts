@@ -16,8 +16,7 @@ import { TokenGuard, ReqInterceptor } from './shared';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async () => {
+      useFactory: () => {
         // 进行配置参数验证
         if (!process.env.POSTGRES_HOST) {
           throw new Error('未配置数据库地址');

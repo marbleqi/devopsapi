@@ -63,7 +63,7 @@ export class TokenGuard implements CanActivate {
     res.locals.controller = context.getClass().name;
     // 设置调用的控制器的方法名
     res.locals.action = context.getHandler().name;
-    console.debug('locals', res.locals);
+    // console.debug('locals', res.locals);
     // 如果请求url是passport开头，或notify开头，或包含startup则路由验证通过
     if (
       ['passport', 'notify'].includes(res.locals.module) ||
@@ -75,6 +75,7 @@ export class TokenGuard implements CanActivate {
     const abilities =
       this.reflector.get<number[]>('abilities', context.getHandler()) || [];
     console.debug('abilities', abilities);
+    res.locals.userid = 1;
     return true;
     // /**令牌验证结果 */
     // const auth: Auth = await this.token.verify(req.headers.token, abilities);

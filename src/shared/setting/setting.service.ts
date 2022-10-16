@@ -2,14 +2,14 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OnEvent } from '@nestjs/event-emitter';
 // 内部依赖
-import { Result, SettingEntity, SettingLogEntity } from '..';
+import { Result, SettingEntity, SettingLogEntity, OperateService } from '..';
 
 /**配置服务 */
 @Injectable()
 export class SettingService implements OnApplicationBootstrap {
   constructor(
+    private operateService: OperateService,
     @InjectRepository(SettingEntity)
     private settingRepository: Repository<SettingEntity>,
     @InjectRepository(SettingLogEntity)
@@ -59,15 +59,15 @@ export class SettingService implements OnApplicationBootstrap {
     value: object,
     updateUserId: number,
   ): Promise<Result> {
-    const params = { code, value, updateUserId };
+    const operateId = await this.operateService.set('setting');
+    const params = { code, value, updateUserId, operateId };
     const setting = this.settingRepository.create(params);
-    const result = await this.settingRepository.save(setting);
-    console.debug('result', result);
+    const settingresult = await this.settingRepository.save(setting);
+    console.debug('settingresult', settingresult);
+    // 如果数据更新，则记录配置历史记录更新（异步执行）
+    if (settingresult?.updateAt) {
+      this.settingLogRepository.save(setting);
+    }
     return { code: 0, msg: '新配置生效' };
-  }
-
-  @OnEvent('addLog')
-  handleOrderCreatedEvent(payload: any) {
-    console.debug('事件监听器B得到消息', payload);
   }
 }

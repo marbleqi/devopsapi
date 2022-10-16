@@ -12,34 +12,27 @@ export abstract class CommonBaseEntity {
   updateUserId: number;
 
   /**更新时间 */
-  @Column({
-    type: 'bigint',
-    name: 'update_at',
-    comment: '更新时间',
-  })
+  @Column({ type: 'bigint', name: 'update_at', comment: '更新时间' })
   updateAt: number;
 
   /**操作序号 */
   @Column({
     type: 'bigint',
-    name: 'operateid',
+    name: 'operate_id',
     default: 0,
     comment: '操作序号',
   })
   operateId: number;
 
-  /**请求序号 */
-  @Column({ type: 'bigint', name: 'reqid', default: 0, comment: '请求序号' })
-  reqId: number;
-
+  /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
   updateLoad() {
     this.updateUserId = Number(this.updateUserId);
     this.updateAt = Number(this.updateAt);
     this.operateId = Number(this.operateId);
-    this.reqId = Number(this.reqId);
   }
 
+  /**创建记录和更新记录时，设置默认值 */
   @BeforeInsert()
   @BeforeUpdate()
   updateData() {

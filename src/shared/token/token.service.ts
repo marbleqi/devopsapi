@@ -36,7 +36,7 @@ export class TokenService implements OnApplicationBootstrap {
   /**用户ID与权限点ID的Map */
   private abilitymap: Map<number, number[]>;
   /**当前最新操作序号，用于差异更新数据 */
-  private operateid: number;
+  private operateId: number;
 
   /**
    * 构造函数
@@ -51,7 +51,7 @@ export class TokenService implements OnApplicationBootstrap {
     this.rolemap = new Map<number, number[]>();
     this.usermap = new Map<number, number[]>();
     this.abilitymap = new Map<number, number[]>();
-    this.operateid = 0;
+    this.operateId = 0;
   }
 
   /**启动时初始化 */
@@ -73,7 +73,7 @@ export class TokenService implements OnApplicationBootstrap {
    */
   async init(): Promise<Result> {
     // /**本次更新得到的最新操作序号 */
-    // let newoperateid = 0;
+    // let newoperateId = 0;
     // /**数据库脚本 */
     // let sqltext = `SELECT roleid, abilities, status, operateid FROM sys_roles WHERE operateid > $1`;
     // /**最新角色 */

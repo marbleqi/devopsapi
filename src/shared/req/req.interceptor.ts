@@ -30,8 +30,8 @@ export class ReqInterceptor implements NestInterceptor {
       tap(() => {
         const res: Response = context.switchToHttp().getResponse();
         res.locals.end_at = Date.now();
-        console.debug('拦截器收到消息', res.locals);
-        this.eventEmitter.emit('addLog', res.locals);
+        // console.debug('拦截器收到消息', res.locals);
+        // this.eventEmitter.emit('addLog', res.locals);
       }),
     );
   }

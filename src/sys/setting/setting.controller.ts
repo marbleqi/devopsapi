@@ -2,7 +2,14 @@
 import { Controller, Get, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { SettingEntity, SettingService } from '../../shared';
+import {
+  Ability,
+  Abilities,
+  AbilityService,
+  QueueService,
+  SettingEntity,
+  SettingService,
+} from '../../shared';
 import { SettingDto } from '..';
 
 @Controller('sys/setting')
@@ -13,13 +20,23 @@ export class SettingController {
    * @param setting 注入的配置服务
    * @param queue 注入的队列服务
    */
-  constructor(private readonly setting: SettingService) {}
-
+  constructor(
+    private readonly ability: AbilityService,
+    private readonly setting: SettingService,
+    private readonly queue: QueueService,
+  ) {
+    // 系统配置
+    this.ability.add([
+      { id: 113, pid: 110, name: '查看配置', description: '查看系统配置' },
+      { id: 115, pid: 110, name: '修改配置', description: '修改系统配置' },
+    ] as Ability[]);
+  }
   /**
    * 获取系统配置
    * @param res 响应上下文
    */
   @Get('show')
+  @Abilities(8, 9, 113)
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
     const data: SettingEntity = await this.setting.get('sys');
@@ -38,9 +55,10 @@ export class SettingController {
    * @param res 响应上下文
    */
   @Post()
+  @Abilities(9, 115)
   async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
-    console.debug('SettingDto', SettingDto);
-    res.locals.result = await this.setting.set('sys', value, 1);
+    console.debug(' res.locals.userid', res.locals.userid);
+    res.locals.result = await this.setting.set('sys', value, res.locals.userid);
     res.status(200).json(res.locals.result);
   }
 }
