@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('req_logs')
 export class ReqEntity {
   /**请求ID */
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'reqid' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'reqid', comment: '请求ID' })
   reqId: number;
 
   /**请求用户ID */

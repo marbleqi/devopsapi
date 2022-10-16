@@ -2,6 +2,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { OnEvent } from '@nestjs/event-emitter';
 // 内部依赖
 import { Result, SettingEntity, SettingLogEntity } from '..';
 
@@ -58,13 +59,15 @@ export class SettingService implements OnApplicationBootstrap {
     value: object,
     updateUserId: number,
   ): Promise<Result> {
-    const setting = this.settingRepository.create({
-      code,
-      value,
-      updateUserId,
-    });
+    const params = { code, value, updateUserId };
+    const setting = this.settingRepository.create(params);
     const result = await this.settingRepository.save(setting);
     console.debug('result', result);
     return { code: 0, msg: '新配置生效' };
+  }
+
+  @OnEvent('addLog')
+  handleOrderCreatedEvent(payload: any) {
+    console.debug('事件监听器B得到消息', payload);
   }
 }

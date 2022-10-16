@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
-export class ReqService {
+export class LogService {
   @OnEvent('addLog')
-  handleOrderCreatedEvent(payload: any) {
-    console.debug('事件监听器A得到消息', payload);
+  async addLog(data: any) {
+    console.debug('data', data);
   }
 }

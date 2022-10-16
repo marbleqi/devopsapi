@@ -39,6 +39,9 @@ cd devopsapi
 # 安装@nestjs相关包
 yarn add @nestjs/config @nestjs/axios @nestjs/platform-socket.io @nestjs/websockets @nestjs/bull @nestjs/schedule
 
+# 安装队列相关包
+yarn add bull
+
 # 安装验证相关包
 yarn add class-validator class-transformer
 
@@ -47,6 +50,9 @@ yarn add @nestjs/mapped-types
 
 # 安装typeorm
 yarn add @nestjs/typeorm typeorm pg
+
+# 安装事件发射器
+yarn add @nestjs/event-emitter
 
 # 安装其他开发包
 yarn add date-fns ioredis xml2js mysql

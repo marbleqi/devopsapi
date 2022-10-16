@@ -1,11 +1,15 @@
 // 外部依赖
 import { Module } from '@nestjs/common';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 // 内部依赖
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { SysModule } from './sys/sys.module';
+import { TokenGuard, ReqInterceptor } from './shared';
 
 /**主模块 */
 @Module({
@@ -46,12 +50,23 @@ import { SysModule } from './sys/sys.module';
         } as TypeOrmModuleOptions;
       },
     }),
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     SharedModule,
     AuthModule,
     SharedModule,
     AuthModule,
     SysModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: TokenGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ReqInterceptor,
+    },
+  ],
 })
 export class AppModule {}
