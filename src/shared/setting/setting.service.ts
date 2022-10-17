@@ -19,25 +19,11 @@ export class SettingService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    console.debug('初始化验证');
-    // const  dto=new SettingDto({ code: 'sys', value: { ccd: 'dafsdf' })
-
-    // const data = { code: 'syddddd333d', value: { ccd: 'dafcsdfgsdfsdfsdf' } };
-    // const setting = this.settingRepository.create(data);
-    // const result = await this.settingRepository.save(setting);
-    // console.debug('result', result);
-    // await setting.save({ data });
-    //   console.debug(setting);
-
-    //   const setting_log = new SettingLogEntity();
-    //   // await setting_log.save({ data });
-    //   console.debug(setting_log);
-    // const setting = await this.get('syddddd333d');
-    // console.debug(setting);
-    // const settingdto = new SettingDto({ code: 'dd', value: {} });
-    // console.debug(settingdto);
-    // const value = { name: 0, title: '' };
-    // await this.set('sys', value, 1);
+    console.debug('项目初始化');
+    const result = await this.get('sys');
+    if (!result) {
+      console.debug('需要执行配置初始化');
+    }
   }
 
   /**

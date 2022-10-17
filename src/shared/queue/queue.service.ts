@@ -17,7 +17,6 @@ export class QueueService {
 
   /**
    * 构造函数
-   * @param pg 注入的数据库服务
    * @param queue 注入的队列服务
    */
   constructor(@InjectQueue('shared') private readonly queue: Queue) {

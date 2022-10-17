@@ -2,14 +2,8 @@
 import { Controller, Get, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import {
-  Ability,
-  Abilities,
-  AbilityService,
-  QueueService,
-  SettingEntity,
-  SettingService,
-} from '../../shared';
+import { QueueService, SettingEntity, SettingService } from '../../shared';
+import { Ability, Abilities, AbilityService } from '../../auth';
 import { SettingDto } from '..';
 
 @Controller('sys/setting')

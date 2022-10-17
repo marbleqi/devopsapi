@@ -1,6 +1,14 @@
 // 注：需要按照依赖关系顺序导入
-export * from './ability/ability.service';
+export * from './ability/ability.interface';
+export * from './ability/abilities.decorator';
 export * from './token/token.interface';
+export * from './menu/menu.entity';
+export * from './role/role.entity';
+export * from './user/user.entity';
+export * from './menu/menu.dto';
+export * from './role/role.dto';
+export * from './user/user.dto';
+export * from './ability/ability.service';
 export * from './menu/menu.service';
 export * from './role/role.service';
 export * from './user/user.service';
@@ -10,3 +18,4 @@ export * from './menu/menu.controller';
 export * from './role/role.controller';
 export * from './user/user.controller';
 export * from './token/token.controller';
+export * from './token/token.guard';

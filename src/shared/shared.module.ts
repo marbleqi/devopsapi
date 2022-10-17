@@ -8,7 +8,6 @@ import {
   OperateEntity,
   SettingEntity,
   SettingLogEntity,
-  AbilityService,
   QueueService,
   RedisService,
   CommonService,
@@ -40,7 +39,6 @@ import {
     }),
   ],
   providers: [
-    AbilityService,
     QueueService,
     RedisService,
     CommonService,
@@ -49,7 +47,6 @@ import {
     SettingService,
   ],
   exports: [
-    AbilityService,
     QueueService,
     RedisService,
     CommonService,

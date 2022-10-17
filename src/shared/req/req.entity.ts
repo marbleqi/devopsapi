@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  BeforeInsert,
-  AfterInsert,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 
 /**请求日志表 */
 @Entity('req_logs')
@@ -67,15 +61,13 @@ export class ReqEntity {
   })
   endAt: number;
 
-  @BeforeInsert()
-  updateData() {
-    this.startAt = Date.now();
-  }
-
   /**长整型数据返回时，进行数据转换 */
-  @AfterInsert()
-  afterInsert() {
+  @AfterLoad()
+  reqLoad() {
     this.reqId = Number(this.reqId);
     this.userId = Number(this.userId);
+    this.status = Number(this.status);
+    this.startAt = Number(this.startAt);
+    this.endAt = Number(this.endAt);
   }
 }

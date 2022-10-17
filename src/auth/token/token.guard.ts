@@ -4,7 +4,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 // 内部依赖
-import { ReqService } from '..';
+import { ReqService } from '../../shared';
 
 /**全局用路由守卫，完成token令牌认证和权限点认证 */
 @Injectable()

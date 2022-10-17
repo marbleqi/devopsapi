@@ -8,3 +8,11 @@ export interface Token {
   /**令牌过期时间 */
   expired?: number;
 }
+
+/**认证结果接口 */
+export interface Auth {
+  /**用户ID */
+  userid: number;
+  /**权限无效标记 */
+  invalid: boolean;
+}

@@ -9,7 +9,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { SysModule } from './sys/sys.module';
-import { TokenGuard, ReqInterceptor } from './shared';
+import { TokenGuard } from './auth';
+import { ReqInterceptor } from './shared';
 
 /**主模块 */
 @Module({

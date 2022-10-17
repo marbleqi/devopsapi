@@ -14,9 +14,13 @@ export class OperateService {
   async set(operateName: string): Promise<number> {
     const result = await this.entityManager.insert(OperateEntity, {
       operateName,
+      createAt: Date.now(),
     });
-    return Math.max(
-      ...result.identifiers.map((item: any) => Number(item.operateId), 0),
-    );
+    const identifiers = result.identifiers;
+    if (identifiers.length) {
+      return identifiers[0].operateId;
+    } else {
+      return 0;
+    }
   }
 }

@@ -4,7 +4,6 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
   AfterLoad,
-  BeforeInsert,
 } from 'typeorm';
 import { CommonBaseEntity } from '..';
 
@@ -35,16 +34,11 @@ export class SettingEntity extends SettingBaseEntity {
   @Column({ type: 'bigint', name: 'create_at', comment: '创建时间' })
   createAt: number;
 
+  /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  createLoad() {
+  settingLoad() {
     this.createUserId = Number(this.createUserId);
     this.createAt = Number(this.createAt);
-  }
-
-  @BeforeInsert()
-  insertDate() {
-    this.createAt = Date.now();
-    this.createUserId = this.updateUserId;
   }
 }
 
@@ -62,4 +56,10 @@ export class SettingLogEntity extends SettingBaseEntity {
   /**配置编码 */
   @Column({ type: 'text', name: 'code', comment: '配置编码' })
   code: string;
+
+  /**对长整型数据返回时，进行数据转换 */
+  @AfterLoad()
+  settingLogLoad() {
+    this.logId = Number(this.logId);
+  }
 }

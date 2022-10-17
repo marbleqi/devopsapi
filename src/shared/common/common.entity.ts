@@ -1,4 +1,4 @@
-import { Column, AfterLoad, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Column, AfterLoad } from 'typeorm';
 
 /**通用实体基类 */
 export abstract class CommonBaseEntity {
@@ -30,17 +30,10 @@ export abstract class CommonBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  updateLoad() {
+  commonBaseLoad() {
     this.updateUserId = Number(this.updateUserId);
     this.updateAt = Number(this.updateAt);
     this.operateId = Number(this.operateId);
     this.reqId = Number(this.reqId);
-  }
-
-  /**创建记录和更新记录时，设置默认值 */
-  @BeforeInsert()
-  @BeforeUpdate()
-  updateData() {
-    this.updateAt = Date.now();
   }
 }
