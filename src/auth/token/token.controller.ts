@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('token')
+@Controller('auth/token')
 export class TokenController {}

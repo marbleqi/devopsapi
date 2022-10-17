@@ -4,7 +4,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 // 内部依赖
-// import { Auth, Result, RedisService } from '..';
+import { ReqService } from '..';
 
 /**全局用路由守卫，完成token令牌认证和权限点认证 */
 @Injectable()
@@ -13,7 +13,10 @@ export class TokenGuard implements CanActivate {
    * 构造函数
    * @param reflector 反射器
    */
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly reqService: ReqService,
+  ) {}
 
   /**
    * 路由守卫函数
@@ -21,26 +24,26 @@ export class TokenGuard implements CanActivate {
    * @returns 守卫通过标记
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    /**请求收到时间 */
+    const startAt = Date.now();
     /**请求上下文 */
     const req: Request = context.switchToHttp().getRequest();
     /**响应上下文 */
     const res: Response = context.switchToHttp().getResponse();
-    res.locals.start_at = Date.now();
-    if (req.headers['x-real-ip']) {
-      res.locals.clientip = req.headers['x-real-ip'];
-    } else {
-      res.locals.clientip = req.ip;
-    }
+    /**请求客户端IP */
+    const clientIp = req.headers['x-real-ip']
+      ? req.headers['x-real-ip']
+      : req.ip;
+    /**本地网卡信息 */
     const network = networkInterfaces();
-    // console.debug('network', network);
-    if (network?.eth0) {
-      res.locals.serverip = network.eth0.filter(
-        (item: NetworkInterfaceInfo) => item.family === 'IPv4',
-      )[0].address;
-    } else {
-      res.locals.serverip = '127.0.0.1';
-    }
-    res.locals.request = {
+    /**响应服务端IP */
+    const serverIp = network?.eth0
+      ? network.eth0.filter(
+          (item: NetworkInterfaceInfo) => item.family === 'IPv4',
+        )[0].address
+      : '127.0.0.1';
+    /**请求消息 */
+    const request = {
       headers: {
         host: req.headers.host,
         token: req.headers.token || '',
@@ -51,31 +54,47 @@ export class TokenGuard implements CanActivate {
       query: req.query,
       body: req.body,
     };
-    res.locals.status = 200;
+
+    const status = 200;
     /**路径路由 */
     const route: string[] = req.url.split('/');
-    if (route.length) {
-      res.locals.module = route[0] ? route[0] : route[1];
-    } else {
-      res.locals.module = '/';
-    }
-    // 设置调用的控制器的类名
-    res.locals.controller = context.getClass().name;
-    // 设置调用的控制器的方法名
-    res.locals.action = context.getHandler().name;
-    // console.debug('locals', res.locals);
+    /**模块名 */
+    const module = route.length ? (route[0] ? route[0] : route[1]) : '/';
+    /**调用的控制器的类名 */
+    const controller = context.getClass().name;
+    /**调用的控制器的方法名 */
+    const action = context.getHandler().name;
+    /**组装请求日志参数 */
+    const params = {
+      startAt,
+      clientIp,
+      serverIp,
+      request,
+      status,
+      module,
+      controller,
+      action,
+    };
+    console.debug('locals', res.locals);
     // 如果请求url是passport开头，或notify开头，或包含startup则路由验证通过
-    if (
-      ['passport', 'notify'].includes(res.locals.module) ||
-      route.includes('startup')
-    ) {
+    if (['passport', 'notify'].includes(module) || route.includes('startup')) {
+      res.locals.userId = 0;
+      res.locals.reqId = await this.reqService.insert({
+        ...params,
+        userId: res.locals.userId,
+      });
       return true;
     }
     /**当前路由需要权限点 */
     const abilities =
       this.reflector.get<number[]>('abilities', context.getHandler()) || [];
     console.debug('abilities', abilities);
-    res.locals.userid = 1;
+    res.locals.userId = 1;
+    res.locals.reqId = await this.reqService.insert({
+      ...params,
+      userId: res.locals.userId,
+    });
+
     return true;
     // /**令牌验证结果 */
     // const auth: Auth = await this.token.verify(req.headers.token, abilities);

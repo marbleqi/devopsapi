@@ -5,10 +5,10 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Response } from 'express';
 import { Observable, tap } from 'rxjs';
 // 内部依赖
+import { ReqService } from '..';
 
 /**全局拦截器，给响应消息加上请求标记，并发出响应，发送记录日志任务 */
 @Injectable()
@@ -17,7 +17,7 @@ export class ReqInterceptor implements NestInterceptor {
    * 构造函数
    * @param eventEmitter 事件发射器
    */
-  constructor(private eventEmitter: EventEmitter2) {}
+  constructor(private readonly reqService: ReqService) {}
 
   /**
    * 拦截器函数
@@ -29,9 +29,8 @@ export class ReqInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const res: Response = context.switchToHttp().getResponse();
-        res.locals.end_at = Date.now();
-        // console.debug('拦截器收到消息', res.locals);
-        // this.eventEmitter.emit('addLog', res.locals);
+        console.debug('拦截器消息A', res.locals);
+        this.reqService.update(res.locals.reqId, res.locals.result);
       }),
     );
   }

@@ -25,7 +25,7 @@ export class SettingEntity extends SettingBaseEntity {
   /**创建用户ID */
   @Column({
     type: 'bigint',
-    name: 'create_userid',
+    name: 'create_user_id',
     default: 0,
     comment: '创建用户ID',
   })
@@ -54,7 +54,7 @@ export class SettingLogEntity extends SettingBaseEntity {
   /**日志ID */
   @PrimaryGeneratedColumn({
     type: 'bigint',
-    name: 'logid',
+    name: 'log_id',
     comment: '日志序号',
   })
   logId: number;

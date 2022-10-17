@@ -1,15 +1,26 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BeforeInsert,
+  AfterInsert,
+} from 'typeorm';
 
 /**请求日志表 */
 @Entity('req_logs')
 export class ReqEntity {
   /**请求ID */
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'reqid', comment: '请求ID' })
+  @PrimaryGeneratedColumn({ type: 'bigint', name: 'req_id', comment: '请求ID' })
   reqId: number;
 
   /**请求用户ID */
-  @Column({ type: 'bigint', name: 'userid', default: 0, comment: '用户ID' })
-  userID: number;
+  @Column({
+    type: 'bigint',
+    name: 'user_id',
+    default: 0,
+    comment: '请求用户ID',
+  })
+  userId: number;
 
   /**模块名 */
   @Column({ type: 'text', name: 'module', comment: '模块名' })
@@ -32,22 +43,39 @@ export class ReqEntity {
   status: number;
 
   /**响应结果 */
-  @Column({ type: 'json', name: 'result', comment: '响应结果' })
+  @Column({ type: 'json', name: 'result', nullable: true, comment: '响应结果' })
   result: object;
 
   /**客户端IP */
-  @Column({ type: 'text', name: 'clientip', comment: '客户端IP' })
+  @Column({ type: 'text', name: 'client_ip', comment: '客户端IP' })
   clientIp: string;
 
   /**服务器IP */
-  @Column({ type: 'text', name: 'serverip', comment: '服务器IP' })
+  @Column({ type: 'text', name: 'server_ip', comment: '服务器IP' })
   serverIp: string;
 
-  /**创建时间 */
+  /**请求到达时间 */
   @Column({ type: 'bigint', name: 'start_at', comment: '请求到达时间' })
   startAt: number;
 
-  /**创建时间 */
-  @Column({ type: 'bigint', name: 'end_at', comment: '响应完成时间' })
+  /**响应完成时间 */
+  @Column({
+    type: 'bigint',
+    name: 'end_at',
+    nullable: true,
+    comment: '响应完成时间',
+  })
   endAt: number;
+
+  @BeforeInsert()
+  updateData() {
+    this.startAt = Date.now();
+  }
+
+  /**长整型数据返回时，进行数据转换 */
+  @AfterInsert()
+  afterInsert() {
+    this.reqId = Number(this.reqId);
+    this.userId = Number(this.userId);
+  }
 }

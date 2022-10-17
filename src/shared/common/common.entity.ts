@@ -5,7 +5,7 @@ export abstract class CommonBaseEntity {
   /**更新用户ID */
   @Column({
     type: 'bigint',
-    name: 'update_userid',
+    name: 'update_user_id',
     default: 0,
     comment: '更新用户ID',
   })
@@ -24,12 +24,17 @@ export abstract class CommonBaseEntity {
   })
   operateId: number;
 
+  /**请求序号 */
+  @Column({ type: 'bigint', name: 'req_id', default: 0, comment: '请求序号' })
+  reqId: number;
+
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
   updateLoad() {
     this.updateUserId = Number(this.updateUserId);
     this.updateAt = Number(this.updateAt);
     this.operateId = Number(this.operateId);
+    this.reqId = Number(this.reqId);
   }
 
   /**创建记录和更新记录时，设置默认值 */

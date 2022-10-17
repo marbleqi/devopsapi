@@ -57,8 +57,12 @@ export class SettingController {
   @Post()
   @Abilities(9, 115)
   async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
-    console.debug(' res.locals.userid', res.locals.userid);
-    res.locals.result = await this.setting.set('sys', value, res.locals.userid);
+    res.locals.result = await this.setting.set(
+      'sys',
+      value,
+      res.locals.userId,
+      res.locals.reqId,
+    );
     res.status(200).json(res.locals.result);
   }
 }

@@ -1,20 +1,22 @@
 // 外部依赖
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
 // 内部依赖
 import { OperateEntity } from '..';
 
 @Injectable()
 export class OperateService {
   constructor(
-    @InjectRepository(OperateEntity)
-    private operateRepository: Repository<OperateEntity>,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async set(operateName: string): Promise<number> {
-    const operate = this.operateRepository.create({ operateName });
-    const result = await this.operateRepository.save(operate);
-    return result.operateId;
+    const result = await this.entityManager.insert(OperateEntity, {
+      operateName,
+    });
+    return Math.max(
+      ...result.identifiers.map((item: any) => Number(item.operateId), 0),
+    );
   }
 }
