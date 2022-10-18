@@ -39,7 +39,7 @@ export class PassportService {
    */
   private async create(userId: number): Promise<Result> {
     /**系统配置参数 */
-    const setting: SettingEntity = await this.setting.get('sys');
+    const setting: object = this.setting.read('sys');
     /**令牌 */
     let token: string;
     /**令牌已存在标记 */
@@ -49,7 +49,7 @@ export class PassportService {
       exists = await this.redis.exists(`token:${token}`);
     } while (exists);
     /**令牌过期时间 */
-    const expired = Date.now() + Number(setting.value['expired']) * 60000;
+    const expired = Date.now() + Number(setting['expired']) * 60000;
     // 缓存令牌
     await this.redis.hmset(
       `token:${token}`,
@@ -67,7 +67,7 @@ export class PassportService {
     // 设置缓存有效期
     await this.redis.pexpire(
       `token:${token}`,
-      Number(setting.value['expired']) * 60000 + 300000,
+      Number(setting['expired']) * 60000 + 300000,
     );
     return {
       code: 0,
@@ -81,8 +81,8 @@ export class PassportService {
    * @returns 响应消息
    */
   async startup(): Promise<Result> {
-    const setting: SettingEntity = await this.setting.get('sys');
-    return { code: 0, msg: 'ok', data: { app: setting.value } };
+    const app: object = this.setting.read('sys');
+    return { code: 0, msg: 'ok', data: { app } };
   }
 
   /**
@@ -93,20 +93,20 @@ export class PassportService {
   async qrurl(type: string): Promise<Result> {
     if (type === 'wxwork') {
       /**企业微信配置参数 */
-      const setting: SettingEntity = await this.setting.get('wxwork');
+      const setting: object = this.setting.read('wxwork');
       return {
         code: 0,
         msg: 'ok',
         data: {
-          appid: setting.value['corpid'],
-          agentid: setting.value['app']['agentid'],
+          appid: setting['corpid'],
+          agentid: setting['app']['agentid'],
         },
       };
     }
     if (type === 'dingtalk') {
       /**钉钉配置参数 */
-      const setting: SettingEntity = await this.setting.get('dingtalk');
-      return { code: 0, msg: 'ok', data: { appkey: setting.value['appkey'] } };
+      const setting: object = this.setting.read('dingtalk');
+      return { code: 0, msg: 'ok', data: { appkey: setting['appkey'] } };
     }
   }
 
@@ -122,13 +122,13 @@ export class PassportService {
     loginPsw: string,
     loginIp: string,
   ): Promise<Result> {
-    const setting: SettingEntity = await this.setting.get('sys');
+    const setting: object = this.setting.read('sys');
     /**系统配置 */
-    if (!setting.value['password']) {
+    if (!setting['password']) {
       return { code: 401, msg: '系统不允许使用密码登陆' };
     }
     /**用户对象 */
-    const user: UserEntity = await this.entityManager.findOne(UserEntity, {
+    const user = await this.entityManager.findOne(UserEntity, {
       select: [
         'userId',
         'config',
@@ -141,6 +141,7 @@ export class PassportService {
         loginName,
       },
     });
+    console.debug('user', user);
     // 判断用户是否存在
     if (!user) {
       return { code: 401, msg: '用户不存在' };
@@ -157,9 +158,9 @@ export class PassportService {
     if (user.pswTimes >= 5) {
       return { code: 401, msg: '密码错误超过5次，请联系管理员重置密码！' };
     }
-    /** */
+    /**判断密码是否一致 */
     const check = await compare(loginPsw, user.password);
-
+    console.debug('check', check);
     // 判断密码密文是否一致
     if (!check) {
       // 密码密文不一致，密码错误计数加1
@@ -174,12 +175,6 @@ export class PassportService {
         msg: `密码已连续输错${user.pswTimes + 1}次,超过5次将锁定！`,
       };
     }
-    this.entityManager.increment(
-      UserEntity,
-      { userId: user.userId },
-      'loginTimes',
-      1,
-    );
     // 验证通过后，更新用户登陆信息
     if (user.firstLoginAt) {
       this.entityManager.update(

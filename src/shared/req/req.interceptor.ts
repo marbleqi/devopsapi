@@ -29,11 +29,11 @@ export class ReqInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const res: Response = context.switchToHttp().getResponse();
-        this.reqService.update(
-          res.locals.reqId,
-          res.locals.request,
-          res.locals.result,
-        );
+        this.reqService.update(res.locals.reqId, {
+          request: res.locals.request,
+          userId: res.locals.userId,
+          result: res.locals.result,
+        });
       }),
     );
   }

@@ -12,6 +12,7 @@ import { SysModule } from './sys/sys.module';
 import { TokenGuard } from './auth';
 import { ReqInterceptor } from './shared';
 import { PassportModule } from './passport/passport.module';
+import { CommonModule } from './common/common.module';
 
 /**主模块 */
 @Module({
@@ -59,6 +60,7 @@ import { PassportModule } from './passport/passport.module';
     AuthModule,
     SysModule,
     PassportModule,
+    CommonModule,
   ],
   providers: [
     {

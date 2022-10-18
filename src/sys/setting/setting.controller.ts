@@ -34,7 +34,6 @@ export class SettingController {
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
     const data: SettingEntity = await this.setting.get('sys');
-    console.debug('data', data);
     if (data) {
       res.locals.result = { code: 0, msg: 'ok', data };
     } else {

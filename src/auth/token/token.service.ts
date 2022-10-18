@@ -128,6 +128,7 @@ export class TokenService implements OnApplicationBootstrap {
         return [useritem[0], abilities];
       }),
     );
+    console.debug('abilityMap', this.abilityMap);
     return { code: 0, msg: '令牌权限下发成功' };
   }
 
@@ -137,35 +138,36 @@ export class TokenService implements OnApplicationBootstrap {
    * @param abilities 待令牌是否拥有的验证权限点，不传入时，表示不验证权限点
    * @returns 验证结果
    */
-  async verify(
-    token: string | string[],
-    abilities: number[] = [],
-  ): Promise<Auth> {
+  async verify(token: string, abilities: number[] = []): Promise<Auth> {
     /**用户ID */
-    let userid = 0;
+    let userId = 0;
     /**权限无效 */
     let invalid = true;
+    console.debug(token, typeof token);
     // 如果传入的令牌无效
     if (!token || typeof token === 'object') {
-      return { userId: userid, invalid };
+      return { userId, invalid };
     }
     /**令牌 */
     const result: any = await this.redis.hgetall(`token:${token}`);
+    console.debug('resultD', result);
     if (!result.token) {
-      return { userId: userid, invalid };
+      return { userId, invalid };
     }
-    userid = Number(result.userid) || 0;
-    if (!userid) {
-      return { userId: userid, invalid };
+    userId = Number(result.userId) || 0;
+    console.debug('userIdG', userId);
+    if (!userId) {
+      return { userId, invalid };
     }
+    console.debug('userIdH', userId);
     // 如果不验证权限点
     if (!abilities.length) {
-      return { userId: userid, invalid: false };
+      return { userId, invalid: false };
     }
     invalid = this.abilityMap
-      .get(userid)
+      .get(userId)
       .every((ability: number) => !abilities.includes(ability));
-    return { userId: userid, invalid };
+    return { userId, invalid };
   }
 
   /**

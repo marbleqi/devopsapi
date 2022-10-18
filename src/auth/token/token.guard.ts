@@ -89,8 +89,9 @@ export class TokenGuard implements CanActivate {
     /**当前路由需要权限点 */
     const abilities =
       this.reflector.get<number[]>('abilities', context.getHandler()) || [];
+    const token = req.headers.token as string;
     /**令牌验证结果 */
-    const auth: Auth = await this.token.verify(req.headers.token, abilities);
+    const auth: Auth = await this.token.verify(token, abilities);
     // 令牌验证不通过
     if (auth.invalid) {
       let result: Result;

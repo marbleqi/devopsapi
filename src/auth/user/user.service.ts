@@ -1,9 +1,9 @@
+// 外部依赖
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { EntityManager, MoreThan } from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
-
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
 import { UserEntity, UserLogEntity } from '..';
@@ -59,7 +59,7 @@ export class UserService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async index(operateId: number): Promise<Result> {
-    /**角色清单 */
+    /**用户清单 */
     const data: UserEntity[] = await this.entityManager.find(UserEntity, {
       select: [
         'userId',
