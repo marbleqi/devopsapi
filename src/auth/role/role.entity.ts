@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  AfterLoad,
-  BeforeInsert,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 
 /**角色表基类 */
@@ -44,8 +38,8 @@ export class RoleEntity extends RoleBaseEntity {
   roleId: number;
 
   /**排序ID */
-  @Column({ type: 'bigint', name: 'orderid', comment: '排序ID' })
-  orderid: number;
+  @Column({ type: 'bigint', name: 'order_id', comment: '排序ID' })
+  orderId: number;
 
   /**创建用户ID */
   @Column({
@@ -60,16 +54,13 @@ export class RoleEntity extends RoleBaseEntity {
   @Column({ type: 'bigint', name: 'create_at', comment: '创建时间' })
   createAt: number;
 
+  /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  insertLoad() {
+  roleLoad() {
+    this.roleId = Number(this.roleId);
+    this.orderId = Number(this.orderId);
     this.createUserId = Number(this.createUserId);
     this.createAt = Number(this.createAt);
-  }
-
-  @BeforeInsert()
-  insertDate() {
-    this.createAt = Date.now();
-    this.createUserId = this.updateUserId;
   }
 }
 
@@ -87,4 +78,11 @@ export class RoleLogEntity extends RoleBaseEntity {
   /**角色ID */
   @Column({ type: 'bigint', name: 'role_id', comment: '角色ID' })
   roleId: number;
+
+  /**对长整型数据返回时，进行数据转换 */
+  @AfterLoad()
+  roleLoad() {
+    this.logId = Number(this.logId);
+    this.roleId = Number(this.roleId);
+  }
 }

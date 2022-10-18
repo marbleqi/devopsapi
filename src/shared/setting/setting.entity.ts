@@ -59,7 +59,7 @@ export class SettingLogEntity extends SettingBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  settingLogLoad() {
+  settingLoad() {
     this.logId = Number(this.logId);
   }
 }

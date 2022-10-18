@@ -11,14 +11,13 @@ export class OperateService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
-  async set(operateName: string): Promise<number> {
+  async insert(operateName: string): Promise<number> {
     const result = await this.entityManager.insert(OperateEntity, {
       operateName,
       createAt: Date.now(),
     });
-    const identifiers = result.identifiers;
-    if (identifiers.length) {
-      return identifiers[0].operateId;
+    if (result.identifiers.length) {
+      return Number(result.identifiers[0].operateId);
     } else {
       return 0;
     }

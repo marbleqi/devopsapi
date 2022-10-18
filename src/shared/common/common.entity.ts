@@ -19,7 +19,7 @@ export abstract class CommonBaseEntity {
   @Column({
     type: 'bigint',
     name: 'operate_id',
-    default: 0,
+    default: 1,
     comment: '操作序号',
   })
   operateId: number;

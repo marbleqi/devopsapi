@@ -66,7 +66,6 @@ export class ReqEntity {
   reqLoad() {
     this.reqId = Number(this.reqId);
     this.userId = Number(this.userId);
-    this.status = Number(this.status);
     this.startAt = Number(this.startAt);
     this.endAt = Number(this.endAt);
   }

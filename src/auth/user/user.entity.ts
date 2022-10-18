@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  AfterLoad,
-  BeforeInsert,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 
 /**用户表基类 */
@@ -118,16 +112,17 @@ export class UserEntity extends UserBaseEntity {
   @Column({ type: 'bigint', name: 'create_at', comment: '创建时间' })
   createAt: number;
 
+  /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  insertLoad() {
+  menuLoad() {
+    this.userId = Number(this.userId);
+    this.pswTimes = Number(this.pswTimes);
+    this.loginTimes = Number(this.loginTimes);
+    this.firstLoginAt = Number(this.firstLoginAt);
+    this.lastLoginAt = Number(this.lastLoginAt);
+    this.lastSessionAt = Number(this.lastSessionAt);
     this.createUserId = Number(this.createUserId);
     this.createAt = Number(this.createAt);
-  }
-
-  @BeforeInsert()
-  insertDate() {
-    this.createAt = Date.now();
-    this.createUserId = this.updateUserId;
   }
 }
 
@@ -145,4 +140,11 @@ export class UserLogEntity extends UserBaseEntity {
   /**用户ID */
   @Column({ type: 'bigint', name: 'user_id', comment: '用户ID' })
   userId: number;
+
+  /**对长整型数据返回时，进行数据转换 */
+  @AfterLoad()
+  menuLoad() {
+    this.logId = Number(this.logId);
+    this.userId = Number(this.userId);
+  }
 }

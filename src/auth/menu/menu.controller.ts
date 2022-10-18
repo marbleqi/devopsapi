@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { QueueService } from '../../shared';
 import { Ability, Abilities, AbilityService, MenuService } from '..';
 
 @Controller('auth/menu')
@@ -20,12 +19,10 @@ export class MenuController {
    * 构造函数
    * @param ability 注入的权限点服务
    * @param menu 注入的菜单服务
-   * @param queue 注入的队列服务
    */
   constructor(
     private readonly ability: AbilityService,
     private readonly menu: MenuService,
-    private readonly queue: QueueService,
   ) {
     // 菜单管理
     this.ability.add([
@@ -55,44 +52,48 @@ export class MenuController {
 
   /**
    * 获取菜单清单
-   * @param operateid 操作序号，用于获取增量数据
+   * @param operateId 操作序号，用于获取增量数据
    * @param res 响应上下文
    */
   @Get('index')
   @Abilities(8, 9, 131, 132)
   async index(
-    @Query('operateid', new ParseIntPipe()) operateid: number,
+    @Query('operateId') operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.index(operateid);
+    console.debug('operateId', operateId);
+    res.locals.result = await this.menu.index(operateId);
+    res.status(200).json(res.locals.result);
   }
 
   /**
    * 获取菜单详情
-   * @param id 菜单ID
+   * @param menuId 菜单ID
    * @param res 响应上下文
    */
-  @Get(':id/show')
+  @Get(':menuId/show')
   @Abilities(8, 9, 133)
   async show(
-    @Param('id', new ParseIntPipe()) id: number,
+    @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.show(id);
+    res.locals.result = await this.menu.show(menuId);
+    res.status(200).json(res.locals.result);
   }
 
   /**
    * 获取菜单变更日志
-   * @param id 菜单ID
+   * @param menuId 菜单ID
    * @param res 响应上下文
    */
-  @Get(':id/log')
+  @Get(':menuId/log')
   @Abilities(8, 9, 133)
   async log(
-    @Param('id', new ParseIntPipe()) id: number,
+    @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.log(id);
+    res.locals.result = await this.menu.log(menuId);
+    res.status(200).json(res.locals.result);
   }
 
   /**
@@ -103,37 +104,34 @@ export class MenuController {
   @Post('create')
   @Abilities(9, 134)
   async create(@Body() value: object, @Res() res: Response): Promise<void> {
-    res.locals.result = await this.menu.create(res.locals.userid, value);
-    if (!res.locals.result.code) {
-      await this.queue.add('menu', {
-        operate: 'create',
-        reqid: res.locals.reqid,
-        operateid: res.locals.result.operateid,
-      });
-    }
+    res.locals.result = await this.menu.create(
+      value,
+      res.locals.userId,
+      res.locals.reqId,
+    );
+    res.status(200).json(res.locals.result);
   }
 
   /**
    * 更新菜单（含禁用和启用菜单）
-   * @param id 菜单ID
+   * @param menuId 菜单ID
    * @param value 提交消息体
    * @param res 响应上下文
    */
-  @Post(':id/update')
+  @Post(':menuId/update')
   @Abilities(9, 135)
   async update(
-    @Param('id', new ParseIntPipe()) id: number,
+    @Param('menuId', new ParseIntPipe()) menuId: number,
     @Body() value: object,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.update(res.locals.userid, id, value);
-    if (!res.locals.result.code) {
-      await this.queue.add('menu', {
-        operate: 'update',
-        reqid: res.locals.reqid,
-        operateid: res.locals.result.operateid,
-      });
-    }
+    res.locals.result = await this.menu.update(
+      menuId,
+      value,
+      res.locals.userId,
+      res.locals.reqId,
+    );
+    res.status(200).json(res.locals.result);
   }
 
   /**
@@ -145,8 +143,6 @@ export class MenuController {
   @Abilities(9, 136)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
     res.locals.result = await this.menu.sort(value);
-    if (!res.locals.result.code) {
-      await this.queue.add('sort', { object: 'menu', reqid: res.locals.reqid });
-    }
+    res.status(200).json(res.locals.result);
   }
 }

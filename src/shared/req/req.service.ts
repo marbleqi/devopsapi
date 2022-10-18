@@ -24,9 +24,11 @@ export class ReqService {
    */
   async insert(data: object): Promise<number> {
     const result = await this.entityManager.insert(ReqEntity, data);
-    return Math.max(
-      ...result.identifiers.map((item: any) => Number(item.reqId), 0),
-    );
+    if (result.identifiers.length) {
+      return Number(result.identifiers[0].reqId);
+    } else {
+      return 0;
+    }
   }
 
   /**

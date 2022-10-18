@@ -98,11 +98,11 @@ export class TokenGuard implements CanActivate {
     return true;
     // /**令牌验证结果 */
     // const auth: Auth = await this.token.verify(req.headers.token, abilities);
-    // res.locals.userid = auth.userid;
+    // res.locals.userId = auth.userid;
     // // 令牌验证不通过
     // if (auth.invalid) {
     //   if (auth.userid) {
-    //     res.locals.result = { code: 403, msg: '用户未授权使用该接口', reqid };
+    //     res.locals.result = { code: 400, msg: '用户未授权使用该接口', reqid };
     //   } else {
     //     res.locals.status = 401;
     //     res.locals.result = { code: 401, msg: '令牌验证失败', reqid };
