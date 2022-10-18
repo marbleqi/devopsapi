@@ -30,7 +30,7 @@ export abstract class UserBaseEntity extends CommonBaseEntity {
   roles: number[];
 
   /**用户密码 */
-  @Column({ type: 'text', name: 'password', comment: '用户密码' })
+  @Column({ type: 'text', name: 'password', default: '', comment: '用户密码' })
   password: string;
 }
 

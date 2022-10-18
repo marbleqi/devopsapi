@@ -26,6 +26,29 @@ export class RoleService implements OnApplicationBootstrap {
     const count: number = await this.entityManager.count(RoleEntity);
     if (!count) {
       console.debug('需要执行角色初始化');
+      const params = {
+        updateUserId: 0,
+        updateAt: Date.now(),
+        createUserId: 0,
+        createAt: Date.now(),
+      };
+      await this.entityManager.insert(RoleEntity, [
+        {
+          ...params,
+          config: { rolename: '超级管理员', description: '超级管理员' },
+          abilities: [9],
+        },
+        {
+          ...params,
+          config: { rolename: '审查员', description: '审查员' },
+          abilities: [8],
+        },
+        {
+          ...params,
+          config: { rolename: '普通用户', description: '普通用户' },
+          abilities: [],
+        },
+      ]);
     }
   }
 

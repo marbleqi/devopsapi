@@ -38,7 +38,7 @@ export class RoleEntity extends RoleBaseEntity {
   roleId: number;
 
   /**排序ID */
-  @Column({ type: 'bigint', name: 'order_id', comment: '排序ID' })
+  @Column({ type: 'bigint', name: 'order_id', default: 0, comment: '排序ID' })
   orderId: number;
 
   /**创建用户ID */

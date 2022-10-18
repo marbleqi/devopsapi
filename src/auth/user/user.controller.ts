@@ -172,7 +172,7 @@ export class UserController {
     @Res() res: Response,
   ): Promise<void> {
     // 将上下文的密码替换，避免将密码明文记入日志
-    res.locals.request.body.loginpsw = '************';
+    res.locals.request.body.loginPsw = '************';
     res.locals.result = await this.user.resetpsw(
       userId,
       loginPsw,

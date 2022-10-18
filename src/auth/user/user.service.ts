@@ -27,7 +27,29 @@ export class UserService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     const count: number = await this.entityManager.count(UserEntity);
     if (!count) {
-      console.debug('需要执行角色初始化');
+      console.debug('需要执行用户初始化');
+      const params = {
+        updateUserId: 0,
+        updateAt: Date.now(),
+        createUserId: 0,
+        createAt: Date.now(),
+      };
+      await this.entityManager.insert(UserEntity, [
+        {
+          ...params,
+          loginName: 'root',
+          config: {
+            username: '超级管理员',
+            avatar:
+              '//wework.qpic.cn/bizmail/rhJR6OOdNRiaepJZSAMVHFicjiaZabHHUdOYJTpdNIqo0MOkFMicWwac1w/0',
+            pswlogin: true,
+            qrlogin: true,
+          },
+          roles: [1],
+          password:
+            '$2b$10$VYml51aRjNYcpYPnqqACRu1iLEZ5xzrHXBzc.01LrjKHYiq8OdfZS',
+        },
+      ]);
     }
   }
 

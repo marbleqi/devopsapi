@@ -4,7 +4,7 @@ export interface Token {
   /**令牌 */
   token: string;
   /**令牌关联用户 */
-  userid: number;
+  userId: number;
   /**令牌过期时间 */
   expired?: number;
 }
@@ -12,7 +12,7 @@ export interface Token {
 /**认证结果接口 */
 export interface Auth {
   /**用户ID */
-  userid: number;
+  userId: number;
   /**权限无效标记 */
   invalid: boolean;
 }

@@ -29,7 +29,12 @@ export class ReqEntity {
   action: string;
 
   /**请求信息 */
-  @Column({ type: 'json', name: 'request', comment: '请求信息' })
+  @Column({
+    type: 'json',
+    name: 'request',
+    nullable: true,
+    comment: '请求信息',
+  })
   request: object;
 
   /**状态码 */

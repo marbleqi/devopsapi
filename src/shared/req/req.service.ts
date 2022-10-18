@@ -34,14 +34,15 @@ export class ReqService {
   /**
    * 更新请求日志
    * @param reqId 请求日志ID
+   * @param request 请求消息
    * @param result 响应结果
    * @returns 更新结果
    */
-  async update(reqId: number, result: object): Promise<void> {
+  async update(reqId: number, request: object, result: object): Promise<void> {
     const info = await this.entityManager.update(
       ReqEntity,
       { reqId },
-      { result, endAt: Date.now() },
+      { request, result, endAt: Date.now() },
     );
     console.debug('updateinfo', info);
   }
