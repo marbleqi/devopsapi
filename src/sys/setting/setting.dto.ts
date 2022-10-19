@@ -10,6 +10,15 @@ export class SettingDto {
   @IsNotEmpty({ message: '应用说明不能为空' })
   description: string;
 
+  @IsNotEmpty({ message: '网站主体不能为空' })
+  company: string;
+
+  @IsNotEmpty({ message: '域名不能为空' })
+  domain: string;
+
+  @IsNotEmpty({ message: 'ICP备案不能为空' })
+  icp: string;
+
   @IsNotEmpty({ message: '令牌有效期设置不能为空' })
   expired: number;
 

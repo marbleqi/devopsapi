@@ -31,10 +31,12 @@ import {
           throw new Error('队列未配置缓存地址');
         }
         const host = process.env.REDIS_HOST;
-        const port = parseInt(process.env.REDIS_PORT, 10) || 5432;
+        const port = parseInt(process.env.REDIS_PORT, 10) || 6379;
         const db = process.env.REDIS_DB || 0;
         const password = process.env.REDIS_PSW || '';
-        return { redis: { host, port, db, password } } as BullModuleOptions;
+        const redis = { host, port, db, password };
+        console.debug('消息队列使用的Redis地址', redis);
+        return { redis } as BullModuleOptions;
       },
     }),
   ],

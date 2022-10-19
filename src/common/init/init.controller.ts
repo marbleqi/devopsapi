@@ -51,6 +51,7 @@ export class InitController {
   @Get('sys')
   sys(@Res() res: Response): void {
     res.locals.result = this.init.sys();
+    res.status(200).json(res.locals.result);
   }
 
   /**

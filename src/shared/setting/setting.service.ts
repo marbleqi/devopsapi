@@ -4,7 +4,13 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { EntityManager, MoreThan } from 'typeorm';
 // 内部依赖
-import { Result, SettingEntity, SettingLogEntity, OperateService } from '..';
+import {
+  Result,
+  SettingEntity,
+  SettingLogEntity,
+  OperateService,
+  QueueService,
+} from '..';
 
 /**配置服务 */
 @Injectable()
@@ -21,7 +27,8 @@ export class SettingService implements OnApplicationBootstrap {
    * @param entityManager 实体管理器
    */
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly queue: QueueService,
     private readonly operateService: OperateService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {
@@ -30,20 +37,40 @@ export class SettingService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
+    await this.init();
+    await this.reload();
+    this.queue.apiSub.subscribe(async (res) => {
+      console.debug('收到消息', res);
+      if (res.name === 'setting') {
+        console.debug('更新配置缓存');
+        await this.reload();
+        console.debug('通知前端更新');
+        this.queue.webSub.next(res);
+      }
+    });
+  }
+
+  /**初始化，将数据存入数据库 */
+  async init(): Promise<void> {
+    /**判断是否已配置系统参数 */
     const result = await this.entityManager.findOne(SettingEntity, {
       select: ['code'],
       where: {
         code: 'sys',
       },
     });
+    // 如果未配置系统参数，就初始化系统参数
     if (!result) {
       console.debug('需要执行配置初始化');
       await this.entityManager.insert(SettingEntity, {
         code: 'sys',
         value: {
           name: '运维平台',
-          description: '平台在手，天下我有。',
           title: '运维平台',
+          description: '平台在手，天下我有。',
+          company: '***公司',
+          domain: '***.com',
+          icp: '*ICP备*号-*',
           expired: 30,
           password: true,
           wxwork: true,
@@ -55,11 +82,10 @@ export class SettingService implements OnApplicationBootstrap {
         createAt: Date.now(),
       });
     }
-    await this.init();
   }
 
-  /**初始化方法，将配置加载到应用内存 */
-  async init(): Promise<void> {
+  /**更新缓存的配置 */
+  async reload(): Promise<void> {
     /**配置清单 */
     const settingList: SettingEntity[] = await this.entityManager.find(
       SettingEntity,
@@ -160,10 +186,10 @@ export class SettingService implements OnApplicationBootstrap {
    */
   @OnEvent('setting')
   async addLog(code: string) {
+    this.queue.add('setting', code);
     /**配置对象 */
     const setting = await this.get(code);
     /**更新结果 */
-    const result = await this.entityManager.insert(SettingLogEntity, setting);
-    console.debug('result', result);
+    this.entityManager.insert(SettingLogEntity, setting);
   }
 }

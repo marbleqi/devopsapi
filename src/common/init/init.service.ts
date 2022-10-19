@@ -70,13 +70,11 @@ export class InitService {
    * @returns 响应消息
    */
   async user(operateId: number): Promise<Result> {
-    const select = ['userId', 'config', 'operateId'];
     /**用户清单 */
     const data: UserEntity[] = await this.entityManager.find(UserEntity, {
       select: ['userId', 'config', 'operateId'],
       where: { operateId: MoreThan(operateId) },
     });
-    console.debug('dataA', data);
     /**响应报文 */
     return { code: 0, msg: 'ok', data };
   }

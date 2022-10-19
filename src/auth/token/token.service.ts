@@ -42,12 +42,12 @@ export class TokenService implements OnApplicationBootstrap {
   /**启动时初始化 */
   async onApplicationBootstrap(): Promise<void> {
     await this.init();
-    this.queue.apisub.subscribe(async (res) => {
+    this.queue.apiSub.subscribe(async (res) => {
       console.debug('收到消息', res);
-      if (res === 'token') {
+      if (res.name === 'token') {
         console.debug('执行令牌初始化');
         await this.init();
-        this.queue.websub.next({ name: 'token' });
+        this.queue.webSub.next({ name: 'token' });
       }
     });
   }
@@ -143,23 +143,19 @@ export class TokenService implements OnApplicationBootstrap {
     let userId = 0;
     /**权限无效 */
     let invalid = true;
-    console.debug(token, typeof token);
     // 如果传入的令牌无效
     if (!token || typeof token === 'object') {
       return { userId, invalid };
     }
     /**令牌 */
     const result: any = await this.redis.hgetall(`token:${token}`);
-    console.debug('resultD', result);
     if (!result.token) {
       return { userId, invalid };
     }
     userId = Number(result.userId) || 0;
-    console.debug('userIdG', userId);
     if (!userId) {
       return { userId, invalid };
     }
-    console.debug('userIdH', userId);
     // 如果不验证权限点
     if (!abilities.length) {
       return { userId, invalid: false };

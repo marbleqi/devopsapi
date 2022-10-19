@@ -11,17 +11,17 @@ import { Result } from '..';
 @Processor('shared')
 export class QueueService {
   /**前端消息订阅主体 */
-  websub: Subject<{ name: string; data?: any }>;
+  webSub: Subject<{ name: string; data?: any }>;
   /**后端消息订阅主体 */
-  apisub: Subject<string>;
+  apiSub: Subject<{ name: string; data?: any }>;
 
   /**
    * 构造函数
    * @param queue 注入的队列服务
    */
   constructor(@InjectQueue('shared') private readonly queue: Queue) {
-    this.websub = new Subject<{ name: string; data?: any }>();
-    this.apisub = new Subject<string>();
+    this.webSub = new Subject<{ name: string; data?: any }>();
+    this.apiSub = new Subject<{ name: string; data?: any }>();
   }
 
   /**
@@ -35,7 +35,7 @@ export class QueueService {
 
   /**
    * 获取任务清单
-   * @param condition 队列配置
+   * @param condition 队列过滤条件
    * @returns 响应消息
    */
   async index(condition: any): Promise<Result> {
@@ -60,13 +60,13 @@ export class QueueService {
 
   /**
    * 删除任务
-   * @param condition 任务配置
+   * @param condition 任务ID清单
    * @returns 响应消息
    */
   async remove(condition: any): Promise<Result> {
     for (const id of condition.idlist) {
       const job = await this.queue.getJob(id);
-      await job.remove();
+      job.remove();
     }
     return { code: 0, msg: 'ok' };
   }
@@ -76,10 +76,8 @@ export class QueueService {
    * @returns 响应消息
    */
   async clean(): Promise<Result> {
-    console.debug('启动任务清理');
     await this.queue.clean(1000, 'completed');
     await this.queue.clean(1000, 'failed');
-    console.debug('完成任务清理');
     return { code: 0, msg: 'ok' };
   }
 
@@ -90,6 +88,6 @@ export class QueueService {
   @OnGlobalQueueWaiting({ name: 'setting' })
   async setting(job: Job): Promise<void> {
     console.debug('通知所有后端配置信息更新！', job.name, job.data);
-    this.apisub.next('setting');
+    this.apiSub.next({ name: 'setting', data: job.data });
   }
 }
