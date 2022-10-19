@@ -2,7 +2,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, MoreThan } from 'typeorm';
+import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
 import { MenuConfig, MenuEntity, MenuLogEntity } from '..';
@@ -303,27 +303,36 @@ export class MenuService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async index(operateId: number): Promise<Result> {
+    /**返回字段 */
+    const select = [
+      'menuId',
+      'pMenuId',
+      'config',
+      'status',
+      'orderId',
+      'updateUserId',
+      'updateAt',
+      'operateId',
+    ] as FindOptionsSelect<MenuEntity>;
     /**菜单清单 */
-    const data: MenuEntity[] = await this.entityManager.find(MenuEntity, {
-      select: [
-        'menuId',
-        'pMenuId',
-        'config',
-        'status',
-        'orderId',
-        'createUserId',
-        'createAt',
-        'updateUserId',
-        'updateAt',
-        'operateId',
-        'reqId',
-      ],
+    const menuList: MenuEntity[] = await this.entityManager.find(MenuEntity, {
+      select,
       where: {
         operateId: MoreThan(operateId),
       },
     });
     /**响应报文 */
-    return { code: 0, msg: 'ok', data };
+    return {
+      code: 0,
+      msg: 'ok',
+      data: menuList.map((item) => {
+        const result: any = {};
+        for (const key of select as string[]) {
+          result[key] = item[key];
+        }
+        return result;
+      }),
+    };
   }
 
   /**
@@ -439,14 +448,15 @@ export class MenuService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async sort(value: object[]): Promise<Result> {
+    console.debug('待排序菜单数据', value);
     if (!value.length) {
       return { code: 400, msg: '没有待排序的菜单记录' };
     }
     for (const item of value) {
       await this.entityManager.update(
         MenuEntity,
-        { menuId: item['menuid'] },
-        { orderId: item['orderid'] },
+        { menuId: item['menuId'] },
+        { orderId: item['orderId'] },
       );
     }
     this.queueService.add('sort', { object: 'menu' });

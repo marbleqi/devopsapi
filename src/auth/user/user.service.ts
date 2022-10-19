@@ -2,7 +2,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, MoreThan } from 'typeorm';
+import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
@@ -59,26 +59,35 @@ export class UserService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async index(operateId: number): Promise<Result> {
+    /**返回字段 */
+    const select = [
+      'userId',
+      'loginName',
+      'config',
+      'status',
+      'updateUserId',
+      'updateAt',
+      'operateId',
+    ] as FindOptionsSelect<UserEntity>;
     /**用户清单 */
-    const data: UserEntity[] = await this.entityManager.find(UserEntity, {
-      select: [
-        'userId',
-        'loginName',
-        'config',
-        'status',
-        'createUserId',
-        'createAt',
-        'updateUserId',
-        'updateAt',
-        'operateId',
-        'reqId',
-      ],
+    const userList: UserEntity[] = await this.entityManager.find(UserEntity, {
+      select,
       where: {
         operateId: MoreThan(operateId),
       },
     });
     /**响应报文 */
-    return { code: 0, msg: 'ok', data };
+    return {
+      code: 0,
+      msg: 'ok',
+      data: userList.map((item) => {
+        const result: any = {};
+        for (const key of select as string[]) {
+          result[key] = item[key];
+        }
+        return result;
+      }),
+    };
   }
 
   /**

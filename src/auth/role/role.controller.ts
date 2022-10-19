@@ -75,6 +75,7 @@ export class RoleController {
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.role.index(operateId);
+    console.debug('角色清单', operateId, res.locals.result);
     res.status(200).json(res.locals.result);
   }
 

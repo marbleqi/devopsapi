@@ -3,9 +3,17 @@ import { CommonBaseEntity } from '../../shared';
 
 /**角色表基类 */
 export abstract class RoleBaseEntity extends CommonBaseEntity {
+  /**角色名称 */
+  @Column({ type: 'text', name: 'role_name', comment: '角色名称' })
+  roleName: string;
+
+  /**角色说明 */
+  @Column({ type: 'text', name: 'description', comment: '角色说明' })
+  description: string;
+
   /**角色配置 */
   @Column({ type: 'json', name: 'config', comment: '角色配置' })
-  config: object;
+  config: any;
 
   /**状态，1表示可用，0表示禁用 */
   @Column({

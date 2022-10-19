@@ -1,7 +1,7 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, MoreThan } from 'typeorm';
+import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
 import { RoleEntity, RoleLogEntity } from '..';
@@ -35,17 +35,20 @@ export class RoleService implements OnApplicationBootstrap {
       await this.entityManager.insert(RoleEntity, [
         {
           ...params,
-          config: { rolename: '超级管理员', description: '超级管理员' },
+          roleName: '超级管理员',
+          description: '超级管理员',
           abilities: [9],
         },
         {
           ...params,
-          config: { rolename: '审查员', description: '审查员' },
+          roleName: '审查员',
+          description: '审查员',
           abilities: [8],
         },
         {
           ...params,
-          config: { rolename: '普通用户', description: '普通用户' },
+          roleName: '普通用户',
+          description: '普通用户',
           abilities: [],
         },
       ]);
@@ -58,26 +61,36 @@ export class RoleService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async index(operateId: number): Promise<Result> {
+    /**返回字段 */
+    const select = [
+      'roleId',
+      'roleName',
+      'description',
+      'status',
+      'orderId',
+      'updateUserId',
+      'updateAt',
+      'operateId',
+    ] as FindOptionsSelect<RoleEntity>;
     /**角色清单 */
-    const data: RoleEntity[] = await this.entityManager.find(RoleEntity, {
-      select: [
-        'roleId',
-        'config',
-        'status',
-        'orderId',
-        'createUserId',
-        'createAt',
-        'updateUserId',
-        'updateAt',
-        'operateId',
-        'reqId',
-      ],
+    const roleList: RoleEntity[] = await this.entityManager.find(RoleEntity, {
+      select,
       where: {
         operateId: MoreThan(operateId),
       },
     });
     /**响应报文 */
-    return { code: 0, msg: 'ok', data };
+    return {
+      code: 0,
+      msg: 'ok',
+      data: roleList.map((item) => {
+        const result: any = {};
+        for (const key of select as string[]) {
+          result[key] = item[key];
+        }
+        return result;
+      }),
+    };
   }
 
   /**
@@ -200,7 +213,7 @@ export class RoleService implements OnApplicationBootstrap {
       await this.entityManager.update(
         RoleEntity,
         { roleId: item['roleId'] },
-        { orderId: item['orderid'] },
+        { orderId: item['orderId'] },
       );
     }
     this.queueService.add('sort', { object: 'role' });
