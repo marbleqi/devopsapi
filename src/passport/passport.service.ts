@@ -5,13 +5,7 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { compare } from 'bcrypt';
 // 内部依赖
-import {
-  Result,
-  SettingEntity,
-  CommonService,
-  RedisService,
-  SettingService,
-} from '../shared';
+import { Result, CommonService, RedisService, SettingService } from '../shared';
 import { UserEntity } from '../auth';
 
 /**认证服务 */
@@ -151,7 +145,7 @@ export class PassportService {
       return { code: 401, msg: '用户状态为禁用' };
     }
     // 判断是否授权用户密码登陆
-    if (!user.config['pswlogin']) {
+    if (!user.config.pswLogin) {
       return { code: 401, msg: '该用户不允许使用密码登陆方式！' };
     }
     // 判断密码错误次数是否超过限制

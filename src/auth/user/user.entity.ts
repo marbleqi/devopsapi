@@ -1,15 +1,32 @@
 import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 
+/**用户配置 */
+export interface UserConfig {
+  [key: string]: any;
+  /**头像 */
+  avatar?: string;
+  /**电子邮箱 */
+  email?: string;
+  /**密码登陆 */
+  pswLogin?: boolean;
+  /**扫码登陆 */
+  qrLogin?: boolean;
+}
+
 /**用户表基类 */
 export abstract class UserBaseEntity extends CommonBaseEntity {
-  /**用户配置 */
+  /**登陆名 */
   @Column({ type: 'text', name: 'login_name', comment: '登陆名' })
   loginName: string;
 
+  /**姓名 */
+  @Column({ type: 'text', name: 'user_name', comment: '姓名' })
+  userName: string;
+
   /**用户配置 */
   @Column({ type: 'json', name: 'config', comment: '用户配置' })
-  config: object;
+  config: UserConfig;
 
   /**状态，1表示可用，0表示禁用 */
   @Column({
@@ -103,7 +120,7 @@ export class UserEntity extends UserBaseEntity {
   @Column({
     type: 'bigint',
     name: 'create_user_id',
-    default: 0,
+    default: 1,
     comment: '创建用户ID',
   })
   createUserId: number;
@@ -114,7 +131,7 @@ export class UserEntity extends UserBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  menuLoad() {
+  userLoad() {
     this.userId = Number(this.userId);
     this.pswTimes = Number(this.pswTimes);
     this.loginTimes = Number(this.loginTimes);
@@ -143,7 +160,7 @@ export class UserLogEntity extends UserBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  menuLoad() {
+  userLoad() {
     this.logId = Number(this.logId);
     this.userId = Number(this.userId);
   }

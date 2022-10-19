@@ -25,7 +25,7 @@ export class SettingEntity extends SettingBaseEntity {
   @Column({
     type: 'bigint',
     name: 'create_user_id',
-    default: 0,
+    default: 1,
     comment: '创建用户ID',
   })
   createUserId: number;

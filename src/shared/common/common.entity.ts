@@ -6,7 +6,7 @@ export abstract class CommonBaseEntity {
   @Column({
     type: 'bigint',
     name: 'update_user_id',
-    default: 0,
+    default: 1,
     comment: '更新用户ID',
   })
   updateUserId: number;

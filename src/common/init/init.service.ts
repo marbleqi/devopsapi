@@ -48,8 +48,8 @@ export class InitService {
     /**用户信息 */
     const user: object = {
       userid: auth.userId,
-      name: result.config['username'],
-      avatar: result.config['avatar'],
+      name: result.userName,
+      avatar: result.config.avatar,
     };
     /**权限点信息 */
     const ability: number[] = this.token.getability(auth.userId);
@@ -71,12 +71,20 @@ export class InitService {
    */
   async user(operateId: number): Promise<Result> {
     /**用户清单 */
-    const data: UserEntity[] = await this.entityManager.find(UserEntity, {
-      select: ['userId', 'config', 'operateId'],
+    const userList: UserEntity[] = await this.entityManager.find(UserEntity, {
+      select: ['userId', 'userName', 'operateId'],
       where: { operateId: MoreThan(operateId) },
     });
     /**响应报文 */
-    return { code: 0, msg: 'ok', data };
+    return {
+      code: 0,
+      msg: 'ok',
+      data: userList.map((user) => ({
+        userId: user.userId,
+        userName: user.userName,
+        operateId: user.operateId,
+      })),
+    };
   }
 
   /**
@@ -86,7 +94,7 @@ export class InitService {
    */
   async menu(operateId: number): Promise<Result> {
     /**菜单清单 */
-    const data: MenuEntity[] = await this.entityManager.find(MenuEntity, {
+    const menuList: MenuEntity[] = await this.entityManager.find(MenuEntity, {
       select: [
         'menuId',
         'pMenuId',
@@ -99,7 +107,19 @@ export class InitService {
       where: { operateId: MoreThan(operateId) },
     });
     /**响应报文 */
-    return { code: 0, msg: 'ok', data };
+    return {
+      code: 0,
+      msg: 'ok',
+      data: menuList.map((menu) => ({
+        menuId: menu.menuId,
+        pMenuId: menu.pMenuId,
+        config: menu.config,
+        status: menu.status,
+        abilities: menu.abilities,
+        orderId: menu.orderId,
+        operateId: menu.operateId,
+      })),
+    };
   }
 
   /**

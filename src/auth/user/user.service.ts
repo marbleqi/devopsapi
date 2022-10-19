@@ -6,7 +6,7 @@ import { EntityManager, MoreThan } from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
-import { UserEntity, UserLogEntity } from '..';
+import { UserConfig, UserEntity, UserLogEntity } from '..';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
@@ -29,22 +29,22 @@ export class UserService implements OnApplicationBootstrap {
     if (!count) {
       console.debug('需要执行用户初始化');
       const params = {
-        updateUserId: 0,
+        updateUserId: 1,
         updateAt: Date.now(),
-        createUserId: 0,
+        createUserId: 1,
         createAt: Date.now(),
       };
       await this.entityManager.insert(UserEntity, [
         {
           ...params,
           loginName: 'root',
+          userName: '超级管理员',
           config: {
-            username: '超级管理员',
             avatar:
               '//wework.qpic.cn/bizmail/rhJR6OOdNRiaepJZSAMVHFicjiaZabHHUdOYJTpdNIqo0MOkFMicWwac1w/0',
-            pswlogin: true,
-            qrlogin: true,
-          },
+            pswLogin: true,
+            qrLogin: true,
+          } as UserConfig,
           roles: [1],
           password:
             '$2b$10$VYml51aRjNYcpYPnqqACRu1iLEZ5xzrHXBzc.01LrjKHYiq8OdfZS',

@@ -5,7 +5,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { EntityManager, MoreThan } from 'typeorm';
 // 内部依赖
 import { Result, OperateService, QueueService } from '../../shared';
-import { MenuEntity, MenuLogEntity } from '..';
+import { MenuConfig, MenuEntity, MenuLogEntity } from '..';
 
 @Injectable()
 export class MenuService implements OnApplicationBootstrap {
@@ -27,9 +27,9 @@ export class MenuService implements OnApplicationBootstrap {
     if (!count) {
       console.debug('需要执行菜单初始化');
       const params = {
-        updateUserId: 0,
+        updateUserId: 1,
         updateAt: Date.now(),
-        createUserId: 0,
+        createUserId: 1,
         createAt: Date.now(),
       };
       await this.entityManager.insert(MenuEntity, [
@@ -43,7 +43,7 @@ export class MenuService implements OnApplicationBootstrap {
             reuse: true,
             isLeaf: false,
             icon: 'form',
-          },
+          } as MenuConfig,
           abilities: [8, 9],
         },
         {

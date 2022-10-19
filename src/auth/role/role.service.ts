@@ -27,9 +27,9 @@ export class RoleService implements OnApplicationBootstrap {
     if (!count) {
       console.debug('需要执行角色初始化');
       const params = {
-        updateUserId: 0,
+        updateUserId: 1,
         updateAt: Date.now(),
-        createUserId: 0,
+        createUserId: 1,
         createAt: Date.now(),
       };
       await this.entityManager.insert(RoleEntity, [

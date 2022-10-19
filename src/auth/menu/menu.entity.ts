@@ -1,6 +1,23 @@
 import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 
+/**菜单配置 */
+export interface MenuConfig {
+  [key: string]: any;
+  /**菜单名称 */
+  text?: string;
+  /**菜单说明 */
+  description?: string;
+  /**菜单链接 */
+  link?: string;
+  /**菜单图标 */
+  icon?: string;
+  /**启用路由复用 */
+  reuse?: boolean;
+  /**是否末级菜单 */
+  isLeaf?: boolean;
+}
+
 /**菜单表基类 */
 export abstract class MenuBaseEntity extends CommonBaseEntity {
   /**上级菜单ID */
@@ -9,7 +26,7 @@ export abstract class MenuBaseEntity extends CommonBaseEntity {
 
   /**菜单配置 */
   @Column({ type: 'json', name: 'config', comment: '菜单配置' })
-  config: object;
+  config: MenuConfig;
 
   /**状态，1表示可用，0表示禁用 */
   @Column({
@@ -50,7 +67,7 @@ export class MenuEntity extends MenuBaseEntity {
   @Column({
     type: 'bigint',
     name: 'create_user_id',
-    default: 0,
+    default: 1,
     comment: '创建用户ID',
   })
   createUserId: number;

@@ -36,9 +36,7 @@ export class InitController {
     @Res() res: Response,
   ): Promise<void> {
     /**令牌验证结果 */
-    console.debug('tokenA', token);
     const auth: Auth = await this.token.verify(token);
-    console.debug('authA', auth);
     res.locals.userId = auth.userId;
     res.locals.result = await this.init.startup(auth);
     res.status(200).json(res.locals.result);
