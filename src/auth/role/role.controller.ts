@@ -14,6 +14,7 @@ import { Response } from 'express';
 import {
   Ability,
   Abilities,
+  RoleDto,
   AbilityService,
   RoleService,
   UserService,
@@ -34,32 +35,12 @@ export class RoleController {
   ) {
     // 角色管理
     this.ability.add([
-      {
-        id: 141,
-        pid: 140,
-        name: '角色选项',
-        description: '获取角色选项，仅返回角色ID和角色名称两项',
-      },
-      {
-        id: 142,
-        pid: 140,
-        name: '角色列表',
-        description: '查看角色列表，返回较多字段，用于列表查看',
-      },
-      {
-        id: 143,
-        pid: 140,
-        name: '角色详情',
-        description: '查看角色详情，编辑页面初始化时数据',
-      },
-      { id: 144, pid: 140, name: '创建角色', description: '创建新的角色' },
-      { id: 145, pid: 140, name: '修改角色', description: '修改已有的角色' },
-      {
-        id: 146,
-        pid: 140,
-        name: '角色排序',
-        description: '对已有的角色进行排序',
-      },
+      { id: 232, pid: 230, name: '角色列表', description: '查看角色列表' },
+      { id: 233, pid: 230, name: '角色详情', description: '查看角色详情' },
+      { id: 234, pid: 230, name: '角色更新历史', description: '角色更新历史' },
+      { id: 235, pid: 230, name: '创建角色', description: '创建新的角色' },
+      { id: 236, pid: 230, name: '修改角色', description: '修改已有的角色' },
+      { id: 237, pid: 230, name: '角色排序', description: '对角色进行排序' },
     ] as Ability[]);
   }
 
@@ -69,13 +50,12 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(8, 9, 141, 142)
+  @Abilities(232)
   async index(
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.role.index(operateId);
-    console.debug('角色清单', operateId, res.locals.result);
     res.status(200).json(res.locals.result);
   }
 
@@ -85,7 +65,7 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get(':roleId/show')
-  @Abilities(8, 9, 143)
+  @Abilities(233)
   async show(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
@@ -100,7 +80,7 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get(':roleId/log')
-  @Abilities(8, 9, 143)
+  @Abilities(234)
   async log(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
@@ -115,8 +95,8 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(9, 144)
-  async create(@Body() value: object, @Res() res: Response): Promise<void> {
+  @Abilities(235)
+  async create(@Body() value: RoleDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.role.create(
       value,
       res.locals.userId,
@@ -132,10 +112,10 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post(':roleId/update')
-  @Abilities(9, 145)
+  @Abilities(236)
   async update(
     @Param('roleId', new ParseIntPipe()) roleId: number,
-    @Body() value: object,
+    @Body() value: RoleDto,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.role.update(
@@ -153,7 +133,7 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post('sort')
-  @Abilities(9, 146)
+  @Abilities(237)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
     res.locals.result = await this.role.sort(value);
     res.status(200).json(res.locals.result);
@@ -161,11 +141,11 @@ export class RoleController {
 
   /**
    * 获取授权角色的用户清单
-   * @param roleId 提交消息体
+   * @param roleId 角色ID
    * @param res 响应上下文
    */
   @Get(':roleId/grant')
-  @Abilities(9, 153)
+  @Abilities(153)
   async granted(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
@@ -176,12 +156,12 @@ export class RoleController {
 
   /**
    * 设置授权角色的用户清单
-   * @param roleId 待授权的角色
+   * @param roleId 待授权的角色ID
    * @param userIds 待授权角色的用户清单
    * @param res 响应上下文
    */
   @Post(':roleId/grant')
-  @Abilities(9, 155)
+  @Abilities(155)
   async grant(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Body() userIds: number[],

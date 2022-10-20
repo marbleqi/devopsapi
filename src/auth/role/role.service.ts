@@ -1,9 +1,19 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  MoreThan,
+} from 'typeorm';
 // 内部依赖
-import { Result, OperateService, QueueService } from '../../shared';
+import {
+  Result,
+  OperateService,
+  QueueService,
+  CommonService,
+} from '../../shared';
 import { RoleEntity, RoleLogEntity } from '..';
 
 @Injectable()
@@ -19,6 +29,7 @@ export class RoleService implements OnApplicationBootstrap {
     private eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
+    private readonly commonService: CommonService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
@@ -37,18 +48,25 @@ export class RoleService implements OnApplicationBootstrap {
           ...params,
           roleName: '超级管理员',
           description: '超级管理员',
-          abilities: [9],
+          config: {},
+          abilities: [
+            100, 110, 113, 115, 120, 122, 123, 130, 132, 138, 200, 210, 212,
+            220, 222, 223, 224, 225, 226, 227, 230, 232, 233, 234, 235, 236,
+            237, 240, 242, 243, 244, 245, 246, 248, 249, 250, 252, 254, 258,
+          ],
         },
         {
           ...params,
           roleName: '审查员',
           description: '审查员',
-          abilities: [8],
+          config: {},
+          abilities: [],
         },
         {
           ...params,
           roleName: '普通用户',
           description: '普通用户',
+          config: {},
           abilities: [],
         },
       ]);
@@ -72,25 +90,11 @@ export class RoleService implements OnApplicationBootstrap {
       'updateAt',
       'operateId',
     ] as FindOptionsSelect<RoleEntity>;
-    /**角色清单 */
-    const roleList: RoleEntity[] = await this.entityManager.find(RoleEntity, {
-      select,
-      where: {
-        operateId: MoreThan(operateId),
-      },
-    });
-    /**响应报文 */
-    return {
-      code: 0,
-      msg: 'ok',
-      data: roleList.map((item) => {
-        const result: any = {};
-        for (const key of select as string[]) {
-          result[key] = item[key];
-        }
-        return result;
-      }),
-    };
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<RoleEntity>;
+    return await this.commonService.index(RoleEntity, select, where);
   }
 
   /**
@@ -230,7 +234,6 @@ export class RoleService implements OnApplicationBootstrap {
     const roles: RoleEntity[] = await this.entityManager.find(RoleEntity, {
       select: ['roleId', 'abilities'],
     });
-    console.debug('grantroles', roles);
     /**已授权角色清单 */
     const data: number[] = roles
       .filter((role) => role.abilities.includes(id))
@@ -256,7 +259,6 @@ export class RoleService implements OnApplicationBootstrap {
     const roles: RoleEntity[] = await this.entityManager.find(RoleEntity, {
       select: ['roleId', 'abilities'],
     });
-    console.debug('grantroles', roles);
     for (const role of roles) {
       // 增加角色的权限
       if (!role.abilities.includes(id) && roleIds.includes(role.roleId)) {

@@ -2,9 +2,19 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  MoreThan,
+} from 'typeorm';
 // 内部依赖
-import { Result, OperateService, QueueService } from '../../shared';
+import {
+  Result,
+  OperateService,
+  QueueService,
+  CommonService,
+} from '../../shared';
 import { MenuConfig, MenuEntity, MenuLogEntity } from '..';
 
 @Injectable()
@@ -19,6 +29,7 @@ export class MenuService implements OnApplicationBootstrap {
     private eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
+    private readonly commonService: CommonService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
@@ -44,7 +55,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: false,
             icon: 'form',
           } as MenuConfig,
-          abilities: [8, 9],
+          abilities: [100],
         },
         {
           ...params,
@@ -57,7 +68,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: false,
             icon: 'form',
           },
-          abilities: [8, 9, 100],
+          abilities: [200],
         },
         {
           ...params,
@@ -70,7 +81,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: false,
             icon: 'coffee',
           },
-          abilities: [8, 9, 200],
+          abilities: [300],
         },
         {
           ...params,
@@ -83,7 +94,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: false,
             icon: 'dingtalk',
           },
-          abilities: [8, 9, 300],
+          abilities: [400],
         },
         {
           ...params,
@@ -102,19 +113,6 @@ export class MenuService implements OnApplicationBootstrap {
           ...params,
           pMenuId: 1,
           config: {
-            text: '工作台',
-            description: '工作台',
-            link: '/sys/dashboard',
-            reuse: true,
-            isLeaf: true,
-            icon: 'windows',
-          },
-          abilities: [8, 9],
-        },
-        {
-          ...params,
-          pMenuId: 1,
-          config: {
             text: '参数设置',
             description: '参数设置',
             link: '/sys/setting',
@@ -122,7 +120,20 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'form',
           },
-          abilities: [8, 9, 110],
+          abilities: [110],
+        },
+        {
+          ...params,
+          pMenuId: 1,
+          config: {
+            text: '日志管理',
+            description: '日志管理',
+            link: '/sys/req',
+            reuse: true,
+            isLeaf: true,
+            icon: 'unordered-list',
+          },
+          abilities: [120],
         },
         {
           ...params,
@@ -135,33 +146,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'ordered-list',
           },
-          abilities: [8, 9, 170],
-        },
-        {
-          ...params,
-          pMenuId: 1,
-          config: {
-            text: '日志管理',
-            description: '日志管理',
-            link: '/sys/log',
-            reuse: true,
-            isLeaf: true,
-            icon: 'unordered-list',
-          },
-          abilities: [8, 9, 190],
-        },
-        {
-          ...params,
-          pMenuId: 1,
-          config: {
-            text: '消息管理',
-            description: '消息管理',
-            link: '/sys/message',
-            reuse: true,
-            isLeaf: true,
-            icon: 'message',
-          },
-          abilities: [8, 9, 180],
+          abilities: [130],
         },
         {
           ...params,
@@ -174,7 +159,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'safety-certificate',
           },
-          abilities: [8, 9, 120],
+          abilities: [210],
         },
         {
           ...params,
@@ -187,7 +172,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'menu',
           },
-          abilities: [8, 9, 130],
+          abilities: [220],
         },
         {
           ...params,
@@ -200,7 +185,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'team',
           },
-          abilities: [8, 9, 140],
+          abilities: [230],
         },
         {
           ...params,
@@ -213,7 +198,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'user',
           },
-          abilities: [8, 9, 150],
+          abilities: [240],
         },
         {
           ...params,
@@ -226,7 +211,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'key',
           },
-          abilities: [8, 9, 160],
+          abilities: [250],
         },
         {
           ...params,
@@ -239,7 +224,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'unordered-list',
           },
-          abilities: [8, 9],
+          abilities: [310],
         },
         {
           ...params,
@@ -252,7 +237,7 @@ export class MenuService implements OnApplicationBootstrap {
             isLeaf: true,
             icon: 'unordered-list',
           },
-          abilities: [8, 9],
+          abilities: [410],
         },
         {
           ...params,
@@ -264,32 +249,6 @@ export class MenuService implements OnApplicationBootstrap {
             reuse: true,
             isLeaf: true,
             icon: 'appstore',
-          },
-          abilities: [],
-        },
-        {
-          ...params,
-          pMenuId: 5,
-          config: {
-            text: '消息',
-            description: '消息',
-            link: '/common/message',
-            reuse: true,
-            isLeaf: true,
-            icon: 'message',
-          },
-          abilities: [],
-        },
-        {
-          ...params,
-          pMenuId: 5,
-          config: {
-            text: '待办',
-            description: '待办',
-            link: '/common/todo',
-            reuse: true,
-            isLeaf: true,
-            icon: 'calendar',
           },
           abilities: [],
         },
@@ -314,25 +273,11 @@ export class MenuService implements OnApplicationBootstrap {
       'updateAt',
       'operateId',
     ] as FindOptionsSelect<MenuEntity>;
-    /**菜单清单 */
-    const menuList: MenuEntity[] = await this.entityManager.find(MenuEntity, {
-      select,
-      where: {
-        operateId: MoreThan(operateId),
-      },
-    });
-    /**响应报文 */
-    return {
-      code: 0,
-      msg: 'ok',
-      data: menuList.map((item) => {
-        const result: any = {};
-        for (const key of select as string[]) {
-          result[key] = item[key];
-        }
-        return result;
-      }),
-    };
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<MenuEntity>;
+    return await this.commonService.index(MenuEntity, select, where);
   }
 
   /**

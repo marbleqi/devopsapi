@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // 内部依赖
 import {
   ReqEntity,
+  ReqModuleEntity,
+  ReqControllerEntity,
+  ReqActionEntity,
   OperateEntity,
   SettingEntity,
   SettingLogEntity,
@@ -20,6 +23,9 @@ import {
   imports: [
     TypeOrmModule.forFeature([
       ReqEntity,
+      ReqModuleEntity,
+      ReqControllerEntity,
+      ReqActionEntity,
       OperateEntity,
       SettingEntity,
       SettingLogEntity,
@@ -35,7 +41,6 @@ import {
         const db = process.env.REDIS_DB || 0;
         const password = process.env.REDIS_PSW || '';
         const redis = { host, port, db, password };
-        console.debug('消息队列使用的Redis地址', redis);
         return { redis } as BullModuleOptions;
       },
     }),

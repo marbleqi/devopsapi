@@ -39,7 +39,8 @@ import { CommonModule } from './common/common.module';
         }
         const password = process.env.POSTGRES_PSW;
         console.debug('当前环境', process.env.NODE_ENV);
-        const synchronize = process.env.NODE_ENV === 'dev';
+        /**同步配置，当开发环境和演示环境时，自动同步表结构 */
+        const synchronize = ['dev', 'demo'].includes(process.env.NODE_ENV);
         return {
           type: 'postgres',
           host,

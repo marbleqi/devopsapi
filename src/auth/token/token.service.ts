@@ -160,6 +160,7 @@ export class TokenService implements OnApplicationBootstrap {
     if (!abilities.length) {
       return { userId, invalid: false };
     }
+    console.debug('abilityMap', this.abilityMap.get(userId));
     invalid = this.abilityMap
       .get(userId)
       .every((ability: number) => !abilities.includes(ability));
@@ -168,11 +169,11 @@ export class TokenService implements OnApplicationBootstrap {
 
   /**
    * 用户ID换用户权限点
-   * @param userid 用户ID
+   * @param userId 用户ID
    * @returns 用户的权限点
    */
-  getability(userid: number): number[] {
-    return this.abilityMap.get(userid);
+  getability(userId: number): number[] {
+    return this.abilityMap.get(userId);
   }
 
   /**
@@ -181,10 +182,10 @@ export class TokenService implements OnApplicationBootstrap {
    */
   async index(): Promise<Result> {
     /**令牌清单 */
-    const tokenlist: string[] = await this.redis.keys('token:*');
+    const tokenList: string[] = await this.redis.keys('token:*');
     /**令牌数组 */
     const tokens: Record<string, string>[] = [];
-    for (const item of tokenlist) {
+    for (const item of tokenList) {
       /**令牌 */
       const token = await this.redis.hgetall(item);
       tokens.push(token);

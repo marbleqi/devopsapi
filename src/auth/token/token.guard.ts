@@ -38,9 +38,7 @@ export class TokenGuard implements CanActivate {
     /**响应上下文 */
     const res: Response = context.switchToHttp().getResponse();
     /**请求客户端IP */
-    const clientIp = req.headers['x-real-ip']
-      ? req.headers['x-real-ip']
-      : req.ip;
+    const clientIp = req.headers['x-real-ip'] || req.ip;
     /**本地网卡信息 */
     const network = networkInterfaces();
     /**响应服务端IP */
@@ -89,6 +87,7 @@ export class TokenGuard implements CanActivate {
     /**当前路由需要权限点 */
     const abilities =
       this.reflector.get<number[]>('abilities', context.getHandler()) || [];
+    /**消息头中的令牌 */
     const token = req.headers.token as string;
     /**令牌验证结果 */
     const auth: Auth = await this.token.verify(token, abilities);

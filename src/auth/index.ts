@@ -13,6 +13,7 @@ export * from './menu/menu.service';
 export * from './role/role.service';
 export * from './user/user.service';
 export * from './token/token.service';
+export * from './auth.service';
 export * from './ability/ability.controller';
 export * from './menu/menu.controller';
 export * from './role/role.controller';

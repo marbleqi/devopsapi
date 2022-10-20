@@ -23,7 +23,8 @@ export class AbilityController {
   /**
    * 构造函数
    * @param ability 注入的共享权限点服务
-   * @param queue 注入的队列服务
+   * @param menuService 注入的菜单服务
+   * @param roleService 注入的角色服务
    */
   constructor(
     private readonly ability: AbilityService,
@@ -32,12 +33,7 @@ export class AbilityController {
   ) {
     // 权限点管理
     this.ability.add([
-      {
-        id: 122,
-        pid: 120,
-        name: '权限点列表',
-        description: '查看权限点列表，返回较多字段，用于列表查看',
-      },
+      { id: 212, pid: 210, name: '权限点列表', description: '权限点列表' },
     ] as Ability[]);
   }
 
@@ -46,7 +42,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(8, 9, 122)
+  @Abilities(212)
   index(@Res() res: Response): void {
     res.locals.result = { code: 0, msg: 'ok', data: this.ability.get() };
     res.status(200).json(res.locals.result);
@@ -58,7 +54,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get(':id/menu')
-  @Abilities(8, 9, 133)
+  @Abilities(223)
   async menu(
     @Param('id', new ParseIntPipe()) id: number,
     @Res() res: Response,
@@ -73,7 +69,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get(':id/role')
-  @Abilities(8, 9, 143)
+  @Abilities(233)
   async role(
     @Param('id', new ParseIntPipe()) id: number,
     @Res() res: Response,
@@ -89,7 +85,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Post(':id/menu')
-  @Abilities(8, 9, 135)
+  @Abilities(226)
   async setmenu(
     @Param('id', new ParseIntPipe()) id: number,
     @Body('objectlist') menuIds: number[],
@@ -111,7 +107,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Post(':id/role')
-  @Abilities(8, 9, 145)
+  @Abilities(236)
   async setrole(
     @Param('id', new ParseIntPipe()) id: number,
     @Body('objectlist') roleIds: number[],

@@ -17,9 +17,9 @@ export class TokenController {
   ) {
     // 令牌管理
     this.ability.add([
-      { id: 162, pid: 160, name: '令牌列表', description: '查看令牌列表' },
-      { id: 164, pid: 160, name: '缓存令牌', description: '重新缓存令牌' },
-      { id: 167, pid: 160, name: '作废令牌', description: '作废单个令牌' },
+      { id: 252, pid: 250, name: '令牌列表', description: '查看令牌列表' },
+      { id: 254, pid: 250, name: '缓存令牌', description: '重新缓存令牌' },
+      { id: 258, pid: 250, name: '作废令牌', description: '作废单个令牌' },
     ] as Ability[]);
   }
 
@@ -28,9 +28,10 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Get()
-  @Abilities(8, 9, 162)
+  @Abilities(252)
   async index(@Res() res: Response): Promise<void> {
     res.locals.result = await this.token.index();
+    res.status(200).json(res.locals.result);
   }
 
   /**
@@ -38,9 +39,10 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Post()
-  @Abilities(9, 164)
+  @Abilities(255)
   async init(@Res() res: Response): Promise<void> {
     res.locals.result = await this.token.init();
+    res.status(200).json(res.locals.result);
   }
 
   /**
@@ -49,11 +51,12 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Delete(':token')
-  @Abilities(9, 167)
+  @Abilities(258)
   async destroy(
     @Param('token') token: string,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.token.destroy(token);
+    res.status(200).json(res.locals.result);
   }
 }

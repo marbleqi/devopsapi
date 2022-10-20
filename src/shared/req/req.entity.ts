@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
+import {
+  Entity,
+  ViewEntity,
+  Column,
+  PrimaryGeneratedColumn,
+  AfterLoad,
+  ViewColumn,
+} from 'typeorm';
 
 /**请求日志表 */
 @Entity('req_logs')
@@ -74,4 +81,49 @@ export class ReqEntity {
     this.startAt = Number(this.startAt);
     this.endAt = Number(this.endAt);
   }
+}
+
+/**请求日志模块视图 */
+@ViewEntity({
+  name: 'req_logs_modules',
+  expression: `SELECT DISTINCT module FROM req_logs`,
+})
+export class ReqModuleEntity {
+  /**模块名 */
+  @ViewColumn({ name: 'module' })
+  module: string;
+}
+
+/**请求日志控制器视图 */
+@ViewEntity({
+  name: 'req_logs_controllers',
+  expression: `SELECT DISTINCT module, controller FROM req_logs`,
+})
+export class ReqControllerEntity {
+  /**模块名 */
+  @ViewColumn({ name: 'module' })
+  module: string;
+
+  /**控制器名 */
+  @ViewColumn({ name: 'controller' })
+  controller: string;
+}
+
+/**请求日志操作视图 */
+@ViewEntity({
+  name: 'req_logs_actions',
+  expression: `SELECT DISTINCT module, controller, action FROM req_logs`,
+})
+export class ReqActionEntity {
+  /**模块名 */
+  @ViewColumn({ name: 'module' })
+  module: string;
+
+  /**控制器名 */
+  @ViewColumn({ name: 'controller' })
+  controller: string;
+
+  /**方法名 */
+  @ViewColumn({ name: 'action' })
+  action: string;
 }

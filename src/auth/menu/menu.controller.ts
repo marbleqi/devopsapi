@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { Ability, Abilities, AbilityService, MenuService } from '..';
+import { Ability, Abilities, MenuDto, AbilityService, MenuService } from '..';
 
 @Controller('auth/menu')
 export class MenuController {
@@ -26,27 +26,12 @@ export class MenuController {
   ) {
     // 菜单管理
     this.ability.add([
-      {
-        id: 131,
-        pid: 130,
-        name: '菜单选项',
-        description: '获取菜单选项，仅返回菜单ID，菜单上级ID和菜单名称两项',
-      },
-      {
-        id: 132,
-        pid: 130,
-        name: '菜单列表',
-        description: '查看菜单列表，返回较多字段，用于列表查看',
-      },
-      { id: 133, pid: 130, name: '菜单详情', description: '查看菜单详情' },
-      { id: 134, pid: 130, name: '创建菜单', description: '创建新的菜单' },
-      { id: 135, pid: 130, name: '修改菜单', description: '修改已有的菜单' },
-      {
-        id: 136,
-        pid: 130,
-        name: '菜单排序',
-        description: '对已有菜单进行排序',
-      },
+      { id: 222, pid: 220, name: '菜单列表', description: '查看菜单列表' },
+      { id: 223, pid: 220, name: '菜单详情', description: '查看菜单详情' },
+      { id: 224, pid: 220, name: '菜单更新历史', description: '菜单更新历史' },
+      { id: 225, pid: 220, name: '创建菜单', description: '创建新的菜单' },
+      { id: 226, pid: 220, name: '修改菜单', description: '修改已有的菜单' },
+      { id: 227, pid: 220, name: '菜单排序', description: '对菜单进行排序' },
     ] as Ability[]);
   }
 
@@ -56,7 +41,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(8, 9, 131, 132)
+  @Abilities(222)
   async index(
     @Query('operateId') operateId: number,
     @Res() res: Response,
@@ -72,7 +57,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get(':menuId/show')
-  @Abilities(8, 9, 133)
+  @Abilities(223)
   async show(
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
@@ -87,7 +72,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get(':menuId/log')
-  @Abilities(8, 9, 133)
+  @Abilities(224)
   async log(
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
@@ -102,8 +87,8 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(9, 134)
-  async create(@Body() value: object, @Res() res: Response): Promise<void> {
+  @Abilities(225)
+  async create(@Body() value: MenuDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.menu.create(
       value,
       res.locals.userId,
@@ -119,10 +104,10 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post(':menuId/update')
-  @Abilities(9, 135)
+  @Abilities(226)
   async update(
     @Param('menuId', new ParseIntPipe()) menuId: number,
-    @Body() value: object,
+    @Body() value: MenuDto,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.menu.update(
@@ -140,7 +125,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post('sort')
-  @Abilities(9, 136)
+  @Abilities(227)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
     res.locals.result = await this.menu.sort(value);
     res.status(200).json(res.locals.result);

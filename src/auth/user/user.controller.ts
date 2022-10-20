@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { Ability, Abilities, AbilityService, UserService } from '..';
+import { Ability, Abilities, UserDto, AbilityService, UserService } from '..';
 
 @Controller('auth/user')
 export class UserController {
@@ -26,33 +26,13 @@ export class UserController {
   ) {
     // 用户管理
     this.ability.add([
-      {
-        id: 151,
-        pid: 150,
-        name: '用户选项',
-        description: '获取用户选项，仅返回用户ID和用户姓名两项',
-      },
-      {
-        id: 152,
-        pid: 150,
-        name: '用户列表',
-        description: '查看用户列表，返回较多字段，用于列表查看',
-      },
-      { id: 153, pid: 150, name: '用户详情', description: '查看用户详情' },
-      { id: 154, pid: 150, name: '创建用户', description: '创建新的用户' },
-      {
-        id: 155,
-        pid: 150,
-        name: '更新用户',
-        description: '更新已有的用户信息，含禁用',
-      },
-      {
-        id: 156,
-        pid: 150,
-        name: '用户解锁',
-        description: '对账户锁定的用户进行解锁',
-      },
-      { id: 157, pid: 150, name: '重置密码', description: '重置用户密码' },
+      { id: 242, pid: 240, name: '用户列表', description: '查看用户列表' },
+      { id: 243, pid: 240, name: '用户详情', description: '查看用户详情' },
+      { id: 244, pid: 240, name: '用户更新历史', description: '用户更新历史' },
+      { id: 245, pid: 240, name: '创建用户', description: '创建新的用户' },
+      { id: 246, pid: 240, name: '更新用户', description: '更新用户信息' },
+      { id: 248, pid: 240, name: '用户解锁', description: '对用户进行解锁' },
+      { id: 249, pid: 240, name: '重置密码', description: '重置用户密码' },
     ] as Ability[]);
   }
 
@@ -62,7 +42,7 @@ export class UserController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(8, 9, 151, 152)
+  @Abilities(242)
   async index(
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
@@ -77,7 +57,7 @@ export class UserController {
    * @param res 响应上下文
    */
   @Get(':userId/show')
-  @Abilities(8, 9, 153)
+  @Abilities(243)
   async show(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
@@ -92,7 +72,7 @@ export class UserController {
    * @param res 响应上下文
    */
   @Get(':userId/log')
-  @Abilities(8, 9, 153)
+  @Abilities(244)
   async log(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
@@ -107,8 +87,8 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(9, 154)
-  async create(@Body() value: object, @Res() res: Response): Promise<void> {
+  @Abilities(245)
+  async create(@Body() value: UserDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.user.create(
       value,
       res.locals.userId,
@@ -124,10 +104,10 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post(':userId/update')
-  @Abilities(9, 155)
+  @Abilities(246)
   async update(
     @Param('userId', new ParseIntPipe()) userId: number,
-    @Body() value: object,
+    @Body() value: UserDto,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.user.update(
@@ -141,11 +121,11 @@ export class UserController {
 
   /**
    * 解锁用户
-   * @param id 角色ID
+   * @param userId 用户ID
    * @param res 响应上下文
    */
   @Post(':userId/unlock')
-  @Abilities(9, 156)
+  @Abilities(248)
   async unlock(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
@@ -161,21 +141,21 @@ export class UserController {
   /**
    * 重置用户密码
    * @param userId 用户ID
-   * @param loginPsw 新密码
+   * @param newPassword 新密码
    * @param res 响应上下文
    */
   @Post(':userId/resetpsw')
-  @Abilities(9, 157)
+  @Abilities(249)
   async resetpsw(
     @Param('userId', new ParseIntPipe()) userId: number,
-    @Body('loginPsw') loginPsw: string,
+    @Body('newPassword') newPassword: string,
     @Res() res: Response,
   ): Promise<void> {
     // 将上下文的密码替换，避免将密码明文记入日志
-    res.locals.request.body.loginPsw = '************';
+    res.locals.request.body.newPassword = '************';
     res.locals.result = await this.user.resetpsw(
       userId,
-      loginPsw,
+      newPassword,
       res.locals.userId,
       res.locals.reqId,
     );

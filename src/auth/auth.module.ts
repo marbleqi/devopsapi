@@ -20,6 +20,7 @@ import {
   MenuController,
   UserController,
   TokenController,
+  AuthService,
 } from '.';
 
 /**认证模块 */
@@ -41,6 +42,7 @@ import {
     MenuService,
     UserService,
     TokenService,
+    AuthService,
   ],
   controllers: [
     AbilityController,

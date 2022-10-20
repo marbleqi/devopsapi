@@ -15,7 +15,7 @@ import { ReqService } from '..';
 export class ReqInterceptor implements NestInterceptor {
   /**
    * 构造函数
-   * @param eventEmitter 事件发射器
+   * @param reqService 请求日志服务
    */
   constructor(private readonly reqService: ReqService) {}
 

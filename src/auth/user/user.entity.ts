@@ -12,6 +12,8 @@ export interface UserConfig {
   pswLogin?: boolean;
   /**扫码登陆 */
   qrLogin?: boolean;
+  /**扫码登陆 */
+  appLogin?: boolean;
 }
 
 /**用户表基类 */

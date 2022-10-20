@@ -1,9 +1,26 @@
 // 外部依赖
 import { Injectable } from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import {
+  ObjectLiteral,
+  EntityTarget,
+  EntityManager,
+  FindOptionsSelect,
+  FindOptionsWhere,
+} from 'typeorm';
+// 内部依赖
+import { Result } from '..';
 
 /**共享通用服务 */
 @Injectable()
 export class CommonService {
+  /**
+   * 构造函数
+   * @param entityManager 实体管理器
+   */
+  constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
+  ) {}
   /**
    * 生成随机字符串
    * @param length 字符串长度
@@ -19,5 +36,36 @@ export class CommonService {
       i++;
     }
     return result;
+  }
+
+  /**
+   * 针对指定实体，返回指定列的清单到前端
+   * @param entityClass 实体类型
+   * @param select 列清单
+   * @param where 搜索条件
+   * @returns 响应消息
+   */
+  async index<Entity extends ObjectLiteral>(
+    entityClass: EntityTarget<Entity>,
+    select: FindOptionsSelect<Entity>,
+    where: FindOptionsWhere<Entity>,
+  ): Promise<Result> {
+    /**菜单清单 */
+    const objectList: Entity[] = await this.entityManager.find(entityClass, {
+      select,
+      where,
+    });
+    /**响应报文 */
+    return {
+      code: 0,
+      msg: 'ok',
+      data: objectList.map((item) => {
+        const result: any = {};
+        for (const key of select as unknown as string[]) {
+          result[key] = item[key];
+        }
+        return result;
+      }),
+    };
   }
 }

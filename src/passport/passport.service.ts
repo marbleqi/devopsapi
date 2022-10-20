@@ -135,7 +135,6 @@ export class PassportService {
         loginName,
       },
     });
-    console.debug('user', user);
     // 判断用户是否存在
     if (!user) {
       return { code: 401, msg: '用户不存在' };
@@ -148,13 +147,12 @@ export class PassportService {
     if (!user.config.pswLogin) {
       return { code: 401, msg: '该用户不允许使用密码登陆方式！' };
     }
-    // 判断密码错误次数是否超过限制
-    if (user.pswTimes >= 5) {
+    // 判断密码错误次数是否超过限制（demo环境不做密码错误次数限制）
+    if (process.env.NODE_ENV !== 'demo' && user.pswTimes >= 5) {
       return { code: 401, msg: '密码错误超过5次，请联系管理员重置密码！' };
     }
     /**判断密码是否一致 */
     const check = await compare(loginPsw, user.password);
-    console.debug('check', check);
     // 判断密码密文是否一致
     if (!check) {
       // 密码密文不一致，密码错误计数加1
@@ -164,10 +162,17 @@ export class PassportService {
         'pswTimes',
         1,
       );
-      return {
-        code: 401,
-        msg: `密码已连续输错${user.pswTimes + 1}次,超过5次将锁定！`,
-      };
+      if (process.env.NODE_ENV === 'demo') {
+        return {
+          code: 401,
+          msg: `密码已连续输错${user.pswTimes + 1}次！`,
+        };
+      } else {
+        return {
+          code: 401,
+          msg: `密码已连续输错${user.pswTimes + 1}次，超过5次将锁定！`,
+        };
+      }
     }
     // 验证通过后，更新用户登陆信息
     if (user.firstLoginAt) {

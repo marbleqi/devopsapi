@@ -1,24 +1,25 @@
 import { IsNotEmpty } from 'class-validator';
+import { UserConfig } from '..';
 
-export class CreateUserDto {
-  @IsNotEmpty({ message: '应用名称不能为空' })
-  name: string;
+/**用户信息DTO */
+export class UserDto {
+  /**登陆名 */
+  @IsNotEmpty({ message: '登陆名不能为空' })
+  loginName: string;
 
-  @IsNotEmpty({ message: '应用标题不能为空' })
-  title: string;
+  /**姓名 */
+  @IsNotEmpty({ message: '姓名不能为空' })
+  userName: string;
 
-  @IsNotEmpty({ message: '应用说明不能为空' })
-  description: string;
+  /**用户配置 */
+  @IsNotEmpty({ message: '用户配置不能为空' })
+  config: UserConfig;
 
-  @IsNotEmpty({ message: '令牌有效期设置不能为空' })
-  expired: number;
+  /**状态，1表示可用，0表示禁用 */
+  @IsNotEmpty({ message: '用户状态不能为空' })
+  status: number;
 
-  @IsNotEmpty({ message: '允许密码登陆设置不能为空' })
-  password: boolean;
-
-  @IsNotEmpty({ message: '允许企业微信登陆设置不能为空' })
-  wxwork: boolean;
-
-  @IsNotEmpty({ message: '允许钉钉登陆设置不能为空' })
-  dingtalk: boolean;
+  /**授权角色 */
+  @IsNotEmpty({ message: '授权角色不能为空' })
+  roles: number[];
 }

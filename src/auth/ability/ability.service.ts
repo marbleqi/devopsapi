@@ -7,26 +7,7 @@ import { Ability } from '..';
 @Injectable()
 export class AbilityService {
   /**应用中缓存的权限点对象列表 */
-  private abilitylist: Ability[];
-
-  /**构造函数 */
-  constructor() {
-    this.abilitylist = [
-      { id: 1, pid: 0, name: '默认权限', description: '系统默认权限' },
-      {
-        id: 8,
-        pid: 1,
-        name: '全局只读权限',
-        description: '审查管理员权限，即全局只读类操作的权限',
-      },
-      {
-        id: 9,
-        pid: 1,
-        name: '全局所有权限',
-        description: '超级管理员权限，即所有权限',
-      },
-    ];
-  }
+  private abilitylist: Ability[] = [];
 
   /**
    * 补充权限点

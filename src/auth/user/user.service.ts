@@ -2,10 +2,20 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EntityManager, FindOptionsSelect, MoreThan } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  MoreThan,
+} from 'typeorm';
 import { genSalt, hash } from 'bcrypt';
 // 内部依赖
-import { Result, OperateService, QueueService } from '../../shared';
+import {
+  Result,
+  OperateService,
+  QueueService,
+  CommonService,
+} from '../../shared';
 import { UserConfig, UserEntity, UserLogEntity } from '..';
 
 @Injectable()
@@ -21,6 +31,7 @@ export class UserService implements OnApplicationBootstrap {
     private eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
+    private readonly commonService: CommonService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
@@ -63,31 +74,18 @@ export class UserService implements OnApplicationBootstrap {
     const select = [
       'userId',
       'loginName',
+      'userName',
       'config',
       'status',
       'updateUserId',
       'updateAt',
       'operateId',
     ] as FindOptionsSelect<UserEntity>;
-    /**用户清单 */
-    const userList: UserEntity[] = await this.entityManager.find(UserEntity, {
-      select,
-      where: {
-        operateId: MoreThan(operateId),
-      },
-    });
-    /**响应报文 */
-    return {
-      code: 0,
-      msg: 'ok',
-      data: userList.map((item) => {
-        const result: any = {};
-        for (const key of select as string[]) {
-          result[key] = item[key];
-        }
-        return result;
-      }),
-    };
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<UserEntity>;
+    return await this.commonService.index(UserEntity, select, where);
   }
 
   /**
@@ -235,25 +233,30 @@ export class UserService implements OnApplicationBootstrap {
    * 重置用户密码
    * @param userId 用户ID
    * @param updateUserId 创建用户的用户ID
-   * @param loginPsw 新密码明文
+   * @param newPassword 新密码明文
    * @param reqId 请求ID
    * @returns 响应消息
    */
   async resetpsw(
     userId: number,
-    loginPsw: string,
+    newPassword: string,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
     if (!userId) {
       return { code: 400, msg: '传入的用户ID无效' };
     }
+    /**如果是demo模式，则不允许超管重置密码 */
+    if (process.env.NODE_ENV === 'demo' && userId === 1) {
+      return { code: 400, msg: '暂不允许超管重置密码' };
+    }
     if (await this.invalid(userId)) {
       return { code: 404, msg: '待重置密码的用户不存在' };
     }
     const operateId = await this.operateService.insert('user');
     const salt = await genSalt();
-    const password = await hash(loginPsw, salt);
+    console.debug(salt, newPassword);
+    const password = await hash(newPassword, salt);
     const result = await this.entityManager.update(
       UserEntity,
       { userId },

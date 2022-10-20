@@ -1,24 +1,21 @@
 import { IsNotEmpty } from 'class-validator';
+import { MenuConfig } from '..';
 
+/**菜单信息DTO */
 export class MenuDto {
-  @IsNotEmpty({ message: '应用名称不能为空' })
-  name: string;
+  /**上级菜单ID */
+  @IsNotEmpty({ message: '上级菜单ID不能为空' })
+  pMenuId: number;
 
-  @IsNotEmpty({ message: '应用标题不能为空' })
-  title: string;
+  /**菜单配置 */
+  @IsNotEmpty({ message: '菜单配置不能为空' })
+  config: MenuConfig;
 
-  @IsNotEmpty({ message: '应用说明不能为空' })
-  description: string;
+  /**状态，1表示可用，0表示禁用 */
+  @IsNotEmpty({ message: '状态不能为空' })
+  status: number;
 
-  @IsNotEmpty({ message: '令牌有效期设置不能为空' })
-  expired: number;
-
-  @IsNotEmpty({ message: '允许密码登陆设置不能为空' })
-  password: boolean;
-
-  @IsNotEmpty({ message: '允许企业微信登陆设置不能为空' })
-  wxwork: boolean;
-
-  @IsNotEmpty({ message: '允许钉钉登陆设置不能为空' })
-  dingtalk: boolean;
+  /**授权权限点 */
+  @IsNotEmpty({ message: '授权权限点不能为空' })
+  abilities: number[];
 }

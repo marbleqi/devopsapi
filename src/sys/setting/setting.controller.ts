@@ -2,7 +2,7 @@
 import { Controller, Get, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { QueueService, SettingEntity, SettingService } from '../../shared';
+import { SettingService } from '../../shared';
 import { Ability, Abilities, AbilityService } from '../../auth';
 import { SettingDto } from '..';
 
@@ -12,12 +12,10 @@ export class SettingController {
    * 构造函数
    * @param ability 注入的权限点服务
    * @param setting 注入的配置服务
-   * @param queue 注入的队列服务
    */
   constructor(
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
-    private readonly queue: QueueService,
   ) {
     // 系统配置
     this.ability.add([
@@ -30,10 +28,10 @@ export class SettingController {
    * @param res 响应上下文
    */
   @Get('show')
-  @Abilities(8, 9, 113)
+  @Abilities(113)
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
-    const data: SettingEntity = await this.setting.get('sys');
+    const data = await this.setting.get('sys');
     if (data) {
       res.locals.result = { code: 0, msg: 'ok', data };
     } else {
@@ -48,7 +46,7 @@ export class SettingController {
    * @param res 响应上下文
    */
   @Post()
-  @Abilities(9, 115)
+  @Abilities(115)
   async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.setting.set(
       'sys',
