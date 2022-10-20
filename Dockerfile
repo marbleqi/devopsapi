@@ -11,7 +11,7 @@ RUN yum -y update \
   # 设置nodejs版本为16
   && curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - \
   # 安装nodejs
-  && yum install -y nodejs \
+  && yum install -y nodejs python3 make gcc gcc-c++ \
   # 设置使用npm淘宝源，在国外服务器上构建镜像时，可考虑注释
   && npm config set registry https://registry.npmmirror.com \
   && npm config set sass_binary_site=https://npmmirror.com/mirrors/node-sass/ \
