@@ -16,7 +16,8 @@ import { UserEntity, UserService as AuthUser } from '../../auth';
 import {
   WxworkUserEntity,
   WxworkUserLogEntity,
-  WxworkUserDto,
+  CreateWxworkUserDto,
+  UpdateWxworkUserDto,
   WxworkService,
 } from '..';
 
@@ -25,17 +26,20 @@ import {
 export class UserService {
   /**
    * 构造函数
-   * @param client 注入的http服务
-   * @param pg 注入的数据库服务
-   * @param wxwork 注入的企业微信服务
-   * @param user 注入的共享用户服务
+   * @param eventEmitter 注入的http服务
+   * @param client 注入的通用服务
+   * @param operateService 注入的操作序号服务
+   * @param commonService 注入的通用服务
+   * @param wxworkService 注入的钉钉服务
+   * @param authUser 注入的认证模块的用户服务
+   * @param entityManager 注入的实体管理器
    */
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly client: HttpService,
     private readonly operateService: OperateService,
     private readonly commonService: CommonService,
-    private readonly wxwork: WxworkService,
+    private readonly wxworkService: WxworkService,
     private readonly authUser: AuthUser,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
@@ -45,9 +49,9 @@ export class UserService {
    * @param departid 部门ID
    * @returns 响应消息
    */
-  async apiindex(departid: number): Promise<Result> {
+  async apiIndex(departid: number): Promise<Result> {
     /**应用凭证 */
-    const access_token = await this.wxwork.token('app');
+    const access_token = await this.wxworkService.token('app');
     /**接口结果 */
     const result: any = await firstValueFrom(
       this.client.get('https://qyapi.weixin.qq.com/cgi-bin/user/simplelist', {
@@ -75,7 +79,7 @@ export class UserService {
     };
   }
 
-  async dbindex(operateId: number): Promise<Result> {
+  async dbIndex(operateId: number): Promise<Result> {
     /**返回字段 */
     const select = [
       'wxworkId',
@@ -99,7 +103,7 @@ export class UserService {
    * @returns 响应消息
    */
   async create(
-    value: WxworkUserDto,
+    value: CreateWxworkUserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -161,7 +165,7 @@ export class UserService {
    * @returns 响应消息
    */
   async save(
-    value: WxworkUserDto,
+    value: UpdateWxworkUserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {

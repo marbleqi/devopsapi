@@ -30,6 +30,12 @@ export class DingtalkService {
         name: '钉钉配置',
         description: '配置钉钉参数',
       },
+      {
+        id: 430,
+        pid: 400,
+        name: '钉钉用户管理',
+        description: '钉钉用户管理',
+      },
     ] as Ability[]);
   }
 

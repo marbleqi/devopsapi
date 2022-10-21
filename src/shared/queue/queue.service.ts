@@ -11,9 +11,9 @@ import { Result } from '..';
 @Processor('shared')
 export class QueueService {
   /**前端消息订阅主体 */
-  webSub: Subject<{ name: string; data?: any }>;
+  webSub: Subject<{ name: string; data: any }>;
   /**后端消息订阅主体 */
-  apiSub: Subject<{ name: string; data?: any }>;
+  apiSub: Subject<{ name: string; data: any }>;
 
   /**
    * 构造函数
@@ -30,6 +30,7 @@ export class QueueService {
    * @param data 任务数据
    */
   async add(name: string, data: any): Promise<void> {
+    console.debug(name, data);
     await this.queue.add(name, data);
   }
 
@@ -86,8 +87,8 @@ export class QueueService {
    * @param job 任务
    */
   @OnGlobalQueueWaiting()
-  async setting(job: Job): Promise<void> {
-    console.debug('收到队列通知！', job.name, job.data);
+  async waiting(jobId: number): Promise<void> {
+    const job = await this.queue.getJob(jobId);
     if (job.name === 'menu') {
       // 菜单类变更通知所有前端
       this.webSub.next({ name: 'menu', data: job.data });

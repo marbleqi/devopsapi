@@ -1,13 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
 
 /**钉钉用户信息DTO */
-export class DingtalkUserDto {
+export class CreateDingtalkUserDto {
   /**钉钉用户ID */
   @IsNotEmpty({ message: '钉钉用户ID不能为空' })
   unionId: string;
-
-  /**用户ID */
-  userId: number;
 
   /**登陆名 */
   @IsNotEmpty({ message: '登陆名不能为空' })
@@ -24,4 +21,15 @@ export class DingtalkUserDto {
   /**授权角色 */
   @IsNotEmpty({ message: '授权角色不能为空' })
   roles: number[];
+}
+
+/**钉钉用户信息DTO */
+export class UpdateDingtalkUserDto {
+  /**钉钉用户ID */
+  @IsNotEmpty({ message: '钉钉用户ID不能为空' })
+  unionId: string;
+
+  /**用户ID */
+  @IsNotEmpty({ message: '用户ID不能为空' })
+  userId: number;
 }

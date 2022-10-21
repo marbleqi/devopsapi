@@ -16,7 +16,8 @@ import { UserEntity, UserService as AuthUser } from '../../auth';
 import {
   DingtalkUserEntity,
   DingtalkUserLogEntity,
-  DingtalkUserDto,
+  CreateDingtalkUserDto,
+  UpdateDingtalkUserDto,
   DingtalkService,
 } from '..';
 
@@ -25,11 +26,13 @@ import {
 export class UserService {
   /**
    * 构造函数
-   * @param client 注入的http服务
+   * @param eventEmitter 注入的http服务
    * @param client 注入的通用服务
+   * @param operateService 注入的操作序号服务
+   * @param commonService 注入的通用服务
    * @param dingtalkService 注入的钉钉服务
    * @param authUser 注入的认证模块的用户服务
-   * @param dingtalkUser 注入的钉钉模块的用户服务
+   * @param entityManager 注入的实体管理器
    */
   constructor(
     private readonly eventEmitter: EventEmitter2,
@@ -100,7 +103,7 @@ export class UserService {
    * @returns 响应消息
    */
   async create(
-    value: DingtalkUserDto,
+    value: CreateDingtalkUserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -162,7 +165,7 @@ export class UserService {
    * @returns 响应消息
    */
   async save(
-    value: DingtalkUserDto,
+    value: UpdateDingtalkUserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
