@@ -4,7 +4,7 @@ import { Response } from 'express';
 // 内部依赖
 import { SettingService, QueueService } from '../../shared';
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { SettingDto } from '..';
+import { WxworkSettingDto } from '..';
 
 /**企业微信配置控制器 */
 @Controller('wxwork/setting')
@@ -59,7 +59,10 @@ export class SettingController {
    */
   @Post()
   @Abilities(316)
-  async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
+  async set(
+    @Body() value: WxworkSettingDto,
+    @Res() res: Response,
+  ): Promise<void> {
     res.locals.result = await this.setting.set(
       'wxwork',
       value,

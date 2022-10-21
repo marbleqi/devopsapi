@@ -25,12 +25,12 @@ export class TokenService implements OnApplicationBootstrap {
   /**
    * 构造函数
    * @param redis 注入的缓存服务
-   * @param queue 注入的队列服务
+   * @param queueService 注入的队列服务
    * @param entityManager 实体管理器
    */
   constructor(
     private readonly redis: RedisService,
-    private readonly queue: QueueService,
+    private readonly queueService: QueueService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {
     this.roleMap = new Map<number, number[]>();
@@ -42,12 +42,12 @@ export class TokenService implements OnApplicationBootstrap {
   /**启动时初始化 */
   async onApplicationBootstrap(): Promise<void> {
     await this.init();
-    this.queue.apiSub.subscribe(async (res) => {
+    this.queueService.apiSub.subscribe(async (res) => {
       console.debug('收到消息', res);
-      if (res.name === 'token') {
-        console.debug('执行令牌初始化');
+      if (res.name !== 'setting') {
+        console.debug('收到用户或角色更新通知，执行令牌初始化', res.name);
         await this.init();
-        this.queue.webSub.next({ name: 'token' });
+        this.queueService.webSub.next(res);
       }
     });
   }
@@ -64,9 +64,7 @@ export class TokenService implements OnApplicationBootstrap {
       RoleEntity,
       {
         select: ['roleId', 'abilities', 'status', 'operateId'],
-        where: {
-          operateId: MoreThan(this.operateId),
-        },
+        where: { operateId: MoreThan(this.operateId) },
       },
     );
     // 更新角色Map
@@ -87,9 +85,7 @@ export class TokenService implements OnApplicationBootstrap {
       UserEntity,
       {
         select: ['userId', 'roles', 'status', 'operateId'],
-        where: {
-          operateId: MoreThan(this.operateId),
-        },
+        where: { operateId: MoreThan(this.operateId) },
       },
     );
     // 更新用户Map

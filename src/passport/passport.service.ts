@@ -4,9 +4,12 @@ import { HttpService } from '@nestjs/axios';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { compare } from 'bcrypt';
+import { firstValueFrom } from 'rxjs';
 // 内部依赖
 import { Result, CommonService, RedisService, SettingService } from '../shared';
 import { UserEntity } from '../auth';
+import { WxworkUserEntity, WxworkService } from '../wxwork';
+import { DingtalkUserEntity, DingtalkService } from '../dingtalk';
 
 /**认证服务 */
 @Injectable()
@@ -14,16 +17,21 @@ export class PassportService {
   /**
    * 构造函数
    * @param client 注入的http服务
+   * @param entityManager 注入的实体管理器服务
    * @param redis 注入的缓存服务
    * @param common 注入的通用服务
    * @param setting 注入的共享配置服务
+   * @param wxwork 注入的企业微信服务
+   * @param dingtalk 注入的钉钉服务
    */
   constructor(
     private readonly client: HttpService,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly redis: RedisService,
     private readonly common: CommonService,
     private readonly setting: SettingService,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly wxwork: WxworkService,
+    private readonly dingtalk: DingtalkService,
   ) {}
 
   /**
@@ -131,9 +139,7 @@ export class PassportService {
         'password',
         'firstLoginAt',
       ],
-      where: {
-        loginName,
-      },
+      where: { loginName },
     });
     // 判断用户是否存在
     if (!user) {
@@ -216,126 +222,151 @@ export class PassportService {
   async callback(
     type = 'wxwork',
     value: any,
-    loginip: string,
+    loginIp: string,
   ): Promise<Result> {
-    console.debug(type, value, loginip);
+    console.debug(type, value, loginIp);
     /**系统配置 */
-    // const setting: SettingEntity = await this.setting.get('sys');
-
-    return { code: 0, msg: 'ok' };
+    const setting: object = this.setting.read('sys');
+    let userId: number;
     // 开始临时code换用户ID
-    // if (type === 'dingtalk') {
-    //   // 钉钉认证
-    //   if (!setting.value['dingtalk']) {
-    //     return { code: 401, msg: '系统不允许使用钉钉登陆' };
-    //   }
-    //   /**钉钉配置 */
-    //   const dingtalk: SettingEntity = await this.setting.get('dingtalk');
-    //   console.debug('dingtalk', dingtalk);
-    //   /**接口调用结果 */
-    //   let result: any = await firstValueFrom(
-    //     this.client.post(
-    //       'https://api.dingtalk.com/v1.0/oauth2/userAccessToken',
-    //       {
-    //         clientId: dingtalk['appkey'],
-    //         clientSecret: dingtalk['secret'],
-    //         code: value.authCode,
-    //         grantType: 'authorization_code',
-    //       },
-    //       { validateStatus: () => true },
-    //     ),
-    //   );
-    //   console.debug('令牌结果', result.data);
-    //   if (result.status != 200) {
-    //     return { code: result.status, msg: result.data.message };
-    //   }
-    //   /**用户凭证 */
-    //   const access_token = result.data.accessToken;
-    //   // 用户凭证换用户unionId
-    //   result = await firstValueFrom(
-    //     this.client.get('https://api.dingtalk.com/v1.0/contact/users/me', {
-    //       headers: { 'x-acs-dingtalk-access-token': access_token },
-    //       validateStatus: () => true,
-    //     }),
-    //   );
-    //   console.debug('用户信息', result.data);
-    //   if (result.status != 200) {
-    //     return { code: result.status, msg: result.data.message };
-    //   }
-    //   sqltext = `SELECT userid, status FROM dingtalk_users WHERE unionid = $1`;
-    //   const dingtalkuser: object = await this.pg.show(sqltext, [
-    //     result.data.unionId,
-    //   ]);
-    //   console.debug('dingtalkuser', dingtalkuser);
-    //   if (!dingtalkuser) {
-    //     return { code: 401, msg: '该钉钉未绑定用户' };
-    //   }
-    //   if (!dingtalkuser['status']) {
-    //     return { code: 401, msg: '用户状态为禁用' };
-    //   }
-    //   userid = dingtalkuser['userid'];
-    // } else {
-    //   // 企业微信认证
-    //   if (!setting.value['wxwork']) {
-    //     return { code: 401, msg: '系统不允许使用企业微信登陆' };
-    //   }
-    //   /**应用凭证 */
-    //   const access_token = await this.wxwork.token('app');
-    //   /**接口调用结果 */
-    //   const result: any = await firstValueFrom(
-    //     this.client.get(
-    //       'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo',
-    //       { params: { access_token, code: value.code } },
-    //     ),
-    //   );
-    //   // 接口调用失败
-    //   if (result.data.errcode) {
-    //     // 如果是应用凭证过期，则重新获取应用凭证
-    //     if (result.data.errcode === 40014) {
-    //       await this.wxwork.token('app', false);
-    //     }
-    //     return { code: result.data.errcode, msg: result.data.errmsg };
-    //   }
-    //   /**企业微信ID */
-    //   const wxworkid = result.data.UserId;
-    //   console.debug('wxworkid', wxworkid);
-    //   sqltext = `SELECT wxworkid, userid, status FROM wxwork_users WHERE wxworkid = $1`;
-    //   const wxworkuser: object = await this.pg.show(sqltext, [wxworkid]);
-    //   if (!wxworkuser) {
-    //     return { code: 401, msg: '该企业微信未绑定用户' };
-    //   }
-    //   // 判断用户状态
-    //   if (!wxworkuser['status']) {
-    //     return { code: 401, msg: '用户状态为禁用' };
-    //   }
-    //   // 判断用户状态
-    //   if (!wxworkuser['userid']) {
-    //     return { code: 401, msg: '关联用户无效' };
-    //   }
-    //   userid = wxworkuser['userid'];
-    // }
-    // sqltext = `SELECT config, status, first_login_at FROM sys_users WHERE userid = $1`;
-    // const user: object = await this.pg.show(sqltext, [userid]);
-    // // 判断用户是否存在
-    // if (!user) {
-    //   return { code: 401, msg: '用户不存在' };
-    // }
-    // // 判断用户状态
-    // if (!user['status']) {
-    //   return { code: 401, msg: '用户状态为禁用' };
-    // }
-    // // 判断是否授权企业微信扫码登陆
-    // if (!user['config']?.qrlogin) {
-    //   return { code: 401, msg: '该用户不允许使用扫码登陆方式！' };
-    // }
-    // // 验证通过后，更新用户登陆信息
-    // if (user['first_login_at']) {
-    //   sqltext = `UPDATE sys_users SET pswtimes = 0, logintimes = logintimes + 1, last_login_ip = $2, last_login_at = $1, last_session_at = $1 WHERE userid = $3`;
-    // } else {
-    //   sqltext = `UPDATE sys_users SET pswtimes = 0, logintimes = logintimes + 1, first_login_at = $1, last_login_ip = $2, last_login_at = $1, last_session_at = $1 WHERE userid = $3`;
-    // }
-    // this.pg.query(sqltext, [Date.now(), loginip, userid]);
-    // // 创建令牌
-    // return await this.create(userid);
+    if (type === 'dingtalk') {
+      // 钉钉认证
+      if (!setting['dingtalk']) {
+        return { code: 401, msg: '系统不允许使用钉钉登陆' };
+      }
+      /**钉钉配置 */
+      const dingtalk: object = this.setting.read('dingtalk');
+      console.debug('dingtalk', dingtalk);
+      /**接口调用结果 */
+      let result: any = await firstValueFrom(
+        this.client.post(
+          'https://api.dingtalk.com/v1.0/oauth2/userAccessToken',
+          {
+            clientId: dingtalk['appkey'],
+            clientSecret: dingtalk['appsecret'],
+            code: value.authCode,
+            grantType: 'authorization_code',
+          },
+          { validateStatus: () => true },
+        ),
+      );
+      console.debug('令牌结果', result.data);
+      if (result.status != 200) {
+        return { code: result.status, msg: result.data.message };
+      }
+      /**用户凭证 */
+      const access_token = result.data.accessToken;
+      // 用户凭证换用户unionId
+      result = await firstValueFrom(
+        this.client.get('https://api.dingtalk.com/v1.0/contact/users/me', {
+          headers: { 'x-acs-dingtalk-access-token': access_token },
+          validateStatus: () => true,
+        }),
+      );
+      console.debug('用户信息', result.data);
+      if (result.status != 200) {
+        return { code: result.status, msg: result.data.message };
+      }
+      /**用户对象 */
+      const dingtalkUser = await this.entityManager.findOneBy(
+        DingtalkUserEntity,
+        { unionId: result.data.unionId },
+      );
+      console.debug('dingtalkuser', dingtalkUser);
+      if (!dingtalkUser) {
+        return { code: 401, msg: '该钉钉未绑定用户' };
+      }
+      if (!dingtalkUser.status) {
+        return { code: 401, msg: '用户状态为禁用' };
+      }
+      // 判断用户ID
+      if (!dingtalkUser.userId) {
+        return { code: 401, msg: '关联用户无效' };
+      }
+      userId = dingtalkUser.userId;
+    } else {
+      // 企业微信认证
+      if (!setting['wxwork']) {
+        return { code: 401, msg: '系统不允许使用企业微信登陆' };
+      }
+      /**应用凭证 */
+      const access_token = await this.wxwork.token('app');
+      /**接口调用结果 */
+      const result: any = await firstValueFrom(
+        this.client.get(
+          'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo',
+          { params: { access_token, code: value.code } },
+        ),
+      );
+      // 接口调用失败
+      if (result.data.errcode) {
+        // 如果是应用凭证过期，则重新获取应用凭证
+        if (result.data.errcode === 40014) {
+          await this.wxwork.token('app', false);
+        }
+        return { code: result.data.errcode, msg: result.data.errmsg };
+      }
+      /**企业微信ID */
+      const wxworkId = result.data.UserId;
+      console.debug('wxworkid', wxworkId);
+      /**用户对象 */
+      const wxworkUser = await this.entityManager.findOneBy(WxworkUserEntity, {
+        wxworkId: result.data.UserId,
+      });
+
+      if (!wxworkUser) {
+        return { code: 401, msg: '该企业微信未绑定用户' };
+      }
+      // 判断用户状态
+      if (!wxworkUser.status) {
+        return { code: 401, msg: '用户状态为禁用' };
+      }
+      // 判断用户ID
+      if (!wxworkUser.userId) {
+        return { code: 401, msg: '关联用户无效' };
+      }
+      userId = wxworkUser.userId;
+    }
+    /**用户信息 */
+    const user = await this.entityManager.findOneBy(UserEntity, { userId });
+    // 判断用户是否存在
+    if (!user) {
+      return { code: 401, msg: '用户不存在' };
+    }
+    // 判断用户状态
+    if (!user.status) {
+      return { code: 401, msg: '用户状态为禁用' };
+    }
+    // 判断是否授权企业微信扫码登陆
+    if (!user.config.qrlogin) {
+      return { code: 401, msg: '该用户不允许使用扫码登陆方式！' };
+    }
+    // 验证通过后，更新用户登陆信息
+    if (user.firstLoginAt) {
+      this.entityManager.update(
+        UserEntity,
+        { userId: user.userId },
+        {
+          lastLoginIp: loginIp,
+          lastLoginAt: Date.now(),
+          lastSessionAt: Date.now(),
+        },
+      );
+    } else {
+      this.entityManager.update(
+        UserEntity,
+        { userId: user.userId },
+        {
+          firstLoginAt: Date.now(),
+          lastLoginIp: loginIp,
+          lastLoginAt: Date.now(),
+          lastSessionAt: Date.now(),
+        },
+      );
+    }
+    // 增加登陆次数
+    this.entityManager.increment(UserEntity, { userId }, 'loginTimes', 1);
+    // 创建令牌
+    return await this.create(userId);
   }
 }

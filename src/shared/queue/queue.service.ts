@@ -88,12 +88,12 @@ export class QueueService {
   @OnGlobalQueueWaiting()
   async setting(job: Job): Promise<void> {
     console.debug('收到队列通知！', job.name, job.data);
-    if (job.name === 'setting') {
-      // 配置类变更通知所有后端
-      this.apiSub.next({ name: 'setting', data: job.data });
+    if (job.name === 'menu') {
+      // 菜单类变更通知所有前端
+      this.webSub.next({ name: 'menu', data: job.data });
     } else {
-      // 其余变更通知所有前端
-      this.webSub.next({ name: job.name, data: job.data });
+      // 其余变更通知所有后端
+      this.apiSub.next({ name: job.name, data: job.data });
     }
   }
 }

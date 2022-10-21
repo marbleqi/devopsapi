@@ -2,9 +2,9 @@
 import { Controller, Res, Body, Get, Post } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { SettingService, QueueService } from '../../shared';
+import { SettingService } from '../../shared';
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { SettingDto } from '..';
+import { DingtalkSettingDto } from '..';
 
 /**钉钉配置控制器 */
 @Controller('dingtalk/setting')
@@ -18,7 +18,6 @@ export class SettingController {
   constructor(
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
-    private readonly queue: QueueService,
   ) {
     this.ability.add([
       {
@@ -60,7 +59,10 @@ export class SettingController {
    */
   @Post()
   @Abilities(416)
-  async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
+  async set(
+    @Body() value: DingtalkSettingDto,
+    @Res() res: Response,
+  ): Promise<void> {
     res.locals.result = await this.setting.set(
       'dingtalk',
       value,

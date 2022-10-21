@@ -15,7 +15,7 @@ import {
   QueueService,
   CommonService,
 } from '../../shared';
-import { MenuConfig, MenuEntity, MenuLogEntity } from '..';
+import { MenuConfig, MenuEntity, MenuLogEntity, MenuDto } from '..';
 
 @Injectable()
 export class MenuService implements OnApplicationBootstrap {
@@ -26,7 +26,7 @@ export class MenuService implements OnApplicationBootstrap {
    * @param entityManager 实体管理器
    */
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
     private readonly commonService: CommonService,
@@ -331,7 +331,7 @@ export class MenuService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async create(
-    value: object,
+    value: MenuDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -365,7 +365,7 @@ export class MenuService implements OnApplicationBootstrap {
    */
   async update(
     menuId: number,
-    value: object,
+    value: MenuDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {

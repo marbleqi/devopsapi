@@ -16,7 +16,7 @@ import {
   QueueService,
   CommonService,
 } from '../../shared';
-import { UserConfig, UserEntity, UserLogEntity } from '..';
+import { UserConfig, UserEntity, UserLogEntity, UserDto } from '..';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
@@ -28,7 +28,7 @@ export class UserService implements OnApplicationBootstrap {
    * @param entityManager 实体管理器
    */
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
     private readonly commonService: CommonService,
@@ -137,7 +137,7 @@ export class UserService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async create(
-    value: object,
+    value: UserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -171,7 +171,7 @@ export class UserService implements OnApplicationBootstrap {
    */
   async update(
     userId: number,
-    value: object,
+    value: UserDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -278,9 +278,7 @@ export class UserService implements OnApplicationBootstrap {
     /**用户对象 */
     const data: UserEntity = await this.entityManager.findOne(UserEntity, {
       select: ['userId'],
-      where: {
-        userId,
-      },
+      where: { userId },
     });
     return !data;
   }

@@ -14,7 +14,7 @@ import {
   QueueService,
   CommonService,
 } from '../../shared';
-import { RoleEntity, RoleLogEntity } from '..';
+import { RoleEntity, RoleLogEntity, RoleDto } from '..';
 
 @Injectable()
 export class RoleService implements OnApplicationBootstrap {
@@ -26,7 +26,7 @@ export class RoleService implements OnApplicationBootstrap {
    * @param entityManager 实体管理器
    */
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
     private readonly commonService: CommonService,
@@ -148,7 +148,7 @@ export class RoleService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async create(
-    value: object,
+    value: RoleDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -182,7 +182,7 @@ export class RoleService implements OnApplicationBootstrap {
    */
   async update(
     roleId: number,
-    value: object,
+    value: RoleDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
