@@ -53,6 +53,20 @@ export class InitController {
   }
 
   /**
+   * 获取角色清单（角色ID，角色名称，操作序号）
+   * @param operateId 操作序号，用于获取增量数据
+   * @param res 响应上下文
+   */
+  @Get('role')
+  async role(
+    @Query('operateId', new ParseIntPipe()) operateId: number,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.locals.result = await this.init.role(operateId);
+    res.status(200).json(res.locals.result);
+  }
+
+  /**
    * 获取用户清单（用户ID，用户姓名，操作序号）
    * @param operateId 操作序号，用于获取增量数据
    * @param res 响应上下文

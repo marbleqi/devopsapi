@@ -70,8 +70,9 @@ export class UserService {
       code: 0,
       msg: 'ok',
       data: result.data.result.list.map((item: any) => ({
-        unionid: item.unionid,
-        userid: item.mobile,
+        unionId: item.unionid,
+        userId: item.userid,
+        email: item.email,
         name: item.name,
         avatar: item.avatar ? item.avatar : '',
         mobile: item.mobile,
@@ -140,7 +141,7 @@ export class UserService {
     /**新操作序号 */
     const operateId = await this.operateService.insert('dingtalk');
     // 如果用户创建成功，则创建钉钉用户的关联关系
-    const dingtalkAdd = await this.entityManager.insert(DingtalkUserEntity, {
+    const dingtalk = await this.entityManager.insert(DingtalkUserEntity, {
       unionId: value.unionId,
       userId: result.userId,
       operateId,
@@ -150,7 +151,7 @@ export class UserService {
       createUserId: updateUserId,
       createAt: Date.now(),
     });
-    if (dingtalkAdd.identifiers.length) {
+    if (dingtalk.identifiers.length) {
       this.eventEmitter.emit('dingtalk', value.unionId);
       return { code: 0, msg: '钉钉用户关联完成', operateId, reqId };
     } else {

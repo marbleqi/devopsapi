@@ -1,7 +1,12 @@
 // 外部依赖
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager, MoreThan } from 'typeorm';
+import {
+  EntityManager,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  MoreThan,
+} from 'typeorm';
 // 内部依赖
 import {
   Result,
@@ -9,7 +14,13 @@ import {
   RedisService,
   SettingService,
 } from '../../shared';
-import { Auth, MenuEntity, UserEntity, TokenService } from '../../auth';
+import {
+  Auth,
+  MenuEntity,
+  RoleEntity,
+  UserEntity,
+  TokenService,
+} from '../../auth';
 
 /**初始化服务 */
 @Injectable()
@@ -65,26 +76,45 @@ export class InitService {
   }
 
   /**
+   * 获取角色清单（角色ID，角色名称，操作序号）
+   * @param operateId 操作序号，用于获取增量数据
+   * @returns 响应消息
+   */
+  async role(operateId: number): Promise<Result> {
+    /**返回字段 */
+    const select = [
+      'roleId',
+      'roleName',
+      'status',
+      'operateId',
+    ] as FindOptionsSelect<RoleEntity>;
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<RoleEntity>;
+    /**角色清单 */
+    return await this.common.index(RoleEntity, select, where);
+  }
+
+  /**
    * 获取用户清单（用户ID，用户姓名，操作序号）
    * @param operateId 操作序号，用于获取增量数据
    * @returns 响应消息
    */
   async user(operateId: number): Promise<Result> {
+    /**返回字段 */
+    const select = [
+      'userId',
+      'userName',
+      'status',
+      'operateId',
+    ] as FindOptionsSelect<UserEntity>;
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<UserEntity>;
     /**用户清单 */
-    const userList: UserEntity[] = await this.entityManager.find(UserEntity, {
-      select: ['userId', 'userName', 'operateId'],
-      where: { operateId: MoreThan(operateId) },
-    });
-    /**响应报文 */
-    return {
-      code: 0,
-      msg: 'ok',
-      data: userList.map((user) => ({
-        userId: user.userId,
-        userName: user.userName,
-        operateId: user.operateId,
-      })),
-    };
+    return await this.common.index(UserEntity, select, where);
   }
 
   /**
@@ -93,33 +123,22 @@ export class InitService {
    * @returns 响应消息
    */
   async menu(operateId: number): Promise<Result> {
-    /**菜单清单 */
-    const menuList: MenuEntity[] = await this.entityManager.find(MenuEntity, {
-      select: [
-        'menuId',
-        'pMenuId',
-        'config',
-        'status',
-        'abilities',
-        'orderId',
-        'operateId',
-      ],
-      where: { operateId: MoreThan(operateId) },
-    });
-    /**响应报文 */
-    return {
-      code: 0,
-      msg: 'ok',
-      data: menuList.map((menu) => ({
-        menuId: menu.menuId,
-        pMenuId: menu.pMenuId,
-        config: menu.config,
-        status: menu.status,
-        abilities: menu.abilities,
-        orderId: menu.orderId,
-        operateId: menu.operateId,
-      })),
-    };
+    /**返回字段 */
+    const select = [
+      'menuId',
+      'pMenuId',
+      'config',
+      'status',
+      'abilities',
+      'orderId',
+      'operateId',
+    ] as FindOptionsSelect<MenuEntity>;
+    /**搜索条件 */
+    const where = {
+      operateId: MoreThan(operateId),
+    } as FindOptionsWhere<MenuEntity>;
+    /**用户清单 */
+    return await this.common.index(MenuEntity, select, where);
   }
 
   /**

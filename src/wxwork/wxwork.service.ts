@@ -25,42 +25,12 @@ export class WxworkService {
     // 系统管理
     this.ability.add([
       { id: 300, pid: 0, name: '企业微信', description: '企业微信管理' },
-      {
-        id: 310,
-        pid: 300,
-        name: '企业微信配置',
-        description: '配置企业微信参数',
-      },
-      {
-        id: 320,
-        pid: 300,
-        name: '企业微信部门管理',
-        description: '企业微信部门管理',
-      },
-      {
-        id: 330,
-        pid: 300,
-        name: '企业微信用户管理',
-        description: '企业微信用户管理',
-      },
-      {
-        id: 340,
-        pid: 300,
-        name: '工作日管理',
-        description: '工作日管理',
-      },
-      {
-        id: 350,
-        pid: 300,
-        name: '打卡管理',
-        description: '打卡管理',
-      },
-      {
-        id: 360,
-        pid: 300,
-        name: '机器人管理',
-        description: '机器人管理',
-      },
+      { id: 310, pid: 300, name: '企业微信配置', description: '企业微信配置' },
+      { id: 320, pid: 300, name: '企业微信部门', description: '企业微信部门' },
+      { id: 330, pid: 300, name: '企业微信用户', description: '企业微信用户' },
+      { id: 340, pid: 300, name: '工作日管理', description: '工作日管理' },
+      { id: 350, pid: 300, name: '打卡管理', description: '打卡管理' },
+      { id: 360, pid: 300, name: '机器人管理', description: '机器人管理' },
     ] as Ability[]);
   }
 
@@ -85,10 +55,10 @@ export class WxworkService {
     const setting: object = this.setting.read('wxwork');
     if (setting) {
       /**企业ID */
-      const corpId: string = setting['corpid'];
+      const corpid: string = setting['corpid'];
       /**应用Secret */
       const corpsecret: string = setting[app]['secret'];
-      const params = { corpId, corpsecret };
+      const params = { corpid, corpsecret };
       /**接口结果 */
       const result: any = await firstValueFrom(
         this.client.get('https://qyapi.weixin.qq.com/cgi-bin/gettoken', {

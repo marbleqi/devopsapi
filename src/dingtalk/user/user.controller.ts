@@ -27,35 +27,25 @@ export class UserController {
   ) {
     // 用户管理
     this.ability.add([
-      {
-        id: 432,
-        pid: 430,
-        name: '用户列表',
-        description: '查看用户列表，返回较多字段，用于列表查看',
-      },
-      { id: 435, pid: 430, name: '创建用户', description: '创建新的用户' },
-      {
-        id: 436,
-        pid: 430,
-        name: '更新用户',
-        description: '更新已有的用户信息，含禁用',
-      },
+      { id: 432, pid: 430, name: '钉钉用户列表', description: '钉钉用户列表' },
+      { id: 435, pid: 430, name: '创建关联用户', description: '创建关联用户' },
+      { id: 436, pid: 430, name: '更新关联用户', description: '更新关联用户' },
     ] as Ability[]);
   }
 
-  @Get('index/:id')
+  @Get('index/:dept_id')
   @Abilities(432)
-  async apiindex(
-    @Param('id', new ParseIntPipe()) id: number,
+  async apiIndex(
+    @Param('dept_id', new ParseIntPipe()) dept_id: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.apiIndex(id);
+    res.locals.result = await this.user.apiIndex(dept_id);
     res.status(200).json(res.locals.result);
   }
 
   @Get('index')
   @Abilities(432)
-  async dbindex(
+  async dbIndex(
     @Query('operateid', new ParseIntPipe()) operateid: number,
     @Res() res: Response,
   ) {

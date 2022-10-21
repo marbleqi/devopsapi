@@ -13,25 +13,14 @@ export class SettingController {
    * 构造函数
    * @param ability 注入的权限点服务
    * @param setting 注入的配置服务
-   * @param queue 注入的队列服务
    */
   constructor(
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
   ) {
     this.ability.add([
-      {
-        id: 413,
-        pid: 410,
-        name: '查看钉钉配置',
-        description: '查看钉钉配置信息',
-      },
-      {
-        id: 416,
-        pid: 410,
-        name: '修改钉钉配置',
-        description: '修改钉钉配置信息',
-      },
+      { id: 413, pid: 410, name: '查看钉钉配置', description: '查看钉钉配置' },
+      { id: 416, pid: 410, name: '修改钉钉配置', description: '修改钉钉配置' },
     ] as Ability[]);
   }
 

@@ -27,19 +27,9 @@ export class UserController {
   ) {
     // 用户管理
     this.ability.add([
-      {
-        id: 332,
-        pid: 330,
-        name: '用户列表',
-        description: '查看用户列表，返回较多字段，用于列表查看',
-      },
+      { id: 332, pid: 330, name: '用户列表', description: '用户列表' },
       { id: 335, pid: 330, name: '创建用户', description: '创建新的用户' },
-      {
-        id: 336,
-        pid: 330,
-        name: '更新用户',
-        description: '更新已有的用户信息，含禁用',
-      },
+      { id: 336, pid: 330, name: '更新用户', description: '更新用户' },
     ] as Ability[]);
   }
 

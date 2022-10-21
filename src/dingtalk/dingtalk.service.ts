@@ -24,18 +24,8 @@ export class DingtalkService {
     // 系统管理
     this.ability.add([
       { id: 400, pid: 0, name: '钉钉', description: '钉钉管理' },
-      {
-        id: 410,
-        pid: 400,
-        name: '钉钉配置',
-        description: '配置钉钉参数',
-      },
-      {
-        id: 430,
-        pid: 400,
-        name: '钉钉用户管理',
-        description: '钉钉用户管理',
-      },
+      { id: 410, pid: 400, name: '钉钉配置', description: '配置钉钉参数' },
+      { id: 430, pid: 400, name: '钉钉用户管理', description: '钉钉用户管理' },
     ] as Ability[]);
   }
 
@@ -45,11 +35,9 @@ export class DingtalkService {
    * @returns 应用凭证
    */
   async token(cache = true): Promise<string> {
-    console.debug('cache', cache);
     if (cache) {
       /**应用凭证 */
       const token: string = await this.redis.get(`dingtalk`);
-      console.debug('token', token);
       // 如果应用凭证已缓存，则直接使用缓存的凭证
       if (token) {
         return token;
@@ -59,14 +47,9 @@ export class DingtalkService {
     /**钉钉配置 */
     const setting: object = this.setting.read('dingtalk');
     if (setting) {
-      const appkey: string = setting['appkey'];
-      const appsecret: string = setting['secret'];
       const result = await firstValueFrom(
-        this.client.get('https://oapi.dingtalk.com/gettoken', {
-          params: { appkey, appsecret },
-        }),
+        this.client.get('https://oapi.dingtalk.com/gettoken', setting),
       );
-      console.debug('获取令牌', result.data);
       if (result.data.errcode === 0) {
         // 缓存应用凭证
         await this.redis.set('dingtalk', result.data.access_token);

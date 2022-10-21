@@ -46,10 +46,10 @@ export class UserService {
 
   /**
    * 根据部门ID获取用户清单
-   * @param departid 部门ID
+   * @param departId 部门ID
    * @returns 响应消息
    */
-  async apiIndex(departid: number): Promise<Result> {
+  async apiIndex(departId: number): Promise<Result> {
     /**应用凭证 */
     const access_token = await this.wxworkService.token('app');
     /**接口结果 */
@@ -57,7 +57,7 @@ export class UserService {
       this.client.get('https://qyapi.weixin.qq.com/cgi-bin/user/simplelist', {
         params: {
           access_token,
-          department_id: departid,
+          department_id: departId,
           fetch_child: 1,
         },
       }),
@@ -73,7 +73,7 @@ export class UserService {
       code: 0,
       msg: 'ok',
       data: result.data.userlist.map((item: any) => ({
-        userid: item.userid,
+        userId: item.userid,
         name: item.name,
       })),
     };
@@ -138,9 +138,9 @@ export class UserService {
       return result;
     }
     /**新操作序号 */
-    const operateId = await this.operateService.insert('dingtalk');
+    const operateId = await this.operateService.insert('wxwork');
     // 如果用户创建成功，则创建企业微信用户的关联关系
-    const dingtalkAdd = await this.entityManager.insert(WxworkUserEntity, {
+    const wxwork = await this.entityManager.insert(WxworkUserEntity, {
       wxworkId: value.wxworkId,
       userId: result.userId,
       operateId,
@@ -150,7 +150,7 @@ export class UserService {
       createUserId: updateUserId,
       createAt: Date.now(),
     });
-    if (dingtalkAdd.identifiers.length) {
+    if (wxwork.identifiers.length) {
       this.eventEmitter.emit('wxwork', value.wxworkId);
       return { code: 0, msg: '企业微信用户关联完成', operateId, reqId };
     } else {
@@ -175,7 +175,7 @@ export class UserService {
       { wxworkId: value.wxworkId },
     );
     /**新操作序号 */
-    const operateId = await this.operateService.insert('dingtalk');
+    const operateId = await this.operateService.insert('wxwork');
     if (exist) {
       const result = await this.entityManager.update(
         WxworkUserEntity,

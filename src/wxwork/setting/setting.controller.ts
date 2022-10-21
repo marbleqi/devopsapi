@@ -21,18 +21,8 @@ export class SettingController {
     private readonly queue: QueueService,
   ) {
     this.ability.add([
-      {
-        id: 313,
-        pid: 310,
-        name: '查看企业微信配置',
-        description: '查看企业微信配置信息',
-      },
-      {
-        id: 316,
-        pid: 310,
-        name: '修改企业微信配置',
-        description: '修改企业微信配置信息',
-      },
+      { id: 313, pid: 310, name: '查企业微信配置', description: '查配置信息' },
+      { id: 316, pid: 310, name: '改企业微信配置', description: '改配置信息' },
     ] as Ability[]);
   }
   /**
