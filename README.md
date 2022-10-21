@@ -13,3 +13,9 @@
 [后端演示环境](https://api.demo.marbleqi.top)
 
 演示环境超管账号：root，密码：root
+
+## 项目其他文档
+
+[开发环境准备](docs/开发环境准备.md)
+[设计原则](docs/设计原则.md)
+[技术方案](docs/技术方案.md)
