@@ -13,6 +13,8 @@ import { TokenGuard } from './auth';
 import { ReqInterceptor } from './shared';
 import { PassportModule } from './passport/passport.module';
 import { CommonModule } from './common/common.module';
+import { WxworkModule } from './wxwork/wxwork.module';
+import { DingtalkModule } from './dingtalk/dingtalk.module';
 
 /**主模块 */
 @Module({
@@ -62,6 +64,8 @@ import { CommonModule } from './common/common.module';
     SysModule,
     PassportModule,
     CommonModule,
+    WxworkModule,
+    DingtalkModule,
   ],
   providers: [
     {

@@ -1,15 +1,13 @@
 # 制作基础镜像
 FROM centos:7 AS base
 
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && yum install -y epel-release && yum -y update
+
 # 设置工作目录
 WORKDIR /data
 
-# 升级软件包
-RUN yum -y update \
-  # 设置时区为上海
-  && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  # 设置nodejs版本为16
-  && curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - \
+# 设置nodejs版本为16
+RUN curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - \
   # 安装nodejs
   && yum install -y nodejs python3 make gcc gcc-c++ \
   # 设置使用npm淘宝源，在国外服务器上构建镜像时，可考虑注释

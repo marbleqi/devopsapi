@@ -20,8 +20,8 @@ export class QueueService {
    * @param queue 注入的队列服务
    */
   constructor(@InjectQueue('shared') private readonly queue: Queue) {
-    this.webSub = new Subject<{ name: string; data?: any }>();
-    this.apiSub = new Subject<{ name: string; data?: any }>();
+    this.webSub = new Subject<{ name: string; data: any }>();
+    this.apiSub = new Subject<{ name: string; data: any }>();
   }
 
   /**
@@ -82,12 +82,18 @@ export class QueueService {
   }
 
   /**
-   * 收到设置变更通知，通知所有后端配置信息更新
+   * 收到队列通知
    * @param job 任务
    */
-  @OnGlobalQueueWaiting({ name: 'setting' })
+  @OnGlobalQueueWaiting()
   async setting(job: Job): Promise<void> {
-    console.debug('通知所有后端配置信息更新！', job.name, job.data);
-    this.apiSub.next({ name: 'setting', data: job.data });
+    console.debug('收到队列通知！', job.name, job.data);
+    if (job.name === 'setting') {
+      // 配置类变更通知所有后端
+      this.apiSub.next({ name: 'setting', data: job.data });
+    } else {
+      // 其余变更通知所有前端
+      this.webSub.next({ name: job.name, data: job.data });
+    }
   }
 }

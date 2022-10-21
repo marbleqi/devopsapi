@@ -21,9 +21,9 @@ export class CommonGateway
 
   /**
    * 构造函数
-   * @param queue 注入的队列服务
+   * @param queueService 注入的队列服务
    */
-  constructor(private readonly queue: QueueService) {}
+  constructor(private readonly queueService: QueueService) {}
 
   /**
    * WebSocket初始化处理
@@ -32,13 +32,9 @@ export class CommonGateway
   async afterInit(server: any) {
     console.debug('WebSocket监听启动', server.name);
     // 有前端订阅消息时，向前端发送全局消息
-    this.queue.webSub.subscribe((res: { name: string; data?: any }) => {
-      console.debug('收到订阅要发布到前端的消息', res.name, res?.data);
-      if (res?.data) {
-        this.server.emit(res.name, res.data);
-      } else {
-        this.server.emit(res.name);
-      }
+    this.queueService.webSub.subscribe((res) => {
+      console.debug('收到订阅要发布到前端的消息', res);
+      this.server.emit(res.name, res.data);
     });
   }
 

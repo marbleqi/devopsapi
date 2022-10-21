@@ -128,7 +128,6 @@ export class TokenService implements OnApplicationBootstrap {
         return [useritem[0], abilities];
       }),
     );
-    console.debug('abilityMap', this.abilityMap);
     return { code: 0, msg: '令牌权限下发成功' };
   }
 
@@ -160,7 +159,6 @@ export class TokenService implements OnApplicationBootstrap {
     if (!abilities.length) {
       return { userId, invalid: false };
     }
-    console.debug('abilityMap', this.abilityMap.get(userId));
     invalid = this.abilityMap
       .get(userId)
       .every((ability: number) => !abilities.includes(ability));

@@ -125,7 +125,7 @@ export class UserService implements OnApplicationBootstrap {
     if (data) {
       return { code: 0, msg: 'ok', data };
     } else {
-      return { code: 404, msg: '未找到角色' };
+      return { code: 404, msg: '未找到记录' };
     }
   }
 
@@ -154,7 +154,7 @@ export class UserService implements OnApplicationBootstrap {
     if (result.identifiers.length) {
       const userId = Number(result.identifiers[0].userId);
       this.eventEmitter.emit('user', userId);
-      this.queueService.add('create', { object: 'user' });
+      this.queueService.add('user', userId);
       return { code: 0, msg: '用户创建完成', operateId, reqId, userId };
     } else {
       return { code: 400, msg: '用户创建失败', operateId, reqId };
@@ -189,7 +189,7 @@ export class UserService implements OnApplicationBootstrap {
     );
     if (result.affected) {
       this.eventEmitter.emit('user', userId);
-      this.queueService.add('update', { object: 'user' });
+      this.queueService.add('user', userId);
       return { code: 0, msg: '更新角色成功', operateId, reqId, userId };
     } else {
       return { code: 400, msg: '更新角色失败', operateId, reqId };
@@ -222,7 +222,6 @@ export class UserService implements OnApplicationBootstrap {
     );
     if (result.affected) {
       this.eventEmitter.emit('user', userId);
-      this.queueService.add('unlock', { object: 'user' });
       return { code: 0, msg: '解锁用户成功', operateId, reqId, userId };
     } else {
       return { code: 400, msg: '解锁用户失败', operateId, reqId };
@@ -264,7 +263,6 @@ export class UserService implements OnApplicationBootstrap {
     );
     if (result.affected) {
       this.eventEmitter.emit('user', userId);
-      this.queueService.add('resetpsw', { object: 'user' });
       return { code: 0, msg: '用户密码重置成功', operateId, reqId, userId };
     } else {
       return { code: 400, msg: '用户密码重置失败', operateId, reqId };
@@ -360,6 +358,7 @@ export class UserService implements OnApplicationBootstrap {
         this.eventEmitter.emit('user', user.userId);
       }
     }
+    this.queueService.add('user', 'grant');
     return { code: 0, msg: '权限点授权成功' };
   }
 
@@ -370,10 +369,8 @@ export class UserService implements OnApplicationBootstrap {
   @OnEvent('user')
   async addLog(userId: number) {
     /**用户对象 */
-    const user = await this.entityManager.findOneBy(UserEntity, {
-      userId,
-    });
-    const result = await this.entityManager.insert(UserLogEntity, user);
-    console.debug('result', result);
+    const user = await this.entityManager.findOneBy(UserEntity, { userId });
+    /**添加日志 */
+    this.entityManager.insert(UserLogEntity, user);
   }
 }

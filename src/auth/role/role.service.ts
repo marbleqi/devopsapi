@@ -165,7 +165,7 @@ export class RoleService implements OnApplicationBootstrap {
     if (result.identifiers.length) {
       const roleId = Number(result.identifiers[0].roleId);
       this.eventEmitter.emit('role', roleId);
-      this.queueService.add('create', { object: 'role' });
+      this.queueService.add('role', roleId);
       return { code: 0, msg: '角色创建完成', operateId, reqId, roleId };
     } else {
       return { code: 400, msg: '角色创建失败', operateId, reqId };
@@ -197,7 +197,7 @@ export class RoleService implements OnApplicationBootstrap {
     );
     if (result.affected) {
       this.eventEmitter.emit('role', roleId);
-      this.queueService.add('update', { object: 'role' });
+      this.queueService.add('role', roleId);
       return { code: 0, msg: '更新角色成功', operateId, reqId, roleId };
     } else {
       return { code: 400, msg: '更新角色失败', operateId, reqId };
@@ -220,7 +220,7 @@ export class RoleService implements OnApplicationBootstrap {
         { orderId: item['orderId'] },
       );
     }
-    this.queueService.add('sort', { object: 'role' });
+    this.queueService.add('role', 'sort');
     return { code: 0, msg: '角色排序成功' };
   }
 
@@ -295,6 +295,7 @@ export class RoleService implements OnApplicationBootstrap {
         this.eventEmitter.emit('role', role.roleId);
       }
     }
+    this.queueService.add('role', 'grant');
     return { code: 0, msg: '权限点授权成功' };
   }
 
@@ -305,10 +306,8 @@ export class RoleService implements OnApplicationBootstrap {
   @OnEvent('role')
   async addLog(roleId: number) {
     /**角色对象 */
-    const role = await this.entityManager.findOneBy(RoleEntity, {
-      roleId,
-    });
-    const result = await this.entityManager.insert(RoleLogEntity, role);
-    console.debug('result', result);
+    const role = await this.entityManager.findOneBy(RoleEntity, { roleId });
+    /**添加日志 */
+    await this.entityManager.insert(RoleLogEntity, role);
   }
 }

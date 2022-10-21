@@ -28,7 +28,7 @@ export class SettingService implements OnApplicationBootstrap {
    */
   constructor(
     private readonly eventEmitter: EventEmitter2,
-    private readonly queue: QueueService,
+    private readonly queueService: QueueService,
     private readonly operateService: OperateService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {
@@ -39,13 +39,13 @@ export class SettingService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     await this.init();
     await this.reload();
-    this.queue.apiSub.subscribe(async (res) => {
+    this.queueService.apiSub.subscribe(async (res) => {
       console.debug('收到消息', res);
       if (res.name === 'setting') {
         console.debug('更新配置缓存');
         await this.reload();
         console.debug('通知前端更新');
-        this.queue.webSub.next(res);
+        this.queueService.webSub.next(res);
       }
     });
   }
@@ -55,9 +55,7 @@ export class SettingService implements OnApplicationBootstrap {
     /**判断是否已配置系统参数 */
     const result = await this.entityManager.findOne(SettingEntity, {
       select: ['code'],
-      where: {
-        code: 'sys',
-      },
+      where: { code: 'sys' },
     });
     // 如果未配置系统参数，就初始化系统参数
     if (!result) {
@@ -152,7 +150,7 @@ export class SettingService implements OnApplicationBootstrap {
       updateUserId,
       updateAt: Date.now(),
     };
-    const setting = await this.get(code);
+    const setting = await this.entityManager.findOneBy(SettingEntity, { code });
     if (setting) {
       const result = await this.entityManager.update(
         SettingEntity,
@@ -186,10 +184,11 @@ export class SettingService implements OnApplicationBootstrap {
    */
   @OnEvent('setting')
   async addLog(code: string) {
-    this.queue.add('setting', code);
+    // 发送队列任务
+    this.queueService.add('setting', code);
     /**配置对象 */
-    const setting = await this.get(code);
-    /**更新结果 */
+    const setting = await this.entityManager.findOneBy(SettingEntity, { code });
+    /**添加日志 */
     this.entityManager.insert(SettingLogEntity, setting);
   }
 }

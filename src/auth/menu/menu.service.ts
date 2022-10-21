@@ -348,7 +348,7 @@ export class MenuService implements OnApplicationBootstrap {
     if (result.identifiers.length) {
       const menuId = Number(result.identifiers[0].menuId);
       this.eventEmitter.emit('menu', menuId);
-      this.queueService.add('create', { object: 'menu' });
+      this.queueService.add('menu', menuId);
       return { code: 0, msg: '菜单创建完成', operateId, reqId, menuId };
     } else {
       return { code: 400, msg: '菜单创建失败', operateId, reqId };
@@ -380,7 +380,7 @@ export class MenuService implements OnApplicationBootstrap {
     );
     if (result.affected) {
       this.eventEmitter.emit('menu', menuId);
-      this.queueService.add('update', { object: 'menu' });
+      this.queueService.add('menu', menuId);
       return { code: 0, msg: '更新菜单成功', operateId, reqId, menuId };
     } else {
       return { code: 400, msg: '更新菜单失败', operateId, reqId };
@@ -404,7 +404,7 @@ export class MenuService implements OnApplicationBootstrap {
         { orderId: item['orderId'] },
       );
     }
-    this.queueService.add('sort', { object: 'menu' });
+    this.queueService.add('menu', 'sort');
     return { code: 0, msg: '菜单排序成功' };
   }
 
@@ -418,7 +418,6 @@ export class MenuService implements OnApplicationBootstrap {
     const menus: MenuEntity[] = await this.entityManager.find(MenuEntity, {
       select: ['menuId', 'abilities'],
     });
-    console.debug('grantedmenus', menus);
     /**已授权菜单清单 */
     const data: number[] = menus
       .filter((menu) => menu.abilities.includes(id))
@@ -444,7 +443,6 @@ export class MenuService implements OnApplicationBootstrap {
     const menus: MenuEntity[] = await this.entityManager.find(MenuEntity, {
       select: ['menuId', 'abilities'],
     });
-    console.debug('grantmenus', menus);
     for (const menu of menus) {
       // 增加菜单的权限
       if (!menu.abilities.includes(id) && menuIds.includes(menu.menuId)) {
@@ -481,6 +479,7 @@ export class MenuService implements OnApplicationBootstrap {
         this.eventEmitter.emit('menu', menu.menuId);
       }
     }
+    this.queueService.add('menu', 'grant');
     return { code: 0, msg: '权限点授权成功' };
   }
 
@@ -491,10 +490,8 @@ export class MenuService implements OnApplicationBootstrap {
   @OnEvent('menu')
   async addLog(menuId: number) {
     /**菜单对象 */
-    const menu = await this.entityManager.findOneBy(MenuEntity, {
-      menuId,
-    });
-    const result = await this.entityManager.insert(MenuLogEntity, menu);
-    console.debug('result', result);
+    const menu = await this.entityManager.findOneBy(MenuEntity, { menuId });
+    /**添加日志 */
+    this.entityManager.insert(MenuLogEntity, menu);
   }
 }
