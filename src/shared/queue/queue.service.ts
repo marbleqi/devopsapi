@@ -77,8 +77,13 @@ export class QueueService {
    * @returns 响应消息
    */
   async clean(): Promise<Result> {
+    console.debug('触发清理任务');
     await this.queue.clean(1000, 'completed');
+    await this.queue.clean(1000, 'wait');
+    await this.queue.clean(1000, 'active');
+    await this.queue.clean(1000, 'delayed');
     await this.queue.clean(1000, 'failed');
+    await this.queue.clean(1000, 'paused');
     return { code: 0, msg: 'ok' };
   }
 

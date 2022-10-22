@@ -9,15 +9,15 @@ import { Ability, Abilities, AbilityService } from '../../auth';
 export class QueueController {
   /**
    *
-   * @param ability 注入的共享权限点服务
-   * @param queue 注入的队列服务
+   * @param abilityService 注入的共享权限点服务
+   * @param queueService 注入的队列服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly queue: QueueService,
+    private readonly abilityService: AbilityService,
+    private readonly queueService: QueueService,
   ) {
     // 队列管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 132, pid: 130, name: '任务列表', description: '查看任务列表' },
       { id: 138, pid: 130, name: '删除任务', description: '删除任务' },
     ] as Ability[]);
@@ -31,7 +31,7 @@ export class QueueController {
   @Get('index')
   @Abilities(132)
   async index(@Query() condition: any, @Res() res: Response) {
-    res.locals.result = await this.queue.index(condition);
+    res.locals.result = await this.queueService.index(condition);
     res.status(200).json(res.locals.result);
   }
 
@@ -43,7 +43,7 @@ export class QueueController {
   @Post('remove')
   @Abilities(138)
   async remove(@Body() condition: any, @Res() res: Response) {
-    res.locals.result = await this.queue.remove(condition);
+    res.locals.result = await this.queueService.remove(condition);
     res.status(200).json(res.locals.result);
   }
 
@@ -54,7 +54,7 @@ export class QueueController {
   @Post('clean')
   @Abilities(138)
   async clean(@Res() res: Response) {
-    res.locals.result = await this.queue.clean();
+    res.locals.result = await this.queueService.clean();
     res.status(200).json(res.locals.result);
   }
 }
