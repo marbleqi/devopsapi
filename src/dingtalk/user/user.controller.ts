@@ -33,6 +33,16 @@ export class UserController {
     ] as Ability[]);
   }
 
+  @Get('depart/:dept_id')
+  @Abilities(432)
+  async depart(
+    @Param('dept_id', new ParseIntPipe()) dept_id: number,
+    @Res() res: Response,
+  ) {
+    res.locals.result = await this.user.depart(dept_id);
+    res.status(200).json(res.locals.result);
+  }
+
   @Get('index/:dept_id')
   @Abilities(432)
   async apiIndex(
@@ -46,10 +56,10 @@ export class UserController {
   @Get('index')
   @Abilities(432)
   async dbIndex(
-    @Query('operateid', new ParseIntPipe()) operateid: number,
+    @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.dbIndex(operateid);
+    res.locals.result = await this.user.dbIndex(operateId);
     res.status(200).json(res.locals.result);
   }
 

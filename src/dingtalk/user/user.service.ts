@@ -45,6 +45,41 @@ export class UserService {
   ) {}
 
   /**
+   * 获取子部门列表
+   * @param dept_id 父级部门ID
+   * @returns 响应消息
+   */
+  async depart(dept_id: number): Promise<Result> {
+    if (!dept_id) {
+      dept_id = 1;
+    }
+    /**应用凭证 */
+    const access_token = await this.dingtalkService.token();
+    /**接口结果 */
+    const result: any = await firstValueFrom(
+      this.client.post(
+        'https://oapi.dingtalk.com/topapi/v2/department/listsub',
+        { dept_id },
+        { params: { access_token } },
+      ),
+    );
+    if (result.data.errcode) {
+      return {
+        code: result.data.errcode,
+        msg: result.data.errmsg,
+      };
+    }
+    return {
+      code: 0,
+      msg: 'ok',
+      data: result.data.result.map((item: any) => ({
+        key: item.dept_id,
+        title: item.name,
+      })),
+    };
+  }
+
+  /**
    * 根据部门ID获取用户清单
    * @param dept_id 部门ID
    * @returns 响应消息

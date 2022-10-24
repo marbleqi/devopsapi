@@ -27,10 +27,19 @@ export class UserController {
   ) {
     // 用户管理
     this.ability.add([
+      { id: 331, pid: 330, name: '部门列表', description: '部门列表' },
       { id: 332, pid: 330, name: '用户列表', description: '用户列表' },
       { id: 335, pid: 330, name: '创建用户', description: '创建新的用户' },
       { id: 336, pid: 330, name: '更新用户', description: '更新用户' },
     ] as Ability[]);
+  }
+
+  @Get('depart')
+  @Abilities(332)
+  async depart(@Res() res: Response) {
+    console.debug('触发事件');
+    res.locals.result = await this.user.depart();
+    res.status(200).json(res.locals.result);
   }
 
   @Get('index/:id')
@@ -46,10 +55,10 @@ export class UserController {
   @Get('index')
   @Abilities(332)
   async dbindex(
-    @Query('operateid', new ParseIntPipe()) operateid: number,
+    @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.dbIndex(operateid);
+    res.locals.result = await this.user.dbIndex(operateId);
     res.status(200).json(res.locals.result);
   }
 

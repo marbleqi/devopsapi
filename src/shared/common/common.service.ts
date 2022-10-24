@@ -39,7 +39,7 @@ export class CommonService {
   }
 
   /**
-   * 针对指定实体，返回指定列的清单到前端
+   * 针对指定实体，返回响应报文
    * @param entityClass 实体类型
    * @param select 列清单
    * @param where 搜索条件

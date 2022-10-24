@@ -44,8 +44,38 @@ export class UserService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
+  /**获取部门列表 */
+  async depart(): Promise<Result> {
+    /**API地址 */
+    const apiurl = 'https://qyapi.weixin.qq.com/cgi-bin/department/list';
+    /**应用凭证 */
+    const access_token = await this.wxworkService.token('app');
+    /**接口调用结果 */
+    const result: any = await firstValueFrom(
+      this.client.get(apiurl, { params: { access_token, id: 0 } }),
+    );
+    // 判断从企业微信接口获得的数据是否正常
+    if (result.data.errcode) {
+      // 如果是应用凭证过期，则重新获取应用凭证
+      if (result.data.errcode === 40014) {
+        await this.wxworkService.token('app', false);
+      }
+      return { code: result.data.errcode, msg: result.data.errmsg };
+    }
+    return {
+      code: 0,
+      msg: 'ok',
+      data: result.data.department.map((item: any) => ({
+        key: item.id,
+        parentId: item.parentid,
+        title: item.name,
+        orderId: item.order,
+      })),
+    };
+  }
+
   /**
-   * 根据部门ID获取用户清单
+   * 根据部门ID从企业微信接口获取用户清单
    * @param departId 部门ID
    * @returns 响应消息
    */
@@ -79,6 +109,11 @@ export class UserService {
     };
   }
 
+  /**
+   * 获取数据库中保存的企业微信账号关联关系
+   * @param operateId
+   * @returns
+   */
   async dbIndex(operateId: number): Promise<Result> {
     /**返回字段 */
     const select = [

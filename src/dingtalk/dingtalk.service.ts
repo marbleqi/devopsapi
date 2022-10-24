@@ -46,9 +46,12 @@ export class DingtalkService {
     // 如果不使用缓存，或应用凭证不存在，则重新获取凭证
     /**钉钉配置 */
     const setting: object = this.setting.read('dingtalk');
+    console.debug('setting', setting);
     if (setting) {
       const result = await firstValueFrom(
-        this.client.get('https://oapi.dingtalk.com/gettoken', setting),
+        this.client.get('https://oapi.dingtalk.com/gettoken', {
+          params: setting,
+        }),
       );
       if (result.data.errcode === 0) {
         // 缓存应用凭证

@@ -53,7 +53,7 @@ export class InitService {
     }
     /**提取用户数据 */
     const result: UserEntity = await this.entityManager.findOne(UserEntity, {
-      select: ['config'],
+      select: ['userName', 'config'],
       where: { userId: auth.userId },
     });
     /**用户信息 */
