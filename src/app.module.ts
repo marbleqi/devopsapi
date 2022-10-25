@@ -7,8 +7,8 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 // 内部依赖
 import { SharedModule } from './shared/shared.module';
-import { AuthModule } from './auth/auth.module';
 import { SysModule } from './sys/sys.module';
+import { AuthModule } from './auth/auth.module';
 import { TokenGuard } from './auth';
 import { ReqInterceptor } from './shared';
 import { PassportModule } from './passport/passport.module';
