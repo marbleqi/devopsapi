@@ -3,5 +3,7 @@ export * from './setting/setting.dto';
 export * from './user/user.dto';
 export * from './wxwork.service';
 export * from './user/user.service';
+export * from './checkin/checkin.service';
 export * from './setting/setting.controller';
 export * from './user/user.controller';
+export * from './checkin/checkin.controller';

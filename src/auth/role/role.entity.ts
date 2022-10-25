@@ -20,7 +20,7 @@ export abstract class RoleBaseEntity extends CommonBaseEntity {
     type: 'int',
     name: 'status',
     default: 1,
-    comment: '状态，1表示可用，0表示禁用',
+    comment: '状态',
   })
   status: number;
 

@@ -2,9 +2,9 @@
 import { Controller, Res, Body, Get, Post } from '@nestjs/common';
 import { Response } from 'express';
 // 内部依赖
-import { SettingService, QueueService } from '../../shared';
+import { SettingService } from '../../shared';
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { WxworkSettingDto } from '..';
+import { WxworkSettingDto, WxworkService } from '..';
 
 /**企业微信配置控制器 */
 @Controller('wxwork/setting')
@@ -18,7 +18,7 @@ export class SettingController {
   constructor(
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
-    private readonly queue: QueueService,
+    private readonly wxwork: WxworkService,
   ) {
     this.ability.add([
       { id: 313, pid: 310, name: '查企业微信配置', description: '查配置信息' },
@@ -60,5 +60,10 @@ export class SettingController {
       res.locals.reqId,
     );
     res.status(200).json(res.locals.result);
+    // 配置修改成功后，立即重新刷新token
+    if (!res.locals.result.code) {
+      this.wxwork.token('app', false);
+      this.wxwork.token('checkin', false);
+    }
   }
 }

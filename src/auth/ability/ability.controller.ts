@@ -22,18 +22,23 @@ import {
 export class AbilityController {
   /**
    * 构造函数
-   * @param ability 注入的共享权限点服务
+   * @param abilityService 注入的共享权限点服务
    * @param menuService 注入的菜单服务
    * @param roleService 注入的角色服务
    */
   constructor(
-    private readonly ability: AbilityService,
+    private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
     private readonly roleService: RoleService,
   ) {
     // 权限点管理
-    this.ability.add([
-      { id: 212, pid: 210, name: '权限点列表', description: '权限点列表' },
+    this.abilityService.add([
+      {
+        id: 212,
+        pid: 210,
+        name: '权限点列表',
+        description: '权限点列表',
+      },
     ] as Ability[]);
   }
 
@@ -44,7 +49,7 @@ export class AbilityController {
   @Get('index')
   @Abilities(212)
   index(@Res() res: Response): void {
-    res.locals.result = { code: 0, msg: 'ok', data: this.ability.get() };
+    res.locals.result = { code: 0, msg: 'ok', data: this.abilityService.get() };
     res.status(200).json(res.locals.result);
   }
 

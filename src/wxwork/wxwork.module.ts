@@ -9,9 +9,11 @@ import {
   WxworkUserEntity,
   WxworkUserLogEntity,
   UserService,
-  UserController,
+  CheckinService,
   WxworkService,
+  UserController,
   SettingController,
+  CheckinController,
 } from '.';
 
 @Module({
@@ -21,8 +23,8 @@ import {
     AuthModule,
     TypeOrmModule.forFeature([WxworkUserEntity, WxworkUserLogEntity]),
   ],
-  providers: [WxworkService, UserService],
-  controllers: [SettingController, UserController],
+  providers: [WxworkService, UserService, CheckinService],
+  controllers: [SettingController, UserController, CheckinController],
   exports: [WxworkService, UserService],
 })
 export class WxworkModule {}

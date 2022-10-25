@@ -14,12 +14,7 @@ export abstract class WxworkUserBaseEntity extends CommonBaseEntity {
   userId: number;
 
   /**状态，1表示可用，0表示禁用 */
-  @Column({
-    type: 'int',
-    name: 'status',
-    default: 1,
-    comment: '状态，1表示可用，0表示禁用',
-  })
+  @Column({ type: 'int', name: 'status', default: 1, comment: '状态' })
   status: number;
 }
 

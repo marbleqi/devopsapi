@@ -31,12 +31,7 @@ export abstract class UserBaseEntity extends CommonBaseEntity {
   config: UserConfig;
 
   /**状态，1表示可用，0表示禁用 */
-  @Column({
-    type: 'int',
-    name: 'status',
-    default: 1,
-    comment: '状态，1表示可用，0表示禁用',
-  })
+  @Column({ type: 'int', name: 'status', default: 1, comment: '状态' })
   status: number;
 
   /**授权角色 */

@@ -4,7 +4,7 @@ import { Response } from 'express';
 // 内部依赖
 import { SettingService } from '../../shared';
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { DingtalkSettingDto } from '..';
+import { DingtalkSettingDto, DingtalkService } from '..';
 
 /**钉钉配置控制器 */
 @Controller('dingtalk/setting')
@@ -17,6 +17,7 @@ export class SettingController {
   constructor(
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
+    private readonly dingtalk: DingtalkService,
   ) {
     this.ability.add([
       { id: 413, pid: 410, name: '查看钉钉配置', description: '查看钉钉配置' },
@@ -59,5 +60,9 @@ export class SettingController {
       res.locals.reqId,
     );
     res.status(200).json(res.locals.result);
+    // 配置修改成功后，立即重新刷新token
+    if (!res.locals.result.code) {
+      this.dingtalk.token(false);
+    }
   }
 }

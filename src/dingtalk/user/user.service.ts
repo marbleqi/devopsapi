@@ -133,6 +133,27 @@ export class UserService {
   }
 
   /**
+   * 获取用户变更日志
+   * @param unionId 用户ID
+   * @returns 响应消息
+   */
+  async log(unionId: string): Promise<Result> {
+    if (!unionId) {
+      return { code: 400, msg: '传入的用户ID无效' };
+    }
+    /**用户对象 */
+    const data: DingtalkUserLogEntity[] = await this.entityManager.findBy(
+      DingtalkUserLogEntity,
+      { unionId },
+    );
+    if (data) {
+      return { code: 0, msg: 'ok', data };
+    } else {
+      return { code: 404, msg: '未找到记录' };
+    }
+  }
+
+  /**
    * 根据钉钉用户信息创建新用户
    * @param value 提交消息体
    * @param updateUserId 创建用户的用户ID

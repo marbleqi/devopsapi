@@ -15,6 +15,15 @@ import { PassportModule } from './passport/passport.module';
 import { CommonModule } from './common/common.module';
 import { WxworkModule } from './wxwork/wxwork.module';
 import { DingtalkModule } from './dingtalk/dingtalk.module';
+import { KongModule } from './kong/kong.module';
+import { AliyunModule } from './aliyun/aliyun.module';
+import { AlipayModule } from './alipay/alipay.module';
+import { AndroidModule } from './android/android.module';
+import { AccountModule } from './account/account.module';
+import { KubernetesModule } from './kubernetes/kubernetes.module';
+import { NacosModule } from './nacos/nacos.module';
+import { NotifyModule } from './notify/notify.module';
+import { WechatModule } from './wechat/wechat.module';
 
 /**主模块 */
 @Module({
@@ -66,6 +75,15 @@ import { DingtalkModule } from './dingtalk/dingtalk.module';
     CommonModule,
     WxworkModule,
     DingtalkModule,
+    KongModule,
+    AliyunModule,
+    AlipayModule,
+    AndroidModule,
+    AccountModule,
+    KubernetesModule,
+    NacosModule,
+    NotifyModule,
+    WechatModule,
   ],
   providers: [
     {
