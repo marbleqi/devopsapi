@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 /**用户信息DTO */
-export class KongHostDto {
+export class KongRouteDto {
   /**登陆名 */
   @IsNotEmpty({ message: '站点名不能为空' })
   name: string;
@@ -10,7 +10,7 @@ export class KongHostDto {
   @IsNotEmpty({ message: '站点说明不能为空' })
   description: string;
 
-  /**站点地址 */
+  /**授权角色 */
   @IsNotEmpty({ message: '站点地址不能为空' })
   url: string;
 

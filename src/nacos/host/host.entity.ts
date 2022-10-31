@@ -2,12 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 
 /**KONG站点基类 */
-export abstract class KongHostBaseEntity extends CommonBaseEntity {
-  /**站点名 */
+export abstract class NacosHostBaseEntity extends CommonBaseEntity {
+  /**登陆名 */
   @Column({ type: 'text', name: 'name', comment: '站点名' })
   name: string;
 
-  /**站点说明 */
+  /**姓名 */
   @Column({ type: 'text', name: 'description', comment: '站点说明' })
   description: string;
 
@@ -21,8 +21,8 @@ export abstract class KongHostBaseEntity extends CommonBaseEntity {
 }
 
 /**用户表 */
-@Entity('kong_hosts')
-export class KongHostEntity extends KongHostBaseEntity {
+@Entity('nacos_hosts')
+export class NacosHostEntity extends NacosHostBaseEntity {
   /**站点ID */
   @PrimaryGeneratedColumn({
     type: 'bigint',
@@ -58,8 +58,8 @@ export class KongHostEntity extends KongHostBaseEntity {
 }
 
 /**用户日志表 */
-@Entity('kong_hosts_logs')
-export class KongHostLogEntity extends KongHostBaseEntity {
+@Entity('nacos_hosts_logs')
+export class NacosHostLogEntity extends NacosHostBaseEntity {
   /**日志ID */
   @PrimaryGeneratedColumn({
     type: 'bigint',

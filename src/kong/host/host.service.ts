@@ -34,10 +34,9 @@ export class HostService {
   async index(operateId: number): Promise<Result> {
     /**返回字段 */
     const select = [
-      'userId',
-      'loginName',
-      'userName',
-      'config',
+      'hostId',
+      'name',
+      'description',
       'status',
       'updateUserId',
       'updateAt',
@@ -180,8 +179,8 @@ export class HostService {
   @OnEvent('kong_host')
   async addLog(hostId: number) {
     /**站点对象 */
-    const user = await this.entityManager.findOneBy(KongHostEntity, { hostId });
+    const host = await this.entityManager.findOneBy(KongHostEntity, { hostId });
     /**添加日志 */
-    this.entityManager.insert(KongHostLogEntity, user);
+    this.entityManager.insert(KongHostLogEntity, host);
   }
 }

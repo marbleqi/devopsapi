@@ -1,21 +1,38 @@
+// 外部依赖
 import { Module } from '@nestjs/common';
-import { KongService, HostService, HostController } from '.';
-import { RouteController } from './route/route.controller';
-import { RouteService } from './route/route.service';
-import { ServiceService } from './service/service.service';
-import { ServiceController } from './service/service.controller';
-import { ConsumerController } from './consumer/consumer.controller';
-import { ConsumerService } from './consumer/consumer.service';
-import { CertificateService } from './certificate/certificate.service';
-import { CertificateController } from './certificate/certificate.controller';
-import { UpstreamController } from './upstream/upstream.controller';
-import { UpstreamService } from './upstream/upstream.service';
-import { TargetService } from './target/target.service';
-import { TargetController } from './target/target.controller';
-import { PluginController } from './plugin/plugin.controller';
-import { PluginService } from './plugin/plugin.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+// 内部依赖
+import { SharedModule } from '../shared/shared.module';
+import { AuthModule } from '../auth/auth.module';
+
+import {
+  KongService,
+  KongHostEntity,
+  KongHostLogEntity,
+  HostService,
+  HostController,
+  TargetService,
+  UpstreamService,
+  PluginService,
+  CertificateService,
+  ConsumerService,
+  ServiceService,
+  RouteService,
+  TargetController,
+  ConsumerController,
+  ServiceController,
+  CertificateController,
+  RouteController,
+  PluginController,
+  UpstreamController,
+} from '.';
 
 @Module({
+  imports: [
+    SharedModule,
+    AuthModule,
+    TypeOrmModule.forFeature([KongHostEntity, KongHostLogEntity]),
+  ],
   providers: [
     HostService,
     KongService,
