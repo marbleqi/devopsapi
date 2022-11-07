@@ -19,6 +19,7 @@ import {
   SettingService,
 } from '.';
 
+/**共享模块 */
 @Module({
   imports: [
     TypeOrmModule.forFeature([

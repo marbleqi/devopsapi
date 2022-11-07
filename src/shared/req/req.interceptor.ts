@@ -26,9 +26,9 @@ export class ReqInterceptor implements NestInterceptor {
    * @returns 响应消息可观察者
    */
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const res: Response = context.switchToHttp().getResponse();
     return next.handle().pipe(
       tap(() => {
+        const res: Response = context.switchToHttp().getResponse();
         this.reqService.update(res.locals.reqId, {
           request: res.locals.request,
           userId: res.locals.userId,

@@ -12,7 +12,7 @@ import {
 import { Response } from 'express';
 // 内部依赖
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { KongHostDto, HostService } from '..';
+import { HostDto, HostService } from '..';
 
 @Controller('kong/host')
 export class HostController {
@@ -80,15 +80,16 @@ export class HostController {
     res.locals.result = await this.hostService.log(hostId);
     res.status(200).json(res.locals.result);
   }
+
   /**
-   * 创建角色
-   * @param value 提交消息体
+   * 创建站点
+   * @param value 提交的站点信息
    * @param res 响应上下文
    */
   @Post('create')
   @Abilities(515)
   async create(
-    @Body() value: KongHostDto,
+    @Body() value: HostDto,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.hostService.create(
@@ -100,16 +101,16 @@ export class HostController {
   }
 
   /**
-   * 更新角色（含禁用和启用角色）
+   * 更新站点（含禁用和启用站点）
    * @param hostId 站点ID
-   * @param value 提交消息体
+   * @param value 提交的站点信息
    * @param res 响应上下文
    */
   @Post(':hostId/update')
   @Abilities(516)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
-    @Body() value: KongHostDto,
+    @Body() value: HostDto,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.hostService.update(
@@ -122,8 +123,8 @@ export class HostController {
   }
 
   /**
-   * 角色排序
-   * @param value 提交消息体
+   * 站点排序
+   * @param value 提交的排序信息
    * @param res 响应上下文
    */
   @Post('sort')

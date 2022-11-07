@@ -1,12 +1,12 @@
 import { IsNotEmpty } from 'class-validator';
 
-/**用户信息DTO */
-export class KongHostDto {
-  /**登陆名 */
+/**站点信息DTO */
+export class HostDto {
+  /**站点名 */
   @IsNotEmpty({ message: '站点名不能为空' })
   name: string;
 
-  /**姓名 */
+  /**站点说明 */
   @IsNotEmpty({ message: '站点说明不能为空' })
   description: string;
 

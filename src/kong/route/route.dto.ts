@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 /**用户信息DTO */
-export class KongRouteDto {
+export class RouteDto {
   /**登陆名 */
   @IsNotEmpty({ message: '站点名不能为空' })
   name: string;
@@ -17,4 +17,8 @@ export class KongRouteDto {
   /**状态，1表示可用，0表示禁用 */
   @IsNotEmpty({ message: '站点状态不能为空' })
   status: number;
+
+  /**状态，1表示可用，0表示禁用 */
+  @IsNotEmpty({ message: '站点状态不能为空' })
+  service: { id: string };
 }

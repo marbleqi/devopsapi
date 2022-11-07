@@ -25,7 +25,7 @@ export class QueueService {
   }
 
   /**
-   * 生产任务（队列对象）
+   * 创建任务（队列对象）
    * @param name 任务名称
    * @param data 任务数据
    */
@@ -78,27 +78,27 @@ export class QueueService {
    */
   async clean(): Promise<Result> {
     console.debug('触发清理任务');
-    await this.queue.clean(1000, 'completed');
-    await this.queue.clean(1000, 'wait');
-    await this.queue.clean(1000, 'active');
-    await this.queue.clean(1000, 'delayed');
-    await this.queue.clean(1000, 'failed');
-    await this.queue.clean(1000, 'paused');
+    this.queue.clean(1000, 'completed');
+    this.queue.clean(1000, 'wait');
+    this.queue.clean(1000, 'active');
+    this.queue.clean(1000, 'delayed');
+    this.queue.clean(1000, 'failed');
+    this.queue.clean(1000, 'paused');
     return { code: 0, msg: 'ok' };
   }
 
   /**
-   * 收到队列通知
-   * @param job 任务
+   * 收到任务等待通知（全局）
+   * @param jobId 任务ID
    */
   @OnGlobalQueueWaiting()
   async waiting(jobId: number): Promise<void> {
     const job = await this.queue.getJob(jobId);
     if (job.name === 'menu') {
-      // 菜单类变更通知所有前端
+      // 菜单类变更直接通知所有前端
       this.webSub.next({ name: 'menu', data: job.data });
     } else {
-      // 其余变更通知所有后端
+      // 其余变更通知先所有后端
       this.apiSub.next({ name: job.name, data: job.data });
     }
   }

@@ -18,6 +18,7 @@ import {
   RoleService,
 } from '..';
 
+/**权限点控制器 */
 @Controller('auth/ability')
 export class AbilityController {
   /**
@@ -33,12 +34,7 @@ export class AbilityController {
   ) {
     // 权限点管理
     this.abilityService.add([
-      {
-        id: 212,
-        pid: 210,
-        name: '权限点列表',
-        description: '权限点列表',
-      },
+      { id: 212, pid: 210, name: '权限点列表', description: '权限点列表' },
     ] as Ability[]);
   }
 

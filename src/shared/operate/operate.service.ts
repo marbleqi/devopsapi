@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 // 内部依赖
 import { OperateEntity } from '..';
 
+/**操作序号服务 */
 @Injectable()
 export class OperateService {
   constructor(

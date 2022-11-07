@@ -13,19 +13,20 @@ import { Response } from 'express';
 // 内部依赖
 import { Ability, Abilities, MenuDto, AbilityService, MenuService } from '..';
 
+/**菜单控制器 */
 @Controller('auth/menu')
 export class MenuController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param menu 注入的菜单服务
+   * @param abilityService 权限点服务
+   * @param menuService 菜单服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly menu: MenuService,
+    private readonly abilityService: AbilityService,
+    private readonly menuService: MenuService,
   ) {
     // 菜单管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 222, pid: 220, name: '菜单列表', description: '查看菜单列表' },
       { id: 223, pid: 220, name: '菜单详情', description: '查看菜单详情' },
       { id: 224, pid: 220, name: '菜单更新历史', description: '菜单更新历史' },
@@ -46,8 +47,7 @@ export class MenuController {
     @Query('operateId') operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    console.debug('operateId', operateId);
-    res.locals.result = await this.menu.index(operateId);
+    res.locals.result = await this.menuService.index(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -62,7 +62,7 @@ export class MenuController {
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.show(menuId);
+    res.locals.result = await this.menuService.show(menuId);
     res.status(200).json(res.locals.result);
   }
 
@@ -77,7 +77,7 @@ export class MenuController {
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.log(menuId);
+    res.locals.result = await this.menuService.log(menuId);
     res.status(200).json(res.locals.result);
   }
 
@@ -89,7 +89,7 @@ export class MenuController {
   @Post('create')
   @Abilities(225)
   async create(@Body() value: MenuDto, @Res() res: Response): Promise<void> {
-    res.locals.result = await this.menu.create(
+    res.locals.result = await this.menuService.create(
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -110,7 +110,7 @@ export class MenuController {
     @Body() value: MenuDto,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.menu.update(
+    res.locals.result = await this.menuService.update(
       menuId,
       value,
       res.locals.userId,
@@ -127,7 +127,7 @@ export class MenuController {
   @Post('sort')
   @Abilities(227)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
-    res.locals.result = await this.menu.sort(value);
+    res.locals.result = await this.menuService.sort(value);
     res.status(200).json(res.locals.result);
   }
 }

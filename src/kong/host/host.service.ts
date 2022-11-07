@@ -1,3 +1,4 @@
+// 外部依赖
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
@@ -9,7 +10,7 @@ import {
 } from 'typeorm';
 // 内部依赖
 import { Result, OperateService, CommonService } from '../../shared';
-import { KongHostDto, KongHostEntity, KongHostLogEntity } from '..';
+import { HostDto, KongHostEntity, KongHostLogEntity } from '..';
 
 @Injectable()
 export class HostService {
@@ -27,7 +28,7 @@ export class HostService {
   ) {}
 
   /**
-   * 获取用户清单
+   * 获取站点清单
    * @param operateId 操作序号，用于获取增量数据
    * @returns 响应消息
    */
@@ -50,13 +51,13 @@ export class HostService {
   }
 
   /**
-   * 获取用户详情
-   * @param hostId 用户ID
+   * 获取站点详情
+   * @param hostId 站点ID
    * @returns 响应消息
    */
   async show(hostId: number): Promise<Result> {
     if (!hostId) {
-      return { code: 400, msg: '传入的用户ID无效' };
+      return { code: 400, msg: '传入的站点ID无效' };
     }
     /**用户对象 */
     const data: KongHostEntity = await this.entityManager.findOneBy(
@@ -66,18 +67,18 @@ export class HostService {
     if (data) {
       return { code: 0, msg: 'ok', data };
     } else {
-      return { code: 404, msg: '未找到角色' };
+      return { code: 404, msg: '未找到站点' };
     }
   }
 
   /**
-   * 获取用户变更日志
-   * @param hostId 用户ID
+   * 获取站点变更日志
+   * @param hostId 站点ID
    * @returns 响应消息
    */
   async log(hostId: number): Promise<Result> {
     if (!hostId) {
-      return { code: 400, msg: '传入的用户ID无效' };
+      return { code: 400, msg: '传入的站点ID无效' };
     }
     /**用户对象 */
     const data: KongHostLogEntity[] = await this.entityManager.findBy(
@@ -92,14 +93,14 @@ export class HostService {
   }
 
   /**
-   * 创建用户
-   * @param value 提交消息体
-   * @param updateUserId 创建用户的用户ID
+   * 创建站点
+   * @param value 提交的站点信息
+   * @param updateUserId 创建站点的用户ID
    * @param reqId 请求ID
    * @returns 响应消息
    */
   async create(
-    value: KongHostDto,
+    value: HostDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -125,14 +126,14 @@ export class HostService {
   /**
    * 更新站点（含禁用）
    * @param hostId 被更新的站点ID
-   * @param value 提交消息体
+   * @param value 提交的站点信息
    * @param updateUserId 执行更新操作的用户ID
    * @param reqId 请求ID
    * @returns 响应消息
    */
   async update(
     hostId: number,
-    value: KongHostDto,
+    value: HostDto,
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
@@ -155,7 +156,7 @@ export class HostService {
 
   /**
    * 站点排序
-   * @param value 提交消息体
+   * @param value 提交的排序信息
    * @returns 响应消息
    */
   async sort(value: object[]): Promise<Result> {

@@ -1,17 +1,20 @@
 // 外部依赖
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 // 内部依赖
-import { Ability, AbilityService } from '../auth';
+import { Ability, AbilityService, MenuService } from '../auth';
 
 @Injectable()
-export class KongService {
+export class KongService implements OnApplicationBootstrap {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
+   * @param abilityService 注入的权限点服务
    */
-  constructor(private readonly ability: AbilityService) {
+  constructor(
+    private readonly abilityService: AbilityService,
+    private readonly menuService: MenuService,
+  ) {
     // 用户管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 500, pid: 0, name: 'KONG管理', description: 'KONG管理' },
       { id: 510, pid: 500, name: '站点', description: '站点管理' },
       { id: 520, pid: 500, name: '路由', description: '路由管理' },
@@ -22,5 +25,14 @@ export class KongService {
       { id: 570, pid: 500, name: '目标', description: '目标管理' },
       { id: 580, pid: 500, name: '插件', description: '插件管理' },
     ] as Ability[]);
+  }
+
+  /**初始化 */
+  async onApplicationBootstrap() {
+    console.debug('KONG服务初始化');
+    // const result = await this.menuService.create(
+    //   { pMenuId: 0, config: { text: '' }, status: 1, abilities: [] },
+    //   1,
+    // );
   }
 }

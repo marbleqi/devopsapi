@@ -1,3 +1,4 @@
+// 外部依赖
 import { Column, AfterLoad } from 'typeorm';
 
 /**通用实体基类 */

@@ -33,6 +33,7 @@ export class MenuService implements OnApplicationBootstrap {
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
+  /**服务初始化 */
   async onApplicationBootstrap() {
     const count: number = await this.entityManager.count(MenuEntity);
     if (!count) {
@@ -278,6 +279,27 @@ export class MenuService implements OnApplicationBootstrap {
       operateId: MoreThan(operateId),
     } as FindOptionsWhere<MenuEntity>;
     return await this.commonService.index(MenuEntity, select, where);
+  }
+
+  /**
+   * 获取菜单详情
+   * @param menuId 菜单ID
+   * @returns 响应消息
+   */
+  async get(menuId: number): Promise<Result> {
+    /**菜单ID */
+    if (!menuId) {
+      return { code: 400, msg: '传入的菜单ID无效' };
+    }
+    /**菜单对象 */
+    const data: MenuEntity = await this.entityManager.findOneBy(MenuEntity, {
+      menuId,
+    });
+    if (data) {
+      return { code: 0, msg: 'ok', data };
+    } else {
+      return { code: 404, msg: '未找到菜单' };
+    }
   }
 
   /**

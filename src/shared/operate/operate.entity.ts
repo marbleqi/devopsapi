@@ -1,3 +1,4 @@
+// 外部依赖
 import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 
 /**操作序号表 */

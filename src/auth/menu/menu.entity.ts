@@ -1,3 +1,4 @@
+// 外部依赖
 import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
 import { CommonBaseEntity } from '../../shared';
 

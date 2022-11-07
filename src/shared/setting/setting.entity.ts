@@ -1,3 +1,4 @@
+// 外部依赖
 import {
   Entity,
   Column,
@@ -5,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   AfterLoad,
 } from 'typeorm';
+// 内部依赖
 import { CommonBaseEntity } from '..';
 
 /**设置表基类 */

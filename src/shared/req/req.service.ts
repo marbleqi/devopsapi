@@ -18,6 +18,7 @@ import {
   CommonService,
 } from '..';
 
+/**请求日志服务 */
 @Injectable()
 export class ReqService {
   constructor(
@@ -97,9 +98,10 @@ export class ReqService {
   /**
    * 获取日志清单
    * @param value 提交条件
+   * @param reqId 当前请求ID（去除当前日志ID）
    * @returns 响应消息
    */
-  async index(value: any): Promise<Result> {
+  async index(value: any, reqId: number): Promise<Result> {
     console.debug('日志查询条件', value);
     /**返回字段 */
     const select = [
@@ -115,7 +117,7 @@ export class ReqService {
       'endAt',
     ] as FindOptionsSelect<ReqEntity>;
     /**搜索条件 */
-    const where: FindOptionsWhere<ReqEntity> = {};
+    const where: FindOptionsWhere<ReqEntity> = { reqId: Not(reqId) };
     if (value.userId && Number(value.userId)) {
       where['userId'] = Number(value.userId);
     }

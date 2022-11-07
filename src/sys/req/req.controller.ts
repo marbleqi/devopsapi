@@ -94,7 +94,7 @@ export class ReqController {
   @Abilities(122)
   async index(@Query() value: ReqDto, @Res() res: Response): Promise<void> {
     console.debug('value', value);
-    res.locals.result = await this.reqService.index(value);
+    res.locals.result = await this.reqService.index(value, res.locals.reqId);
     res.status(200).json(res.locals.result);
   }
 

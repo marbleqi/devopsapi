@@ -1,4 +1,6 @@
+// 外部依赖
 import { IsNotEmpty } from 'class-validator';
+// 内部依赖
 import { MenuConfig } from '..';
 
 /**菜单信息DTO */

@@ -20,6 +20,7 @@ import {
   UserService,
 } from '..';
 
+/**角色控制器 */
 @Controller('auth/role')
 export class RoleController {
   /**

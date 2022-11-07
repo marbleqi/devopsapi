@@ -1,3 +1,4 @@
+// 外部依赖
 import {
   Entity,
   ViewEntity,

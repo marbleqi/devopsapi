@@ -1,4 +1,6 @@
+// 外部依赖
 import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
+// 内部依赖
 import { CommonBaseEntity } from '../../shared';
 
 /**KONG站点基类 */
@@ -20,7 +22,7 @@ export abstract class KongHostBaseEntity extends CommonBaseEntity {
   status: number;
 }
 
-/**用户表 */
+/**KONG站点表 */
 @Entity('kong_hosts')
 export class KongHostEntity extends KongHostBaseEntity {
   /**站点ID */
@@ -57,7 +59,7 @@ export class KongHostEntity extends KongHostBaseEntity {
   }
 }
 
-/**用户日志表 */
+/**KONG站点日志表 */
 @Entity('kong_hosts_logs')
 export class KongHostLogEntity extends KongHostBaseEntity {
   /**日志ID */
@@ -68,7 +70,7 @@ export class KongHostLogEntity extends KongHostBaseEntity {
   })
   logId: number;
 
-  /**用户ID */
+  /**站点ID */
   @Column({ type: 'bigint', name: 'host_id', comment: '站点ID' })
   hostId: number;
 

@@ -6,8 +6,12 @@ export interface Ability {
   pid: number;
   /**权限点名称 */
   name: string;
-  /**权限点类型 */
-  type?: string;
   /**权限点说明 */
   description: string;
+  /**权限点类型 */
+  type?: string;
+  /**所属模块 */
+  moduleName?: string;
+  /**所属对象 */
+  objectName?: string;
 }
