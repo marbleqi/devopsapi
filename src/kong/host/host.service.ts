@@ -16,15 +16,15 @@ import { HostDto, KongHostEntity, KongHostLogEntity } from '..';
 export class HostService {
   /**
    * 构造函数
+   * @param entityManager 实体管理器
    * @param eventEmitter 事件发射器
    * @param operateService 操作序号服务
-   * @param entityManager 实体管理器
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly commonService: CommonService,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   /**

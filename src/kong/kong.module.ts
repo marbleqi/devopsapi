@@ -4,20 +4,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // 内部依赖
 import { SharedModule } from '../shared/shared.module';
 import { AuthModule } from '../auth/auth.module';
-
 import {
   KongService,
   KongHostEntity,
   KongHostLogEntity,
+  KongProjectEntity,
+  KongProjectLogEntity,
   HostService,
-  HostController,
+  ProjectService,
   TargetService,
-  UpstreamService,
   PluginService,
-  CertificateService,
-  ConsumerService,
-  ServiceService,
-  RouteService,
+  HostController,
   TargetController,
   ConsumerController,
   ServiceController,
@@ -26,23 +23,25 @@ import {
   PluginController,
   UpstreamController,
 } from '.';
+import {} from './project/project.service';
 
 @Module({
   imports: [
     SharedModule,
     AuthModule,
-    TypeOrmModule.forFeature([KongHostEntity, KongHostLogEntity]),
+    TypeOrmModule.forFeature([
+      KongHostEntity,
+      KongHostLogEntity,
+      KongProjectEntity,
+      KongProjectLogEntity,
+    ]),
   ],
   providers: [
     HostService,
     KongService,
-    RouteService,
-    ServiceService,
-    ConsumerService,
-    CertificateService,
-    UpstreamService,
     TargetService,
     PluginService,
+    ProjectService,
   ],
   controllers: [
     HostController,

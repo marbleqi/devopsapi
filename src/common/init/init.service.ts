@@ -10,7 +10,7 @@ import {
 // 内部依赖
 import {
   Result,
-  CommonService as SharedCommon,
+  CommonService,
   RedisService,
   SettingService,
 } from '../../shared';
@@ -27,17 +27,17 @@ import {
 export class InitService {
   /**
    * 构造函数
-   * @param common 注入的共享通用服务
-   * @param redis 注入的缓存服务
-   * @param setting 注入的配置服务
-   * @param token 注入的令牌服务
+   * @param commonService 注入的共享通用服务
+   * @param redisService 注入的缓存服务
+   * @param settingService 注入的配置服务
+   * @param tokenService 注入的令牌服务
    */
   constructor(
-    private readonly common: SharedCommon,
-    private readonly redis: RedisService,
-    private readonly setting: SettingService,
-    private readonly token: TokenService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly commonService: CommonService,
+    private readonly redisService: RedisService,
+    private readonly settingService: SettingService,
+    private readonly tokenService: TokenService,
   ) {}
 
   /**
@@ -47,7 +47,7 @@ export class InitService {
    */
   async startup(auth: Auth): Promise<Result> {
     /**应用配置 */
-    const setting: object = this.setting.read('sys');
+    const setting: object = this.settingService.read('sys');
     if (auth.invalid) {
       return { code: 401, msg: '令牌验证不通过', data: { app: setting } };
     }
@@ -63,7 +63,7 @@ export class InitService {
       avatar: result.config.avatar,
     };
     /**权限点信息 */
-    const ability: number[] = this.token.getability(auth.userId);
+    const ability: number[] = this.tokenService.getability(auth.userId);
     return { code: 0, msg: 'ok', data: { app: setting, user, ability } };
   }
 
@@ -72,7 +72,7 @@ export class InitService {
    * @returns 响应消息
    */
   sys(): Result {
-    return { code: 0, msg: 'ok', data: this.setting.read('sys') };
+    return { code: 0, msg: 'ok', data: this.settingService.read('sys') };
   }
 
   /**
@@ -93,7 +93,7 @@ export class InitService {
       operateId: MoreThan(operateId),
     } as FindOptionsWhere<RoleEntity>;
     /**角色清单 */
-    return await this.common.index(RoleEntity, select, where);
+    return await this.commonService.index(RoleEntity, select, where);
   }
 
   /**
@@ -114,7 +114,7 @@ export class InitService {
       operateId: MoreThan(operateId),
     } as FindOptionsWhere<UserEntity>;
     /**用户清单 */
-    return await this.common.index(UserEntity, select, where);
+    return await this.commonService.index(UserEntity, select, where);
   }
 
   /**
@@ -127,6 +127,7 @@ export class InitService {
     const select = [
       'menuId',
       'pMenuId',
+      'link',
       'config',
       'status',
       'abilities',
@@ -138,7 +139,7 @@ export class InitService {
       operateId: MoreThan(operateId),
     } as FindOptionsWhere<MenuEntity>;
     /**用户清单 */
-    return await this.common.index(MenuEntity, select, where);
+    return await this.commonService.index(MenuEntity, select, where);
   }
 
   /**
@@ -148,17 +149,17 @@ export class InitService {
    */
   async refresh(oldtoken: string): Promise<Result> {
     /**系统配置 */
-    const setting: object = this.setting.read('sys');
+    const setting: object = this.settingService.read('sys');
     /**新令牌 */
     let token: string;
     /**新令牌存在标记 */
     let exists: number;
     do {
-      token = this.common.random(40);
-      exists = await this.redis.exists(`token:${token}`);
+      token = this.commonService.random(40);
+      exists = await this.redisService.exists(`token:${token}`);
     } while (exists);
     /**令牌更换结果 */
-    const rename: number = await this.redis.renamenx(
+    const rename: number = await this.redisService.renamenx(
       `token:${oldtoken}`,
       `token:${token}`,
     );
@@ -169,7 +170,7 @@ export class InitService {
     /**令牌过期时间 */
     const expired = Date.now() + Number(setting['expired']) * 60000;
     // 缓存令牌
-    await this.redis.hmset(
+    await this.redisService.hmset(
       `token:${token}`,
       'token',
       token,
@@ -179,7 +180,10 @@ export class InitService {
       Date.now(),
     );
     // 设置缓存有效期
-    await this.redis.expire(`token:${token}`, Number(setting['expired']) * 60);
+    await this.redisService.expire(
+      `token:${token}`,
+      Number(setting['expired']) * 60,
+    );
     // 返回新的令牌信息
     return { code: 0, msg: 'ok', data: { token, expired } };
   }

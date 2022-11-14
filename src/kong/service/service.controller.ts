@@ -12,9 +12,9 @@ import {
 import { Response } from 'express';
 // 内部依赖
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { ServiceDto, HostService } from '..';
+import { HostService } from '..';
 
-@Controller('service')
+@Controller('kong/service')
 export class ServiceController {
   /**
    * 构造函数
@@ -87,10 +87,7 @@ export class ServiceController {
    */
   @Post('create')
   @Abilities(515)
-  async create(
-    @Body() value: ServiceDto,
-    @Res() res: Response,
-  ): Promise<void> {
+  async create(@Body() value: any, @Res() res: Response): Promise<void> {
     res.locals.result = await this.hostService.create(
       value,
       res.locals.userId,
@@ -109,7 +106,7 @@ export class ServiceController {
   @Abilities(516)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
-    @Body() value: ServiceDto,
+    @Body() value: any,
     @Res() res: Response,
   ): Promise<void> {
     res.locals.result = await this.hostService.update(

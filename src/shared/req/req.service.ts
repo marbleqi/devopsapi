@@ -22,8 +22,8 @@ import {
 @Injectable()
 export class ReqService {
   constructor(
-    private readonly commonService: CommonService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly commonService: CommonService,
   ) {}
 
   /**

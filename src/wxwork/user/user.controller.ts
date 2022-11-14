@@ -18,15 +18,15 @@ import { CreateWxworkUserDto, UpdateWxworkUserDto, UserService } from '..';
 export class UserController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param user 注入的用户服务
+   * @param abilityService 注入的权限点服务
+   * @param userService 注入的用户服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly user: UserService,
+    private readonly abilityService: AbilityService,
+    private readonly userService: UserService,
   ) {
     // 用户管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 331, pid: 330, name: '部门列表', description: '部门列表' },
       { id: 332, pid: 330, name: '用户列表', description: '用户列表' },
       { id: 335, pid: 330, name: '创建用户', description: '创建新的用户' },
@@ -38,7 +38,7 @@ export class UserController {
   @Abilities(332)
   async depart(@Res() res: Response) {
     console.debug('触发事件');
-    res.locals.result = await this.user.depart();
+    res.locals.result = await this.userService.depart();
     res.status(200).json(res.locals.result);
   }
 
@@ -48,7 +48,7 @@ export class UserController {
     @Param('id', new ParseIntPipe()) id: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.apiIndex(id);
+    res.locals.result = await this.userService.apiIndex(id);
     res.status(200).json(res.locals.result);
   }
 
@@ -58,14 +58,14 @@ export class UserController {
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.dbIndex(operateId);
+    res.locals.result = await this.userService.dbIndex(operateId);
     res.status(200).json(res.locals.result);
   }
 
   @Post('create')
   @Abilities(335)
   async create(@Body() value: CreateWxworkUserDto, @Res() res: Response) {
-    res.locals.result = await this.user.create(
+    res.locals.result = await this.userService.create(
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -76,7 +76,7 @@ export class UserController {
   @Post('save')
   @Abilities(336)
   async save(@Body() value: UpdateWxworkUserDto, @Res() res: Response) {
-    res.locals.result = await this.user.save(
+    res.locals.result = await this.userService.save(
       value,
       res.locals.userId,
       res.locals.reqId,

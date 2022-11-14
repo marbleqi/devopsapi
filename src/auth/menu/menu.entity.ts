@@ -9,8 +9,6 @@ export interface MenuConfig {
   text?: string;
   /**菜单说明 */
   description?: string;
-  /**菜单链接 */
-  link?: string;
   /**菜单图标 */
   icon?: string;
   /**启用路由复用 */
@@ -25,8 +23,12 @@ export abstract class MenuBaseEntity extends CommonBaseEntity {
   @Column({ type: 'bigint', name: 'p_menu_id', comment: '上级菜单ID' })
   pMenuId: number;
 
+  /**菜单链接 */
+  @Column({ type: 'text', name: 'link', comment: '菜单链接' })
+  link: string;
+
   /**菜单配置 */
-  @Column({ type: 'json', name: 'config', comment: '菜单配置' })
+  @Column({ type: 'jsonb', name: 'config', comment: '菜单配置' })
   config: MenuConfig;
 
   /**状态，1表示可用，0表示禁用 */
@@ -34,7 +36,7 @@ export abstract class MenuBaseEntity extends CommonBaseEntity {
   status: number;
 
   /**授权权限点 */
-  @Column({ type: 'json', name: 'abilities', comment: '授权权限点' })
+  @Column({ type: 'jsonb', name: 'abilities', comment: '授权权限点' })
   abilities: number[];
 
   /**对长整型数据返回时，进行数据转换 */

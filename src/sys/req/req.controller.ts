@@ -18,24 +18,24 @@ import { ReqDto } from '..';
 export class ReqController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
+   * @param abilityService 注入的权限点服务
    * @param reqService 注入的请求日志服务
    */
   constructor(
-    private readonly ability: AbilityService,
+    private readonly abilityService: AbilityService,
     private readonly reqService: ReqService,
   ) {
     // 日志管理
-    this.ability.add([
+    this.abilityService.add([
       {
-        id: 122,
-        pid: 120,
+        id: 222,
+        pid: 220,
         name: '日志列表',
         description: '查看日志列表，返回较多字段，用于列表查看',
       },
       {
-        id: 123,
-        pid: 120,
+        id: 223,
+        pid: 220,
         name: '日志详情',
         description: '查看日志详情，编辑页面初始化时数据',
       },
@@ -47,7 +47,7 @@ export class ReqController {
    * @param res 响应上下文
    */
   @Get('module')
-  @Abilities(122)
+  @Abilities(222)
   async module(@Res() res: Response): Promise<void> {
     res.locals.result = await this.reqService.module();
     res.status(200).json(res.locals.result);
@@ -59,7 +59,7 @@ export class ReqController {
    * @param res 响应上下文
    */
   @Get('controller')
-  @Abilities(122)
+  @Abilities(222)
   async controller(
     @Query('module') module: string,
     @Res() res: Response,
@@ -75,7 +75,7 @@ export class ReqController {
    * @param res 响应上下文
    */
   @Get('action')
-  @Abilities(122)
+  @Abilities(222)
   async action(
     @Query('module') module: string,
     @Query('controller') controller: string,
@@ -91,7 +91,7 @@ export class ReqController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(122)
+  @Abilities(222)
   async index(@Query() value: ReqDto, @Res() res: Response): Promise<void> {
     console.debug('value', value);
     res.locals.result = await this.reqService.index(value, res.locals.reqId);
@@ -104,7 +104,7 @@ export class ReqController {
    * @param res 响应上下文
    */
   @Get(':reqId/show')
-  @Abilities(123)
+  @Abilities(223)
   async show(
     @Param('reqId', new ParseIntPipe()) reqId: number,
     @Res() res: Response,

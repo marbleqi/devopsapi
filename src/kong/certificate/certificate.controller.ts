@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('certificate')
+@Controller('kong/certificate')
 export class CertificateController {}

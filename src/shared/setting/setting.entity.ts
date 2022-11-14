@@ -12,7 +12,7 @@ import { CommonBaseEntity } from '..';
 /**设置表基类 */
 export abstract class SettingBaseEntity extends CommonBaseEntity {
   /**配置值 */
-  @Column({ type: 'json', name: 'value', comment: '值' })
+  @Column({ type: 'jsonb', name: 'value', comment: '值' })
   value: object;
 }
 

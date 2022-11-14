@@ -18,8 +18,8 @@ export class QueueController {
   ) {
     // 队列管理
     this.abilityService.add([
-      { id: 132, pid: 130, name: '任务列表', description: '查看任务列表' },
-      { id: 138, pid: 130, name: '删除任务', description: '删除任务' },
+      { id: 232, pid: 230, name: '任务列表', description: '查看任务列表' },
+      { id: 238, pid: 230, name: '删除任务', description: '删除任务' },
     ] as Ability[]);
   }
 
@@ -29,7 +29,7 @@ export class QueueController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(132)
+  @Abilities(232)
   async index(@Query() condition: any, @Res() res: Response) {
     res.locals.result = await this.queueService.index(condition);
     res.status(200).json(res.locals.result);
@@ -37,13 +37,13 @@ export class QueueController {
 
   /**
    * 移除指定任务
-   * @param condition 任务条件
+   * @param idlist 任务ID清单
    * @param res 响应上下文
    */
   @Post('remove')
-  @Abilities(138)
-  async remove(@Body() condition: any, @Res() res: Response) {
-    res.locals.result = await this.queueService.remove(condition);
+  @Abilities(238)
+  async remove(@Body('idlist') idlist: number[], @Res() res: Response) {
+    res.locals.result = await this.queueService.remove(idlist);
     res.status(200).json(res.locals.result);
   }
 
@@ -52,7 +52,7 @@ export class QueueController {
    * @param res 响应上下文
    */
   @Post('clean')
-  @Abilities(138)
+  @Abilities(238)
   async clean(@Res() res: Response) {
     res.locals.result = await this.queueService.clean();
     res.status(200).json(res.locals.result);

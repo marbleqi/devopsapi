@@ -9,7 +9,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { HttpService } from '@nestjs/axios';
 // 内部依赖
 import { PassportService } from '.';
 
@@ -20,10 +19,7 @@ export class PassportController {
    * 构造函数
    * @param passport 注入的passport服务
    */
-  constructor(
-    private readonly client: HttpService,
-    private readonly passport: PassportService,
-  ) {}
+  constructor(private readonly passport: PassportService) {}
 
   /**
    * 获取初始化参数

@@ -27,12 +27,12 @@ export class MenuController {
   ) {
     // 菜单管理
     this.abilityService.add([
-      { id: 222, pid: 220, name: '菜单列表', description: '查看菜单列表' },
-      { id: 223, pid: 220, name: '菜单详情', description: '查看菜单详情' },
-      { id: 224, pid: 220, name: '菜单更新历史', description: '菜单更新历史' },
-      { id: 225, pid: 220, name: '创建菜单', description: '创建新的菜单' },
-      { id: 226, pid: 220, name: '修改菜单', description: '修改已有的菜单' },
-      { id: 227, pid: 220, name: '菜单排序', description: '对菜单进行排序' },
+      { id: 122, pid: 120, name: '菜单列表', description: '查看菜单列表' },
+      { id: 123, pid: 120, name: '菜单详情', description: '查看菜单详情' },
+      { id: 124, pid: 120, name: '菜单更新历史', description: '菜单更新历史' },
+      { id: 125, pid: 120, name: '创建菜单', description: '创建新的菜单' },
+      { id: 126, pid: 120, name: '修改菜单', description: '修改已有的菜单' },
+      { id: 127, pid: 120, name: '菜单排序', description: '对菜单进行排序' },
     ] as Ability[]);
   }
 
@@ -42,7 +42,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(222)
+  @Abilities(122)
   async index(
     @Query('operateId') operateId: number,
     @Res() res: Response,
@@ -57,7 +57,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get(':menuId/show')
-  @Abilities(223)
+  @Abilities(123)
   async show(
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
@@ -72,7 +72,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Get(':menuId/log')
-  @Abilities(224)
+  @Abilities(124)
   async log(
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Res() res: Response,
@@ -87,7 +87,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(225)
+  @Abilities(125)
   async create(@Body() value: MenuDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.menuService.create(
       value,
@@ -104,7 +104,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post(':menuId/update')
-  @Abilities(226)
+  @Abilities(126)
   async update(
     @Param('menuId', new ParseIntPipe()) menuId: number,
     @Body() value: MenuDto,
@@ -125,7 +125,7 @@ export class MenuController {
    * @param res 响应上下文
    */
   @Post('sort')
-  @Abilities(227)
+  @Abilities(127)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
     res.locals.result = await this.menuService.sort(value);
     res.status(200).json(res.locals.result);

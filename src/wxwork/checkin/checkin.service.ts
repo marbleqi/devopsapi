@@ -14,7 +14,7 @@ export class CheckinService {
    * @param wxwork 注入的企业微信服务
    */
   constructor(
-    private readonly client: HttpService,
+    private readonly clientService: HttpService,
     private readonly wxwork: WxworkService,
   ) {}
 
@@ -24,7 +24,7 @@ export class CheckinService {
     const access_token = await this.wxwork.token('checkin');
     /**请求结果 */
     const result = await firstValueFrom(
-      this.client.post(
+      this.clientService.post(
         'https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata',
         value,
         { params: { access_token } },

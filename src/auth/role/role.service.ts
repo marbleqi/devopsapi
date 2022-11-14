@@ -20,17 +20,18 @@ import { RoleEntity, RoleLogEntity, RoleDto } from '..';
 export class RoleService implements OnApplicationBootstrap {
   /**
    * 构造函数
+   * @param entityManager 实体管理器
    * @param eventEmitter 事件发射器
    * @param operateService 操作序号服务
    * @param queueService 消息队列
-   * @param entityManager 实体管理器
+   * @param commonService 通用服务
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
     private readonly commonService: CommonService,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async onApplicationBootstrap() {
@@ -50,9 +51,10 @@ export class RoleService implements OnApplicationBootstrap {
           description: '超级管理员',
           config: {},
           abilities: [
-            100, 110, 113, 115, 120, 122, 123, 130, 132, 138, 200, 210, 212,
-            220, 222, 223, 224, 225, 226, 227, 230, 232, 233, 234, 235, 236,
-            237, 240, 242, 243, 244, 245, 246, 248, 249, 250, 252, 254, 258,
+            100, 110, 120, 122, 123, 130, 133, 134, 135, 136, 138, 200, 210,
+            212, 213, 215, 220, 222, 223, 224, 225, 226, 227, 230, 232, 233,
+            234, 235, 236, 237, 240, 242, 243, 244, 245, 246, 248, 249, 250,
+            252, 254, 258,
           ],
         },
         {

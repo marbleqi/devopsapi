@@ -8,10 +8,10 @@ export interface Ability {
   name: string;
   /**权限点说明 */
   description: string;
-  /**权限点类型 */
-  type?: string;
   /**所属模块 */
-  moduleName?: string;
+  moduleName: string;
   /**所属对象 */
   objectName?: string;
+  /**权限点类型 */
+  type: string;
 }

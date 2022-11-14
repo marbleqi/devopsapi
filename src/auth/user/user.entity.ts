@@ -27,7 +27,7 @@ export abstract class UserBaseEntity extends CommonBaseEntity {
   userName: string;
 
   /**用户配置 */
-  @Column({ type: 'json', name: 'config', comment: '用户配置' })
+  @Column({ type: 'jsonb', name: 'config', comment: '用户配置' })
   config: UserConfig;
 
   /**状态，1表示可用，0表示禁用 */
@@ -36,7 +36,7 @@ export abstract class UserBaseEntity extends CommonBaseEntity {
 
   /**授权角色 */
   @Column({
-    type: 'json',
+    type: 'jsonb',
     name: 'roles',
     default: [],
     comment: '授权角色',

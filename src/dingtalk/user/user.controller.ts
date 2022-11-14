@@ -18,15 +18,15 @@ import { CreateDingtalkUserDto, UpdateDingtalkUserDto, UserService } from '..';
 export class UserController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param user 注入的用户服务
+   * @param abilityService 注入的权限点服务
+   * @param userService 注入的用户服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly user: UserService,
+    private readonly abilityService: AbilityService,
+    private readonly userService: UserService,
   ) {
     // 用户管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 432, pid: 430, name: '钉钉用户列表', description: '钉钉用户列表' },
       { id: 435, pid: 430, name: '创建关联用户', description: '创建关联用户' },
       { id: 436, pid: 430, name: '更新关联用户', description: '更新关联用户' },
@@ -39,7 +39,7 @@ export class UserController {
     @Param('dept_id', new ParseIntPipe()) dept_id: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.depart(dept_id);
+    res.locals.result = await this.userService.depart(dept_id);
     res.status(200).json(res.locals.result);
   }
 
@@ -49,7 +49,7 @@ export class UserController {
     @Param('dept_id', new ParseIntPipe()) dept_id: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.apiIndex(dept_id);
+    res.locals.result = await this.userService.apiIndex(dept_id);
     res.status(200).json(res.locals.result);
   }
 
@@ -59,14 +59,14 @@ export class UserController {
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ) {
-    res.locals.result = await this.user.dbIndex(operateId);
+    res.locals.result = await this.userService.dbIndex(operateId);
     res.status(200).json(res.locals.result);
   }
 
   @Post('create')
   @Abilities(435)
   async create(@Body() value: CreateDingtalkUserDto, @Res() res: Response) {
-    res.locals.result = await this.user.create(
+    res.locals.result = await this.userService.create(
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -77,7 +77,7 @@ export class UserController {
   @Post('save')
   @Abilities(436)
   async save(@Body() value: UpdateDingtalkUserDto, @Res() res: Response) {
-    res.locals.result = await this.user.save(
+    res.locals.result = await this.userService.save(
       value,
       res.locals.userId,
       res.locals.reqId,

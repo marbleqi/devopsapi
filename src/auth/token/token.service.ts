@@ -24,14 +24,14 @@ export class TokenService implements OnApplicationBootstrap {
 
   /**
    * 构造函数
-   * @param redis 注入的缓存服务
-   * @param queueService 注入的队列服务
    * @param entityManager 实体管理器
+   * @param redisService 注入的缓存服务
+   * @param queueService 注入的队列服务
    */
   constructor(
-    private readonly redis: RedisService,
-    private readonly queueService: QueueService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly redisService: RedisService,
+    private readonly queueService: QueueService,
   ) {
     this.roleMap = new Map<number, number[]>();
     this.userMap = new Map<number, number[]>();
@@ -143,7 +143,7 @@ export class TokenService implements OnApplicationBootstrap {
       return { userId, invalid };
     }
     /**令牌 */
-    const result: any = await this.redis.hgetall(`token:${token}`);
+    const result: any = await this.redisService.hgetall(`token:${token}`);
     if (!result.token) {
       return { userId, invalid };
     }
@@ -176,12 +176,12 @@ export class TokenService implements OnApplicationBootstrap {
    */
   async index(): Promise<Result> {
     /**令牌清单 */
-    const tokenList: string[] = await this.redis.keys('token:*');
+    const tokenList: string[] = await this.redisService.keys('token:*');
     /**令牌数组 */
     const tokens: Record<string, string>[] = [];
     for (const item of tokenList) {
       /**令牌 */
-      const token = await this.redis.hgetall(item);
+      const token = await this.redisService.hgetall(item);
       tokens.push(token);
     }
     return { code: 0, msg: 'ok', data: tokens };
@@ -193,7 +193,7 @@ export class TokenService implements OnApplicationBootstrap {
    * @returns 响应消息
    */
   async destroy(token: string): Promise<Result> {
-    await this.redis.del(`token:${token}`);
+    await this.redisService.del(`token:${token}`);
     return { code: 0, msg: '令牌作废成功' };
   }
 }

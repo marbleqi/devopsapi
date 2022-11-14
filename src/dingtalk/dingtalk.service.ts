@@ -1,32 +1,81 @@
 // 外部依赖
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
+import { EntityManager } from 'typeorm';
 // 内部依赖
 import { RedisService, SettingService } from '../shared';
-import { Ability, AbilityService } from '../auth';
+import {
+  Ability,
+  AbilityService,
+  MenuConfig,
+  MenuEntity,
+  MenuService,
+} from '../auth';
 
 @Injectable()
-export class DingtalkService {
+export class DingtalkService implements OnApplicationBootstrap {
   /**
    * 构造函数
-   * @param client 注入的http服务
-   * @param ability 注入的权限点服务
-   * @param redis 注入的缓存服务
-   * @param setting 注入的配置服务
+   * @param clientService 注入的http服务
+   * @param abilityService 注入的权限点服务
+   * @param redisService 注入的缓存服务
+   * @param settingService 注入的配置服务
    */
   constructor(
-    private readonly client: HttpService,
-    private readonly ability: AbilityService,
-    private readonly redis: RedisService,
-    private readonly setting: SettingService,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly clientService: HttpService,
+    private readonly abilityService: AbilityService,
+    private readonly redisService: RedisService,
+    private readonly settingService: SettingService,
+    private readonly menuService: MenuService,
   ) {
     // 系统管理
-    this.ability.add([
+    this.abilityService.add([
       { id: 400, pid: 0, name: '钉钉', description: '钉钉管理' },
       { id: 410, pid: 400, name: '钉钉配置', description: '配置钉钉参数' },
       { id: 430, pid: 400, name: '钉钉用户管理', description: '钉钉用户管理' },
     ] as Ability[]);
+  }
+
+  async onApplicationBootstrap() {
+    const dingtalkAuth = await this.menuService.get('dingtalk');
+    if (!dingtalkAuth) {
+      const params = {
+        updateUserId: 1,
+        updateAt: Date.now(),
+        createUserId: 1,
+        createAt: Date.now(),
+      };
+      const result = await this.entityManager.insert(MenuEntity, {
+        ...params,
+        pMenuId: 0,
+        link: 'dingtalk',
+        config: {
+          text: '钉钉',
+          description: '钉钉',
+          reuse: true,
+          isLeaf: false,
+          icon: 'coffee',
+        } as MenuConfig,
+        abilities: [300],
+      });
+      const pMenuId = Number(result.identifiers[0].menuId);
+      await this.entityManager.insert(MenuEntity, {
+        ...params,
+        pMenuId,
+        link: '/dingtalk/setting',
+        config: {
+          text: '参数设置',
+          description: '参数设置',
+          reuse: true,
+          isLeaf: true,
+          icon: 'unordered-list',
+        } as MenuConfig,
+        abilities: [],
+      });
+    }
   }
 
   /**
@@ -37,7 +86,7 @@ export class DingtalkService {
   async token(cache = true): Promise<string> {
     if (cache) {
       /**应用凭证 */
-      const token: string = await this.redis.get(`dingtalk`);
+      const token: string = await this.redisService.get(`dingtalk`);
       // 如果应用凭证已缓存，则直接使用缓存的凭证
       if (token) {
         return token;
@@ -45,19 +94,19 @@ export class DingtalkService {
     }
     // 如果不使用缓存，或应用凭证不存在，则重新获取凭证
     /**钉钉配置 */
-    const setting: object = this.setting.read('dingtalk');
+    const setting: object = this.settingService.read('dingtalk');
     console.debug('setting', setting);
     if (setting) {
       const result = await firstValueFrom(
-        this.client.get('https://oapi.dingtalk.com/gettoken', {
+        this.clientService.get('https://oapi.dingtalk.com/gettoken', {
           params: setting,
         }),
       );
       if (result.data.errcode === 0) {
         // 缓存应用凭证
-        await this.redis.set('dingtalk', result.data.access_token);
+        await this.redisService.set('dingtalk', result.data.access_token);
         // 设置缓存时间
-        await this.redis.expire('dingtalk', result.data.expires_in);
+        await this.redisService.expire('dingtalk', result.data.expires_in);
         // 返回缓存值
         return result.data.access_token;
       }

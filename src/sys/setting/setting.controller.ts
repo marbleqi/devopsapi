@@ -19,8 +19,8 @@ export class SettingController {
   ) {
     // 系统配置
     this.ability.add([
-      { id: 113, pid: 110, name: '查看配置', description: '查看系统配置' },
-      { id: 115, pid: 110, name: '修改配置', description: '修改系统配置' },
+      { id: 213, pid: 210, name: '查看配置', description: '查看系统配置' },
+      { id: 215, pid: 210, name: '修改配置', description: '修改系统配置' },
     ] as Ability[]);
   }
   /**
@@ -28,7 +28,7 @@ export class SettingController {
    * @param res 响应上下文
    */
   @Get('show')
-  @Abilities(113)
+  @Abilities(213)
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
     const data = await this.setting.get('sys');
@@ -46,7 +46,7 @@ export class SettingController {
    * @param res 响应上下文
    */
   @Post()
-  @Abilities(115)
+  @Abilities(215)
   async set(@Body() value: SettingDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.setting.set(
       'sys',

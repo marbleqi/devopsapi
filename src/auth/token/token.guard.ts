@@ -5,6 +5,7 @@ import {
   ExecutionContext,
   Injectable,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
@@ -22,7 +23,7 @@ export class TokenGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly reqService: ReqService,
-    private readonly token: TokenService,
+    private readonly tokenService: TokenService,
   ) {}
 
   /**
@@ -90,15 +91,15 @@ export class TokenGuard implements CanActivate {
     /**消息头中的令牌 */
     const token = req.headers.token as string;
     /**令牌验证结果 */
-    const auth: Auth = await this.token.verify(token, abilities);
+    const auth: Auth = await this.tokenService.verify(token, abilities);
     // 令牌验证不通过
     if (auth.invalid) {
       let result: Result;
       if (auth.userId) {
-        result = { code: 403, msg: '用户未授权使用该接口' };
+        result = { code: HttpStatus.FORBIDDEN, msg: '用户未授权使用该接口' };
       } else {
-        status = 401;
-        result = { code: 401, msg: '令牌验证失败' };
+        status = HttpStatus.UNAUTHORIZED;
+        result = { code: HttpStatus.UNAUTHORIZED, msg: '令牌验证失败' };
       }
       this.reqService.insert({
         ...params,

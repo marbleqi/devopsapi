@@ -12,7 +12,7 @@ export abstract class RoleBaseEntity extends CommonBaseEntity {
   description: string;
 
   /**角色配置 */
-  @Column({ type: 'json', name: 'config', comment: '角色配置' })
+  @Column({ type: 'jsonb', name: 'config', comment: '角色配置' })
   config: any;
 
   /**状态，1表示可用，0表示禁用 */
@@ -26,7 +26,7 @@ export abstract class RoleBaseEntity extends CommonBaseEntity {
 
   /**授权权限点 */
   @Column({
-    type: 'json',
+    type: 'jsonb',
     name: 'abilities',
     default: [],
     comment: '授权权限点',

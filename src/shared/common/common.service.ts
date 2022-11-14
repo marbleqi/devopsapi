@@ -21,6 +21,7 @@ export class CommonService {
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
+
   /**
    * 生成随机字符串
    * @param length 字符串长度

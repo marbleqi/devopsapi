@@ -16,22 +16,22 @@ import { DingtalkUserEntity, DingtalkService } from '../dingtalk';
 export class PassportService {
   /**
    * 构造函数
-   * @param client 注入的http服务
+   * @param clientService 注入的http服务
    * @param entityManager 注入的实体管理器服务
    * @param redis 注入的缓存服务
    * @param common 注入的通用服务
-   * @param setting 注入的共享配置服务
-   * @param wxwork 注入的企业微信服务
-   * @param dingtalk 注入的钉钉服务
+   * @param settingService 注入的共享配置服务
+   * @param wxworkService 注入的企业微信服务
+   * @param dingtalkService 注入的钉钉服务
    */
   constructor(
-    private readonly client: HttpService,
+    private readonly clientService: HttpService,
     @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly redis: RedisService,
     private readonly common: CommonService,
-    private readonly setting: SettingService,
-    private readonly wxwork: WxworkService,
-    private readonly dingtalk: DingtalkService,
+    private readonly settingService: SettingService,
+    private readonly wxworkService: WxworkService,
+    private readonly dingtalkService: DingtalkService,
   ) {}
 
   /**
@@ -41,7 +41,7 @@ export class PassportService {
    */
   private async create(userId: number): Promise<Result> {
     /**系统配置参数 */
-    const setting: object = this.setting.read('sys');
+    const setting: object = this.settingService.read('sys');
     /**令牌 */
     let token: string;
     /**令牌已存在标记 */
@@ -83,7 +83,7 @@ export class PassportService {
    * @returns 响应消息
    */
   async startup(): Promise<Result> {
-    const app: object = this.setting.read('sys');
+    const app: object = this.settingService.read('sys');
     return { code: 0, msg: 'ok', data: { app } };
   }
 
@@ -95,7 +95,7 @@ export class PassportService {
   async qrurl(type: string): Promise<Result> {
     if (type === 'wxwork') {
       /**企业微信配置参数 */
-      const setting: object = this.setting.read('wxwork');
+      const setting: object = this.settingService.read('wxwork');
       return {
         code: 0,
         msg: 'ok',
@@ -107,7 +107,7 @@ export class PassportService {
     }
     if (type === 'dingtalk') {
       /**钉钉配置参数 */
-      const setting: object = this.setting.read('dingtalk');
+      const setting: object = this.settingService.read('dingtalk');
       return { code: 0, msg: 'ok', data: { appkey: setting['appkey'] } };
     }
   }
@@ -124,7 +124,7 @@ export class PassportService {
     loginPsw: string,
     loginIp: string,
   ): Promise<Result> {
-    const setting: object = this.setting.read('sys');
+    const setting: object = this.settingService.read('sys');
     /**系统配置 */
     if (!setting['password']) {
       return { code: 401, msg: '系统不允许使用密码登陆' };
@@ -226,7 +226,7 @@ export class PassportService {
   ): Promise<Result> {
     console.debug(type, value, loginIp);
     /**系统配置 */
-    const setting: object = this.setting.read('sys');
+    const setting: object = this.settingService.read('sys');
     let userId: number;
     // 开始临时code换用户ID
     if (type === 'dingtalk') {
@@ -235,11 +235,11 @@ export class PassportService {
         return { code: 401, msg: '系统不允许使用钉钉登陆' };
       }
       /**钉钉配置 */
-      const dingtalk: object = this.setting.read('dingtalk');
+      const dingtalk: object = this.settingService.read('dingtalk');
       console.debug('dingtalk', dingtalk);
       /**接口调用结果 */
       let result: any = await firstValueFrom(
-        this.client.post(
+        this.clientService.post(
           'https://api.dingtalk.com/v1.0/oauth2/userAccessToken',
           {
             clientId: dingtalk['appkey'],
@@ -258,10 +258,13 @@ export class PassportService {
       const access_token = result.data.accessToken;
       // 用户凭证换用户unionId
       result = await firstValueFrom(
-        this.client.get('https://api.dingtalk.com/v1.0/contact/users/me', {
-          headers: { 'x-acs-dingtalk-access-token': access_token },
-          validateStatus: () => true,
-        }),
+        this.clientService.get(
+          'https://api.dingtalk.com/v1.0/contact/users/me',
+          {
+            headers: { 'x-acs-dingtalk-access-token': access_token },
+            validateStatus: () => true,
+          },
+        ),
       );
       console.debug('用户信息', result.data);
       if (result.status != 200) {
@@ -290,10 +293,10 @@ export class PassportService {
         return { code: 401, msg: '系统不允许使用企业微信登陆' };
       }
       /**应用凭证 */
-      const access_token = await this.wxwork.token('app');
+      const access_token = await this.wxworkService.token('app');
       /**接口调用结果 */
       const result: any = await firstValueFrom(
-        this.client.get(
+        this.clientService.get(
           'https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo',
           { params: { access_token, code: value.code } },
         ),
@@ -302,7 +305,7 @@ export class PassportService {
       if (result.data.errcode) {
         // 如果是应用凭证过期，则重新获取应用凭证
         if (result.data.errcode === 40014) {
-          await this.wxwork.token('app', false);
+          await this.wxworkService.token('app', false);
         }
         return { code: result.data.errcode, msg: result.data.errmsg };
       }

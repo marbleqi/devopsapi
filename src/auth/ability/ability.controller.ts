@@ -34,7 +34,7 @@ export class AbilityController {
   ) {
     // 权限点管理
     this.abilityService.add([
-      { id: 212, pid: 210, name: '权限点列表', description: '权限点列表' },
+      { id: 112, pid: 110, name: '权限点列表', description: '权限点列表' },
     ] as Ability[]);
   }
 
@@ -43,7 +43,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(212)
+  @Abilities(112)
   index(@Res() res: Response): void {
     res.locals.result = { code: 0, msg: 'ok', data: this.abilityService.get() };
     res.status(200).json(res.locals.result);
@@ -55,7 +55,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get(':id/menu')
-  @Abilities(223)
+  @Abilities(123)
   async menu(
     @Param('id', new ParseIntPipe()) id: number,
     @Res() res: Response,
@@ -70,7 +70,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Get(':id/role')
-  @Abilities(233)
+  @Abilities(133)
   async role(
     @Param('id', new ParseIntPipe()) id: number,
     @Res() res: Response,
@@ -86,7 +86,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Post(':id/menu')
-  @Abilities(226)
+  @Abilities(126)
   async setmenu(
     @Param('id', new ParseIntPipe()) id: number,
     @Body('objectlist') menuIds: number[],
@@ -108,7 +108,7 @@ export class AbilityController {
    * @param res 响应上下文
    */
   @Post(':id/role')
-  @Abilities(236)
+  @Abilities(136)
   async setrole(
     @Param('id', new ParseIntPipe()) id: number,
     @Body('objectlist') roleIds: number[],

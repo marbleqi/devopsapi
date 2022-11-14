@@ -11,16 +11,16 @@ import { WxworkSettingDto, WxworkService } from '..';
 export class SettingController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param setting 注入的配置服务
-   * @param queue 注入的队列服务
+   * @param abilityService 注入的权限点服务
+   * @param settingService 注入的配置服务
+   * @param wxworkService 注入的企业微信服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly setting: SettingService,
-    private readonly wxwork: WxworkService,
+    private readonly abilityService: AbilityService,
+    private readonly settingService: SettingService,
+    private readonly wxworkService: WxworkService,
   ) {
-    this.ability.add([
+    this.abilityService.add([
       { id: 313, pid: 310, name: '查企业微信配置', description: '查配置信息' },
       { id: 316, pid: 310, name: '改企业微信配置', description: '改配置信息' },
     ] as Ability[]);
@@ -33,7 +33,7 @@ export class SettingController {
   @Abilities(313)
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
-    const data: object = await this.setting.get('wxwork');
+    const data: object = await this.settingService.get('wxwork');
     if (data) {
       res.locals.result = { code: 0, msg: 'ok', data };
     } else {
@@ -53,7 +53,7 @@ export class SettingController {
     @Body() value: WxworkSettingDto,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.setting.set(
+    res.locals.result = await this.settingService.set(
       'wxwork',
       value,
       res.locals.userId,
@@ -62,8 +62,8 @@ export class SettingController {
     res.status(200).json(res.locals.result);
     // 配置修改成功后，立即重新刷新token
     if (!res.locals.result.code) {
-      this.wxwork.token('app', false);
-      this.wxwork.token('checkin', false);
+      this.wxworkService.token('app', false);
+      this.wxworkService.token('checkin', false);
     }
   }
 }

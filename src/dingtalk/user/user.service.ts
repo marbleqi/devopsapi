@@ -12,7 +12,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 // 内部依赖
 import { Result, OperateService, CommonService } from '../../shared';
-import { UserEntity, UserService as AuthUser } from '../../auth';
+import { UserEntity, UserService as AuthUserService } from '../../auth';
 import {
   DingtalkUserEntity,
   DingtalkUserLogEntity,
@@ -27,21 +27,21 @@ export class UserService {
   /**
    * 构造函数
    * @param eventEmitter 注入的http服务
-   * @param client 注入的通用服务
+   * @param clientService 注入的通用服务
    * @param operateService 注入的操作序号服务
    * @param commonService 注入的通用服务
    * @param dingtalkService 注入的钉钉服务
-   * @param authUser 注入的认证模块的用户服务
+   * @param authUserService 注入的认证模块的用户服务
    * @param entityManager 注入的实体管理器
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly eventEmitter: EventEmitter2,
-    private readonly client: HttpService,
+    private readonly clientService: HttpService,
     private readonly operateService: OperateService,
     private readonly commonService: CommonService,
     private readonly dingtalkService: DingtalkService,
-    private readonly authUser: AuthUser,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly authUserService: AuthUserService,
   ) {}
 
   /**
@@ -57,7 +57,7 @@ export class UserService {
     const access_token = await this.dingtalkService.token();
     /**接口结果 */
     const result: any = await firstValueFrom(
-      this.client.post(
+      this.clientService.post(
         'https://oapi.dingtalk.com/topapi/v2/department/listsub',
         { dept_id },
         { params: { access_token } },
@@ -89,7 +89,7 @@ export class UserService {
     const access_token = await this.dingtalkService.token();
     /**接口结果 */
     const result: any = await firstValueFrom(
-      this.client.post(
+      this.clientService.post(
         'https://oapi.dingtalk.com/topapi/v2/user/list',
         { dept_id, cursor: 0, size: 100 },
         { params: { access_token } },
@@ -180,7 +180,7 @@ export class UserService {
       return { code: 400, msg: '用户名已使用' };
     }
     /**请求结果 */
-    const result: Result = await this.authUser.create(
+    const result: Result = await this.authUserService.create(
       {
         loginName: value.loginName,
         userName: value.userName,

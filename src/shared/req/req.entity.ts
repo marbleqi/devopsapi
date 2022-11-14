@@ -38,7 +38,7 @@ export class ReqEntity {
 
   /**请求信息 */
   @Column({
-    type: 'json',
+    type: 'jsonb',
     name: 'request',
     nullable: true,
     comment: '请求信息',
@@ -50,7 +50,7 @@ export class ReqEntity {
   status: number;
 
   /**响应结果 */
-  @Column({ type: 'json', name: 'result', nullable: true, comment: '响应结果' })
+  @Column({ type: 'jsonb', name: 'result', nullable: true, comment: '响应结果' })
   result: object;
 
   /**客户端IP */

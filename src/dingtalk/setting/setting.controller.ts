@@ -11,15 +11,16 @@ import { DingtalkSettingDto, DingtalkService } from '..';
 export class SettingController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param setting 注入的配置服务
+   * @param abilityService 注入的权限点服务
+   * @param settingService 注入的配置服务
+   * @param dingtalkService 注入的钉钉服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly setting: SettingService,
-    private readonly dingtalk: DingtalkService,
+    private readonly abilityService: AbilityService,
+    private readonly settingService: SettingService,
+    private readonly dingtalkService: DingtalkService,
   ) {
-    this.ability.add([
+    this.abilityService.add([
       { id: 413, pid: 410, name: '查看钉钉配置', description: '查看钉钉配置' },
       { id: 416, pid: 410, name: '修改钉钉配置', description: '修改钉钉配置' },
     ] as Ability[]);
@@ -33,7 +34,7 @@ export class SettingController {
   @Abilities(413)
   async get(@Res() res: Response): Promise<void> {
     /**配置对象 */
-    const data: object = await this.setting.get('dingtalk');
+    const data: object = await this.settingService.get('dingtalk');
     if (data) {
       res.locals.result = { code: 0, msg: 'ok', data };
     } else {
@@ -53,7 +54,7 @@ export class SettingController {
     @Body() value: DingtalkSettingDto,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.setting.set(
+    res.locals.result = await this.settingService.set(
       'dingtalk',
       value,
       res.locals.userId,
@@ -62,7 +63,7 @@ export class SettingController {
     res.status(200).json(res.locals.result);
     // 配置修改成功后，立即重新刷新token
     if (!res.locals.result.code) {
-      this.dingtalk.token(false);
+      this.dingtalkService.token(false);
     }
   }
 }

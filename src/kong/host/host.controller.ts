@@ -88,10 +88,7 @@ export class HostController {
    */
   @Post('create')
   @Abilities(515)
-  async create(
-    @Body() value: HostDto,
-    @Res() res: Response,
-  ): Promise<void> {
+  async create(@Body() value: HostDto, @Res() res: Response): Promise<void> {
     res.locals.result = await this.hostService.create(
       value,
       res.locals.userId,

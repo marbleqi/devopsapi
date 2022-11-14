@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('upstream')
+@Controller('kong/upstream')
 export class UpstreamController {}

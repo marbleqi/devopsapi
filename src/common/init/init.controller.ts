@@ -17,12 +17,12 @@ import { InitService } from '..';
 export class InitController {
   /**
    * 构造函数
-   * @param token 注入的令牌服务
-   * @param init 注入的初始化服务
+   * @param tokenService 注入的令牌服务
+   * @param initService 注入的初始化服务
    */
   constructor(
-    private readonly token: TokenService,
-    private readonly init: InitService,
+    private readonly tokenService: TokenService,
+    private readonly initService: InitService,
   ) {}
 
   /**
@@ -36,9 +36,9 @@ export class InitController {
     @Res() res: Response,
   ): Promise<void> {
     /**令牌验证结果 */
-    const auth: Auth = await this.token.verify(token);
+    const auth: Auth = await this.tokenService.verify(token);
     res.locals.userId = auth.userId;
-    res.locals.result = await this.init.startup(auth);
+    res.locals.result = await this.initService.startup(auth);
     res.status(200).json(res.locals.result);
   }
 
@@ -48,7 +48,7 @@ export class InitController {
    */
   @Get('sys')
   sys(@Res() res: Response): void {
-    res.locals.result = this.init.sys();
+    res.locals.result = this.initService.sys();
     res.status(200).json(res.locals.result);
   }
 
@@ -62,7 +62,7 @@ export class InitController {
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.init.role(operateId);
+    res.locals.result = await this.initService.role(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -76,7 +76,7 @@ export class InitController {
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.init.user(operateId);
+    res.locals.result = await this.initService.user(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -90,7 +90,7 @@ export class InitController {
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.init.menu(operateId);
+    res.locals.result = await this.initService.menu(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -104,7 +104,7 @@ export class InitController {
     @Headers('token') token: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.init.refresh(token);
+    res.locals.result = await this.initService.refresh(token);
     res.status(200).json(res.locals.result);
   }
 }

@@ -25,23 +25,23 @@ import {
 export class RoleController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param role 注入的角色服务
-   * @param user 注入的用户服务
+   * @param abilityService 注入的权限点服务
+   * @param roleService 注入的角色服务
+   * @param userService 注入的用户服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly role: RoleService,
-    private readonly user: UserService,
+    private readonly abilityService: AbilityService,
+    private readonly roleService: RoleService,
+    private readonly userService: UserService,
   ) {
     // 角色管理
-    this.ability.add([
-      { id: 232, pid: 230, name: '角色列表', description: '查看角色列表' },
-      { id: 233, pid: 230, name: '角色详情', description: '查看角色详情' },
-      { id: 234, pid: 230, name: '角色更新历史', description: '角色更新历史' },
-      { id: 235, pid: 230, name: '创建角色', description: '创建新的角色' },
-      { id: 236, pid: 230, name: '修改角色', description: '修改已有的角色' },
-      { id: 237, pid: 230, name: '角色排序', description: '对角色进行排序' },
+    this.abilityService.add([
+      { id: 132, pid: 130, name: '角色列表', description: '查看角色列表' },
+      { id: 133, pid: 130, name: '角色详情', description: '查看角色详情' },
+      { id: 134, pid: 130, name: '角色更新历史', description: '角色更新历史' },
+      { id: 135, pid: 130, name: '创建角色', description: '创建新的角色' },
+      { id: 136, pid: 130, name: '修改角色', description: '修改已有的角色' },
+      { id: 137, pid: 130, name: '角色排序', description: '对角色进行排序' },
     ] as Ability[]);
   }
 
@@ -51,12 +51,12 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(232)
+  @Abilities(132)
   async index(
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.role.index(operateId);
+    res.locals.result = await this.roleService.index(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -66,12 +66,12 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get(':roleId/show')
-  @Abilities(233)
+  @Abilities(133)
   async show(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.role.show(roleId);
+    res.locals.result = await this.roleService.show(roleId);
     res.status(200).json(res.locals.result);
   }
 
@@ -81,12 +81,12 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Get(':roleId/log')
-  @Abilities(234)
+  @Abilities(134)
   async log(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.role.log(roleId);
+    res.locals.result = await this.roleService.log(roleId);
     res.status(200).json(res.locals.result);
   }
 
@@ -96,9 +96,9 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(235)
+  @Abilities(135)
   async create(@Body() value: RoleDto, @Res() res: Response): Promise<void> {
-    res.locals.result = await this.role.create(
+    res.locals.result = await this.roleService.create(
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -113,13 +113,13 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post(':roleId/update')
-  @Abilities(236)
+  @Abilities(136)
   async update(
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Body() value: RoleDto,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.role.update(
+    res.locals.result = await this.roleService.update(
       roleId,
       value,
       res.locals.userId,
@@ -134,9 +134,9 @@ export class RoleController {
    * @param res 响应上下文
    */
   @Post('sort')
-  @Abilities(237)
+  @Abilities(137)
   async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
-    res.locals.result = await this.role.sort(value);
+    res.locals.result = await this.roleService.sort(value);
     res.status(200).json(res.locals.result);
   }
 
@@ -151,7 +151,7 @@ export class RoleController {
     @Param('roleId', new ParseIntPipe()) roleId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.granted(roleId);
+    res.locals.result = await this.userService.granted(roleId);
     res.status(200).json(res.locals.result);
   }
 
@@ -168,7 +168,7 @@ export class RoleController {
     @Body() userIds: number[],
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.grant(
+    res.locals.result = await this.userService.grant(
       roleId,
       userIds,
       res.locals.userId,

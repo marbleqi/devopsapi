@@ -12,7 +12,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 // 内部依赖
 import { Result, OperateService, CommonService } from '../../shared';
-import { UserEntity, UserService as AuthUser } from '../../auth';
+import { UserEntity, UserService as AuthUserService } from '../../auth';
 import {
   WxworkUserEntity,
   WxworkUserLogEntity,
@@ -26,22 +26,22 @@ import {
 export class UserService {
   /**
    * 构造函数
+   * @param entityManager 注入的实体管理器
    * @param eventEmitter 注入的http服务
-   * @param client 注入的通用服务
+   * @param clientService 注入的通用服务
    * @param operateService 注入的操作序号服务
    * @param commonService 注入的通用服务
    * @param wxworkService 注入的钉钉服务
-   * @param authUser 注入的认证模块的用户服务
-   * @param entityManager 注入的实体管理器
+   * @param authUserService 注入的认证模块的用户服务
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly eventEmitter: EventEmitter2,
-    private readonly client: HttpService,
+    private readonly clientService: HttpService,
     private readonly operateService: OperateService,
     private readonly commonService: CommonService,
     private readonly wxworkService: WxworkService,
-    private readonly authUser: AuthUser,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly authUserService: AuthUserService,
   ) {}
 
   /**获取部门列表 */
@@ -52,7 +52,7 @@ export class UserService {
     const access_token = await this.wxworkService.token('app');
     /**接口调用结果 */
     const result: any = await firstValueFrom(
-      this.client.get(apiurl, { params: { access_token, id: 0 } }),
+      this.clientService.get(apiurl, { params: { access_token, id: 0 } }),
     );
     // 判断从企业微信接口获得的数据是否正常
     if (result.data.errcode) {
@@ -84,13 +84,16 @@ export class UserService {
     const access_token = await this.wxworkService.token('app');
     /**接口结果 */
     const result: any = await firstValueFrom(
-      this.client.get('https://qyapi.weixin.qq.com/cgi-bin/user/simplelist', {
-        params: {
-          access_token,
-          department_id: departId,
-          fetch_child: 1,
+      this.clientService.get(
+        'https://qyapi.weixin.qq.com/cgi-bin/user/simplelist',
+        {
+          params: {
+            access_token,
+            department_id: departId,
+            fetch_child: 1,
+          },
         },
-      }),
+      ),
     );
     // 判断从企业微信接口获得的数据是否正常
     if (result.data.errcode) {
@@ -158,7 +161,7 @@ export class UserService {
       return { code: 400, msg: '用户名已使用' };
     }
     /**请求结果 */
-    const result: Result = await this.authUser.create(
+    const result: Result = await this.authUserService.create(
       {
         loginName: value.loginName,
         userName: value.userName,

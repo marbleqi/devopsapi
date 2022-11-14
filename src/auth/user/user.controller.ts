@@ -17,22 +17,22 @@ import { Ability, Abilities, UserDto, AbilityService, UserService } from '..';
 export class UserController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param user 注入的用户服务
+   * @param abilityService 注入的权限点服务
+   * @param userService 注入的用户服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly user: UserService,
+    private readonly abilityService: AbilityService,
+    private readonly userService: UserService,
   ) {
     // 用户管理
-    this.ability.add([
-      { id: 242, pid: 240, name: '用户列表', description: '查看用户列表' },
-      { id: 243, pid: 240, name: '用户详情', description: '查看用户详情' },
-      { id: 244, pid: 240, name: '用户更新历史', description: '用户更新历史' },
-      { id: 245, pid: 240, name: '创建用户', description: '创建新的用户' },
-      { id: 246, pid: 240, name: '更新用户', description: '更新用户信息' },
-      { id: 248, pid: 240, name: '用户解锁', description: '对用户进行解锁' },
-      { id: 249, pid: 240, name: '重置密码', description: '重置用户密码' },
+    this.abilityService.add([
+      { id: 142, pid: 140, name: '用户列表', description: '查看用户列表' },
+      { id: 143, pid: 140, name: '用户详情', description: '查看用户详情' },
+      { id: 144, pid: 140, name: '用户更新历史', description: '用户更新历史' },
+      { id: 145, pid: 140, name: '创建用户', description: '创建新的用户' },
+      { id: 146, pid: 140, name: '更新用户', description: '更新用户信息' },
+      { id: 148, pid: 140, name: '用户解锁', description: '对用户进行解锁' },
+      { id: 149, pid: 140, name: '重置密码', description: '重置用户密码' },
     ] as Ability[]);
   }
 
@@ -42,12 +42,12 @@ export class UserController {
    * @param res 响应上下文
    */
   @Get('index')
-  @Abilities(242)
+  @Abilities(142)
   async index(
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.index(operateId);
+    res.locals.result = await this.userService.index(operateId);
     res.status(200).json(res.locals.result);
   }
 
@@ -57,27 +57,27 @@ export class UserController {
    * @param res 响应上下文
    */
   @Get(':userId/show')
-  @Abilities(243)
+  @Abilities(143)
   async show(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.show(userId);
+    res.locals.result = await this.userService.show(userId);
     res.status(200).json(res.locals.result);
   }
 
   /**
    * 获取用户变更日志
-   * @param id 用户ID
+   * @param userId 用户ID
    * @param res 响应上下文
    */
   @Get(':userId/log')
-  @Abilities(244)
+  @Abilities(144)
   async log(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.log(userId);
+    res.locals.result = await this.userService.log(userId);
     res.status(200).json(res.locals.result);
   }
 
@@ -87,9 +87,9 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post('create')
-  @Abilities(245)
+  @Abilities(145)
   async create(@Body() value: UserDto, @Res() res: Response): Promise<void> {
-    res.locals.result = await this.user.create(
+    res.locals.result = await this.userService.create(
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -104,13 +104,13 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post(':userId/update')
-  @Abilities(246)
+  @Abilities(146)
   async update(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Body() value: UserDto,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.update(
+    res.locals.result = await this.userService.update(
       userId,
       value,
       res.locals.userId,
@@ -125,12 +125,12 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post(':userId/unlock')
-  @Abilities(248)
+  @Abilities(148)
   async unlock(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.user.unlock(
+    res.locals.result = await this.userService.unlock(
       userId,
       res.locals.userId,
       res.locals.reqId,
@@ -145,7 +145,7 @@ export class UserController {
    * @param res 响应上下文
    */
   @Post(':userId/resetpsw')
-  @Abilities(249)
+  @Abilities(149)
   async resetpsw(
     @Param('userId', new ParseIntPipe()) userId: number,
     @Body('newPassword') newPassword: string,
@@ -153,7 +153,7 @@ export class UserController {
   ): Promise<void> {
     // 将上下文的密码替换，避免将密码明文记入日志
     res.locals.request.body.newPassword = '************';
-    res.locals.result = await this.user.resetpsw(
+    res.locals.result = await this.userService.resetpsw(
       userId,
       newPassword,
       res.locals.userId,

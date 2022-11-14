@@ -8,7 +8,7 @@ import {
   FindOptionsWhere,
   MoreThan,
 } from 'typeorm';
-import { genSalt, hash } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
 // 内部依赖
 import {
   Result,
@@ -28,11 +28,11 @@ export class UserService implements OnApplicationBootstrap {
    * @param entityManager 实体管理器
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly eventEmitter: EventEmitter2,
     private readonly operateService: OperateService,
     private readonly queueService: QueueService,
     private readonly commonService: CommonService,
-    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async onApplicationBootstrap() {
@@ -194,6 +194,44 @@ export class UserService implements OnApplicationBootstrap {
     } else {
       return { code: 400, msg: '更新角色失败', operateId, reqId };
     }
+  }
+
+  async secure(userId: number, value: object): Promise<Result> {
+    /**用户信息 */
+    const user: UserEntity = await this.entityManager.findOne(UserEntity, {
+      select: [
+        'userId',
+        'loginName',
+        'config',
+        'status',
+        'createUserId',
+        'createAt',
+        'updateUserId',
+        'updateAt',
+        'operateId',
+        'reqId',
+      ],
+      where: { userId },
+    });
+    if (!user) {
+      return { code: 404, msg: '没有获取用户信息' };
+    }
+    if (user.pswTimes >= 5) {
+      return { code: 401, msg: '密码错误超过5次，请联系管理员重置密码！' };
+    }
+    const check = await compare(value['oldpsw'], user.password);
+    if (!check) {
+      return {
+        code: 401,
+        msg: `密码已连续输错${user.pswTimes + 1} 次，超过5次将锁定！`,
+      };
+    }
+    /**密码盐 */
+    const salt = await genSalt();
+    /**密码密文 */
+    const password = await hash(value['newpsw'], salt);
+    await this.entityManager.update(UserEntity, { userId }, { password });
+    return { code: 0, msg: '密码已更新' };
   }
 
   /**

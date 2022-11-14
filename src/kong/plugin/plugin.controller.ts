@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('plugin')
+@Controller('kong/plugin')
 export class PluginController {}

@@ -61,11 +61,11 @@ export class QueueService {
 
   /**
    * 删除任务
-   * @param condition 任务ID清单
+   * @param idlist 任务ID清单
    * @returns 响应消息
    */
-  async remove(condition: any): Promise<Result> {
-    for (const id of condition.idlist) {
+  async remove(idlist: number[]): Promise<Result> {
+    for (const id of idlist) {
       const job = await this.queue.getJob(id);
       job.remove();
     }

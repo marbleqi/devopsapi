@@ -8,18 +8,18 @@ import { Ability, Abilities, AbilityService, TokenService } from '..';
 export class TokenController {
   /**
    * 构造函数
-   * @param ability 注入的权限点服务
-   * @param token 注入的令牌服务
+   * @param abilityService 注入的权限点服务
+   * @param tokenService 注入的令牌服务
    */
   constructor(
-    private readonly ability: AbilityService,
-    private readonly token: TokenService,
+    private readonly abilityService: AbilityService,
+    private readonly tokenService: TokenService,
   ) {
     // 令牌管理
-    this.ability.add([
-      { id: 252, pid: 250, name: '令牌列表', description: '查看令牌列表' },
-      { id: 254, pid: 250, name: '缓存令牌', description: '重新缓存令牌' },
-      { id: 258, pid: 250, name: '作废令牌', description: '作废单个令牌' },
+    this.abilityService.add([
+      { id: 152, pid: 150, name: '令牌列表', description: '查看令牌列表' },
+      { id: 154, pid: 150, name: '缓存令牌', description: '重新缓存令牌' },
+      { id: 158, pid: 150, name: '作废令牌', description: '作废单个令牌' },
     ] as Ability[]);
   }
 
@@ -28,9 +28,9 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Get()
-  @Abilities(252)
+  @Abilities(152)
   async index(@Res() res: Response): Promise<void> {
-    res.locals.result = await this.token.index();
+    res.locals.result = await this.tokenService.index();
     res.status(200).json(res.locals.result);
   }
 
@@ -39,9 +39,9 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Post()
-  @Abilities(255)
+  @Abilities(155)
   async init(@Res() res: Response): Promise<void> {
-    res.locals.result = await this.token.init();
+    res.locals.result = await this.tokenService.init();
     res.status(200).json(res.locals.result);
   }
 
@@ -51,12 +51,12 @@ export class TokenController {
    * @param res 响应上下文
    */
   @Delete(':token')
-  @Abilities(258)
+  @Abilities(158)
   async destroy(
     @Param('token') token: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.token.destroy(token);
+    res.locals.result = await this.tokenService.destroy(token);
     res.status(200).json(res.locals.result);
   }
 }
