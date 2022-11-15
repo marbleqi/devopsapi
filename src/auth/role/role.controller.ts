@@ -34,15 +34,25 @@ export class RoleController {
     private readonly roleService: RoleService,
     private readonly userService: UserService,
   ) {
+    const type = '接口';
+    const moduleName = '认证';
+    const objectName = '角色';
     // 角色管理
-    this.abilityService.add([
-      { id: 132, pid: 130, name: '角色列表', description: '查看角色列表' },
-      { id: 133, pid: 130, name: '角色详情', description: '查看角色详情' },
-      { id: 134, pid: 130, name: '角色更新历史', description: '角色更新历史' },
-      { id: 135, pid: 130, name: '创建角色', description: '创建新的角色' },
-      { id: 136, pid: 130, name: '修改角色', description: '修改已有的角色' },
-      { id: 137, pid: 130, name: '角色排序', description: '对角色进行排序' },
-    ] as Ability[]);
+    this.abilityService.add(
+      [
+        { id: 132, pid: 130, name: '角色列表', description: '查看角色列表' },
+        { id: 133, pid: 130, name: '角色详情', description: '查看角色详情' },
+        {
+          id: 134,
+          pid: 130,
+          name: '角色更新历史',
+          description: '角色更新历史',
+        },
+        { id: 135, pid: 130, name: '创建角色', description: '创建新的角色' },
+        { id: 136, pid: 130, name: '修改角色', description: '修改已有的角色' },
+        { id: 137, pid: 130, name: '角色排序', description: '对角色进行排序' },
+      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    );
   }
 
   /**

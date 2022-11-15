@@ -1,3 +1,4 @@
+// 注：需要按照依赖关系顺序导入
 export * from './user/user.entity';
 export * from './setting/setting.dto';
 export * from './user/user.dto';

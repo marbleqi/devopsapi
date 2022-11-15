@@ -25,21 +25,26 @@ export class ReqController {
     private readonly abilityService: AbilityService,
     private readonly reqService: ReqService,
   ) {
+    const type = '接口';
+    const moduleName = '系统管理';
+    const objectName = '日志';
     // 日志管理
-    this.abilityService.add([
-      {
-        id: 222,
-        pid: 220,
-        name: '日志列表',
-        description: '查看日志列表，返回较多字段，用于列表查看',
-      },
-      {
-        id: 223,
-        pid: 220,
-        name: '日志详情',
-        description: '查看日志详情，编辑页面初始化时数据',
-      },
-    ] as Ability[]);
+    this.abilityService.add(
+      [
+        {
+          id: 222,
+          pid: 220,
+          name: '日志列表',
+          description: '查看日志列表，返回较多字段，用于列表查看',
+        },
+        {
+          id: 223,
+          pid: 220,
+          name: '日志详情',
+          description: '查看日志详情，编辑页面初始化时数据',
+        },
+      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    );
   }
 
   /**

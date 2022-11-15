@@ -41,13 +41,16 @@ export class DingtalkService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const dingtalkAuth = await this.menuService.get('dingtalk');
-    if (!dingtalkAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (dingtalkAuth) {
+      pMenuId = dingtalkAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
@@ -59,10 +62,12 @@ export class DingtalkService implements OnApplicationBootstrap {
           isLeaf: false,
           icon: 'coffee',
         } as MenuConfig,
-        abilities: [300],
+        abilities: [400],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, {
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
         ...params,
         pMenuId,
         link: '/dingtalk/setting',
@@ -73,8 +78,24 @@ export class DingtalkService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'unordered-list',
         } as MenuConfig,
-        abilities: [],
-      });
+        abilities: [410],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/dingtalk/user',
+        config: {
+          text: '用户',
+          description: '用户',
+          reuse: true,
+          isLeaf: true,
+          icon: 'user',
+        } as MenuConfig,
+        abilities: [430],
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 

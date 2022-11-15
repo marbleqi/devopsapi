@@ -40,70 +40,153 @@ export class KongService implements OnApplicationBootstrap {
 
   /**初始化 */
   async onApplicationBootstrap() {
-    console.debug('KONG服务初始化');
     const kongAuth = await this.menuService.get('kong');
-    if (!kongAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (kongAuth) {
+      pMenuId = kongAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
         link: 'kong',
         config: {
-          text: '系统管理',
-          description: '系统管理',
+          text: 'KONG管理',
+          description: 'KONG管理',
           reuse: true,
           isLeaf: false,
           icon: 'form',
         } as MenuConfig,
-        abilities: [200],
+        abilities: [500],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, [
-        {
-          ...params,
-          pMenuId,
-          link: '/kong/host',
-          config: {
-            text: '站点',
-            description: '站点',
-            reuse: true,
-            isLeaf: true,
-            icon: 'form',
-          } as MenuConfig,
-          abilities: [210],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/kong/route',
-          config: {
-            text: '路由',
-            description: '路由',
-            reuse: true,
-            isLeaf: true,
-            icon: 'unordered-list',
-          } as MenuConfig,
-          abilities: [220],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/kong/service',
-          config: {
-            text: '服务',
-            description: '服务',
-            reuse: true,
-            isLeaf: true,
-            icon: 'ordered-list',
-          } as MenuConfig,
-          abilities: [230],
-        },
-      ]);
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/host',
+        config: {
+          text: '站点',
+          description: '站点',
+          reuse: true,
+          isLeaf: true,
+          icon: 'form',
+        } as MenuConfig,
+        abilities: [510],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/new',
+        config: {
+          text: '新建代理',
+          description: '创建服务及路由',
+          reuse: true,
+          isLeaf: true,
+          icon: 'plus',
+        } as MenuConfig,
+        abilities: [520],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/route',
+        config: {
+          text: '路由',
+          description: '路由',
+          reuse: true,
+          isLeaf: true,
+          icon: 'unordered-list',
+        } as MenuConfig,
+        abilities: [520],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/service',
+        config: {
+          text: '服务',
+          description: '服务',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [530],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/consumer',
+        config: {
+          text: '用户',
+          description: '用户',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [540],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/certificate',
+        config: {
+          text: '证书',
+          description: '证书',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [550],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/upstream',
+        config: {
+          text: '上游',
+          description: '上游',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [560],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/target',
+        config: {
+          text: '目标',
+          description: '目标',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [570],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/kong/plugin',
+        config: {
+          text: '插件',
+          description: '插件',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [580],
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 }

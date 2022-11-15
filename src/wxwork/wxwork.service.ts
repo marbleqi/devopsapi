@@ -46,13 +46,16 @@ export class WxworkService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const wxworkAuth = await this.menuService.get('wxwork');
-    if (!wxworkAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (wxworkAuth) {
+      pMenuId = wxworkAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
@@ -66,8 +69,10 @@ export class WxworkService implements OnApplicationBootstrap {
         } as MenuConfig,
         abilities: [300],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, {
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
         ...params,
         pMenuId,
         link: '/wxwork/setting',
@@ -78,8 +83,24 @@ export class WxworkService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'unordered-list',
         } as MenuConfig,
-        abilities: [],
-      });
+        abilities: [310],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/wxwork/user',
+        config: {
+          text: '用户',
+          description: '用户',
+          reuse: true,
+          isLeaf: true,
+          icon: 'user',
+        } as MenuConfig,
+        abilities: [330],
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 

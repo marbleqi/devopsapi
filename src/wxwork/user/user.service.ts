@@ -1,8 +1,8 @@
 // 外部依赖
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { HttpService } from '@nestjs/axios';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import {
   EntityManager,
   FindOptionsSelect,

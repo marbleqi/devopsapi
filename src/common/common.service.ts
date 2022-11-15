@@ -18,13 +18,16 @@ export class CommonService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const commonAuth = await this.menuService.get('common');
-    if (!commonAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (commonAuth) {
+      pMenuId = commonAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
@@ -38,8 +41,10 @@ export class CommonService implements OnApplicationBootstrap {
         } as MenuConfig,
         abilities: [],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, {
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
         ...params,
         pMenuId,
         link: '/common/home',
@@ -51,7 +56,10 @@ export class CommonService implements OnApplicationBootstrap {
           icon: 'appstore',
         } as MenuConfig,
         abilities: [],
-      });
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 }

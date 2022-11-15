@@ -66,13 +66,16 @@ export class SysService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const sysAuth = await this.menuService.get('sys');
-    if (!sysAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (sysAuth) {
+      pMenuId = sysAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
@@ -86,48 +89,51 @@ export class SysService implements OnApplicationBootstrap {
         } as MenuConfig,
         abilities: [200],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, [
-        {
-          ...params,
-          pMenuId,
-          link: '/sys/setting',
-          config: {
-            text: '参数设置',
-            description: '参数设置',
-            reuse: true,
-            isLeaf: true,
-            icon: 'form',
-          } as MenuConfig,
-          abilities: [210],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/sys/req',
-          config: {
-            text: '日志管理',
-            description: '日志管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'unordered-list',
-          } as MenuConfig,
-          abilities: [220],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/sys/queue',
-          config: {
-            text: '队列管理',
-            description: '队列管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'ordered-list',
-          } as MenuConfig,
-          abilities: [230],
-        },
-      ]);
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
+        ...params,
+        pMenuId,
+        link: '/sys/setting',
+        config: {
+          text: '参数设置',
+          description: '参数设置',
+          reuse: true,
+          isLeaf: true,
+          icon: 'form',
+        } as MenuConfig,
+        abilities: [210],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/sys/req',
+        config: {
+          text: '日志管理',
+          description: '日志管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'unordered-list',
+        } as MenuConfig,
+        abilities: [220],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/sys/queue',
+        config: {
+          text: '队列管理',
+          description: '队列管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'ordered-list',
+        } as MenuConfig,
+        abilities: [230],
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 }

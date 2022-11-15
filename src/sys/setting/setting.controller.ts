@@ -17,11 +17,16 @@ export class SettingController {
     private readonly ability: AbilityService,
     private readonly setting: SettingService,
   ) {
+    const type = '接口';
+    const moduleName = '系统管理';
+    const objectName = '配置';
     // 系统配置
-    this.ability.add([
-      { id: 213, pid: 210, name: '查看配置', description: '查看系统配置' },
-      { id: 215, pid: 210, name: '修改配置', description: '修改系统配置' },
-    ] as Ability[]);
+    this.ability.add(
+      [
+        { id: 213, pid: 210, name: '查看配置', description: '查看系统配置' },
+        { id: 215, pid: 210, name: '修改配置', description: '修改系统配置' },
+      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    );
   }
   /**
    * 获取系统配置

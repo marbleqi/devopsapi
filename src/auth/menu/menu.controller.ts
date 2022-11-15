@@ -25,15 +25,25 @@ export class MenuController {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
+    const type = '接口';
+    const moduleName = '认证';
+    const objectName = '菜单';
     // 菜单管理
-    this.abilityService.add([
-      { id: 122, pid: 120, name: '菜单列表', description: '查看菜单列表' },
-      { id: 123, pid: 120, name: '菜单详情', description: '查看菜单详情' },
-      { id: 124, pid: 120, name: '菜单更新历史', description: '菜单更新历史' },
-      { id: 125, pid: 120, name: '创建菜单', description: '创建新的菜单' },
-      { id: 126, pid: 120, name: '修改菜单', description: '修改已有的菜单' },
-      { id: 127, pid: 120, name: '菜单排序', description: '对菜单进行排序' },
-    ] as Ability[]);
+    this.abilityService.add(
+      [
+        { id: 122, pid: 120, name: '菜单列表', description: '查看菜单列表' },
+        { id: 123, pid: 120, name: '菜单详情', description: '查看菜单详情' },
+        {
+          id: 124,
+          pid: 120,
+          name: '菜单更新历史',
+          description: '菜单更新历史',
+        },
+        { id: 125, pid: 120, name: '创建菜单', description: '创建新的菜单' },
+        { id: 126, pid: 120, name: '修改菜单', description: '修改已有的菜单' },
+        { id: 127, pid: 120, name: '菜单排序', description: '对菜单进行排序' },
+      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    );
   }
 
   /**

@@ -28,8 +28,8 @@ export class KongProjectEntity extends KongProjectBaseEntity {
   hostId: number;
 
   /**对象类型 */
-  @PrimaryColumn({ type: 'text', name: 'project_type', comment: '对象类型' })
-  projectType: string;
+  @PrimaryColumn({ type: 'text', name: 'project', comment: '对象类型' })
+  project: string;
 
   /**服务ID */
   @PrimaryColumn({ type: 'uuid', name: 'id', comment: '对象ID' })
@@ -72,8 +72,8 @@ export class KongProjectLogEntity extends KongProjectBaseEntity {
   hostId: number;
 
   /**对象类型 */
-  @Column({ type: 'text', name: 'project_type', comment: '对象类型' })
-  projectType: string;
+  @Column({ type: 'text', name: 'project', comment: '对象类型' })
+  project: string;
 
   /**对象ID */
   @Column({ type: 'uuid', name: 'id', comment: '对象ID' })

@@ -114,6 +114,19 @@ export class MenuService {
   }
 
   /**
+   * 设置菜单
+   * @param value 菜单信息
+
+   * @returns 响应消息
+   */
+  async set(value: any): Promise<void> {
+    const result = await this.get(value.link);
+    if (!result) {
+      await this.entityManager.insert(MenuEntity, value);
+    }
+  }
+
+  /**
    * 创建菜单
    * @param value 菜单信息
    * @param updateUserId 用户ID

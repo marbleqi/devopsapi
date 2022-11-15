@@ -32,10 +32,15 @@ export class AbilityController {
     private readonly menuService: MenuService,
     private readonly roleService: RoleService,
   ) {
+    const type = '接口';
+    const moduleName = '认证';
+    const objectName = '权限点';
     // 权限点管理
-    this.abilityService.add([
-      { id: 112, pid: 110, name: '权限点列表', description: '权限点列表' },
-    ] as Ability[]);
+    this.abilityService.add(
+      [
+        { id: 112, pid: 110, name: '权限点列表', description: '权限点列表' },
+      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    );
   }
 
   /**

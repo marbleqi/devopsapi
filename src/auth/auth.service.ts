@@ -85,13 +85,16 @@ export class AuthService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const menuAuth = await this.menuService.get('auth');
-    if (!menuAuth) {
-      const params = {
-        updateUserId: 1,
-        updateAt: Date.now(),
-        createUserId: 1,
-        createAt: Date.now(),
-      };
+    let pMenuId: number;
+    const params = {
+      updateUserId: 1,
+      updateAt: Date.now(),
+      createUserId: 1,
+      createAt: Date.now(),
+    };
+    if (menuAuth) {
+      pMenuId = menuAuth.menuId;
+    } else {
       const result = await this.entityManager.insert(MenuEntity, {
         ...params,
         pMenuId: 0,
@@ -105,74 +108,77 @@ export class AuthService implements OnApplicationBootstrap {
         } as MenuConfig,
         abilities: [100],
       });
-      const pMenuId = Number(result.identifiers[0].menuId);
-      await this.entityManager.insert(MenuEntity, [
-        {
-          ...params,
-          pMenuId,
-          link: '/auth/ability',
-          config: {
-            text: '权限点管理',
-            description: '权限点管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'safety-certificate',
-          } as MenuConfig,
-          abilities: [110],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/auth/menu',
-          config: {
-            text: '菜单管理',
-            description: '菜单管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'menu',
-          } as MenuConfig,
-          abilities: [120],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/auth/role',
-          config: {
-            text: '角色管理',
-            description: '角色管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'team',
-          } as MenuConfig,
-          abilities: [130],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/auth/user',
-          config: {
-            text: '用户管理',
-            description: '用户管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'user',
-          } as MenuConfig,
-          abilities: [140],
-        },
-        {
-          ...params,
-          pMenuId,
-          link: '/auth/token',
-          config: {
-            text: '令牌管理',
-            description: '令牌管理',
-            reuse: true,
-            isLeaf: true,
-            icon: 'key',
-          } as MenuConfig,
-          abilities: [150],
-        },
-      ]);
+      pMenuId = Number(result.identifiers[0].menuId);
+    }
+    const menuList = [
+      {
+        ...params,
+        pMenuId,
+        link: '/auth/ability',
+        config: {
+          text: '权限点管理',
+          description: '权限点管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'safety-certificate',
+        } as MenuConfig,
+        abilities: [110],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/auth/menu',
+        config: {
+          text: '菜单管理',
+          description: '菜单管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'menu',
+        } as MenuConfig,
+        abilities: [120],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/auth/role',
+        config: {
+          text: '角色管理',
+          description: '角色管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'team',
+        } as MenuConfig,
+        abilities: [130],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/auth/user',
+        config: {
+          text: '用户管理',
+          description: '用户管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'user',
+        } as MenuConfig,
+        abilities: [140],
+      },
+      {
+        ...params,
+        pMenuId,
+        link: '/auth/token',
+        config: {
+          text: '令牌管理',
+          description: '令牌管理',
+          reuse: true,
+          isLeaf: true,
+          icon: 'key',
+        } as MenuConfig,
+        abilities: [150],
+      },
+    ];
+    for (const menuItem of menuList) {
+      await this.menuService.set(menuItem);
     }
   }
 }

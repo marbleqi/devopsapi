@@ -44,32 +44,17 @@ export class RoleService implements OnApplicationBootstrap {
         createUserId: 1,
         createAt: Date.now(),
       };
+      const abilities: number[] = [];
+      for (let i = 100; i <= 500; i++) {
+        abilities.push(i);
+      }
       await this.entityManager.insert(RoleEntity, [
         {
           ...params,
           roleName: '超级管理员',
           description: '超级管理员',
           config: {},
-          abilities: [
-            100, 110, 120, 122, 123, 130, 133, 134, 135, 136, 138, 200, 210,
-            212, 213, 215, 220, 222, 223, 224, 225, 226, 227, 230, 232, 233,
-            234, 235, 236, 237, 240, 242, 243, 244, 245, 246, 248, 249, 250,
-            252, 254, 258,
-          ],
-        },
-        {
-          ...params,
-          roleName: '审查员',
-          description: '审查员',
-          config: {},
-          abilities: [],
-        },
-        {
-          ...params,
-          roleName: '普通用户',
-          description: '普通用户',
-          config: {},
-          abilities: [],
+          abilities,
         },
       ]);
     }

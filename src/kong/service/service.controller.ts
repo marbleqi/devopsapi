@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Param,
   Query,
   Body,
@@ -12,7 +13,7 @@ import {
 import { Response } from 'express';
 // 内部依赖
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { HostService } from '..';
+import { ProjectService } from '..';
 
 @Controller('kong/service')
 export class ServiceController {
@@ -23,94 +24,113 @@ export class ServiceController {
    */
   constructor(
     private readonly abilityService: AbilityService,
-    private readonly hostService: HostService,
+    private readonly projectService: ProjectService,
   ) {
     // 服务管理
     this.abilityService.add([
-      { id: 511, pid: 530, name: '服务同步', description: '服务同步' },
-      { id: 512, pid: 530, name: '服务列表', description: '服务列表' },
-      { id: 513, pid: 530, name: '服务详情', description: '服务详情' },
-      { id: 514, pid: 530, name: '服务变更历史', description: '创建服务' },
-      { id: 515, pid: 530, name: '创建服务', description: '创建服务' },
-      { id: 516, pid: 530, name: '修改服务', description: '修改服务' },
+      { id: 531, pid: 530, name: '服务同步', description: '服务同步' },
+      { id: 532, pid: 530, name: '服务列表', description: '服务列表' },
+      { id: 533, pid: 530, name: '服务详情', description: '服务详情' },
+      { id: 534, pid: 530, name: '服务变更历史', description: '创建服务' },
+      { id: 535, pid: 530, name: '创建服务', description: '创建服务' },
+      { id: 536, pid: 530, name: '修改服务', description: '修改服务' },
+      { id: 537, pid: 530, name: '删除服务', description: '删除服务' },
     ] as Ability[]);
   }
 
   /**
+   * 服务数据同步
+   * @param hostId 站点ID
+   * @param res 响应上下文
+   */
+  @Post(':hostId/sync')
+  @Abilities(531)
+  async sync(
+    @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Res() res: Response,
+  ): Promise<void> {
+    console.debug('发起服务同步请求', hostId);
+    res.locals.result = await this.projectService.sync(
+      hostId,
+      'services',
+      res.locals.userId,
+      res.locals.reqId,
+    );
+    res.status(200).json(res.locals.result);
+  }
+
+  /**
    * 获取服务清单
+   * @param hostId 站点ID
    * @param operateId 操作序号，用于获取增量数据
    * @param res 响应上下文
    */
-  @Get('index')
-  @Abilities(512)
+  @Get(':hostId/index')
+  @Abilities(532)
   async index(
+    @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.hostService.index(operateId);
+    console.debug(hostId, operateId);
+    res.locals.result = await this.projectService.index(
+      hostId,
+      'services',
+      operateId,
+    );
     res.status(200).json(res.locals.result);
   }
 
   /**
    * 获取服务详情
-   * @param hostId 服务ID
+   * @param hostId 站点ID
+   * @param id 服务ID
    * @param res 响应上下文
    */
-  @Get(':hostId/show')
-  @Abilities(513)
+  @Get(':hostId/:id/show')
+  @Abilities(533)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Param('id') id: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.hostService.show(hostId);
+    res.locals.result = await this.projectService.show(hostId, 'services', id);
     res.status(200).json(res.locals.result);
   }
 
   /**
    * 获取服务变更日志
-   * @param hostId 服务ID
+   * @param hostId 站点ID
+   * @param id 服务ID
    * @param res 响应上下文
    */
-  @Get(':hostId/log')
-  @Abilities(514)
+  @Get(':hostId/:id/log')
+  @Abilities(534)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Param('id') id: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.hostService.log(hostId);
-    res.status(200).json(res.locals.result);
-  }
-  /**
-   * 创建角色
-   * @param value 提交消息体
-   * @param res 响应上下文
-   */
-  @Post('create')
-  @Abilities(515)
-  async create(@Body() value: any, @Res() res: Response): Promise<void> {
-    res.locals.result = await this.hostService.create(
-      value,
-      res.locals.userId,
-      res.locals.reqId,
-    );
+    res.locals.result = await this.projectService.log(hostId, 'services', id);
     res.status(200).json(res.locals.result);
   }
 
   /**
-   * 更新角色（含禁用和启用角色）
-   * @param hostId 服务ID
+   * 创建服务
+   * @param hostId 站点ID
    * @param value 提交消息体
    * @param res 响应上下文
    */
-  @Post(':hostId/update')
-  @Abilities(516)
-  async update(
+  @Post(':hostId/create')
+  @Abilities(535)
+  async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.hostService.update(
+    res.locals.result = await this.projectService.create(
       hostId,
+      'services',
       value,
       res.locals.userId,
       res.locals.reqId,
@@ -119,14 +139,51 @@ export class ServiceController {
   }
 
   /**
-   * 角色排序
+   * 更新服务
+   * @param hostId 站点ID
+   * @param id 服务ID
    * @param value 提交消息体
    * @param res 响应上下文
    */
-  @Post('sort')
-  @Abilities(517)
-  async sort(@Body() value: object[], @Res() res: Response): Promise<void> {
-    res.locals.result = await this.hostService.sort(value);
+  @Post(':hostId/:id/update')
+  @Abilities(536)
+  async update(
+    @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Param('id') id: string,
+    @Body() value: any,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.locals.result = await this.projectService.update(
+      hostId,
+      'services',
+      id,
+      value,
+      res.locals.userId,
+      res.locals.reqId,
+    );
+    res.status(200).json(res.locals.result);
+  }
+
+  /**
+   * 删除服务
+   * @param hostId 站点ID
+   * @param id 服务ID
+   * @param res 响应上下文
+   */
+  @Delete(':hostId/:id')
+  @Abilities(537)
+  async destroy(
+    @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.locals.result = await this.projectService.update(
+      hostId,
+      'services',
+      id,
+      res.locals.userId,
+      res.locals.reqId,
+    );
     res.status(200).json(res.locals.result);
   }
 }
