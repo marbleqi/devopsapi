@@ -94,7 +94,13 @@ export class ServiceController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.projectService.show(hostId, 'services', id);
+    res.locals.result = await this.projectService.show(
+      hostId,
+      'services',
+      id,
+      res.locals.userId,
+      res.locals.reqId,
+    );
     res.status(200).json(res.locals.result);
   }
 

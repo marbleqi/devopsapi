@@ -76,7 +76,13 @@ export class ProjectService {
    * @param id 服务ID
    * @returns 响应消息
    */
-  async show(hostId: number, project: string, id: string): Promise<Result> {
+  async show(
+    hostId: number,
+    project: string,
+    id: string,
+    updateUserId: number,
+    reqId = 0,
+  ): Promise<Result> {
     if (!hostId) {
       return { code: 400, msg: '传入的站点ID无效' };
     }
@@ -90,15 +96,27 @@ export class ProjectService {
     if (result.code) {
       return result;
     }
+    /**API接口返回对象信息 */
     result = await firstValueFrom(
       this.clientService.get(`${result.data.url}/${project}/${id}`, {
         validateStatus: () => true,
       }),
     );
-    if (result.status !== 200) {
-      return { code: 404, msg: '未找到对象！' };
+    const data: any = result.status === 200 ? result.data : null;
+    /**数据库对象信息 */
+    const dbdata: KongProjectEntity = await this.entityManager.findOneBy(
+      KongProjectEntity,
+      {
+        hostId,
+        project,
+        id,
+      },
+    );
+    // 如果数据库中对象不存在，则发起数据同步
+    if (!dbdata) {
+      this.sync(hostId, project, updateUserId, reqId);
     }
-    return { code: 0, msg: 'ok', data: result.data };
+    return { code: 0, msg: 'ok', data, dbdata };
   }
 
   /**
@@ -142,7 +160,6 @@ export class ProjectService {
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
-    console.debug('收到服务同步请求', hostId, project);
     if (!hostId) {
       return { code: 400, msg: '传入的站点ID无效' };
     }
@@ -153,17 +170,10 @@ export class ProjectService {
     if (result.code) {
       return result;
     }
-    console.debug(result, result.data.url);
     let next: any = await firstValueFrom(
       this.clientService.get(`${result.data.url}/${project}`, {
         validateStatus: () => true,
       }),
-    );
-    console.debug(
-      'next',
-      next.data.data.length,
-      next.data.next,
-      next.data.offset,
     );
     let apidata: any[] = next.data.data;
     // 当对象不止一页时轮询获取
@@ -173,46 +183,72 @@ export class ProjectService {
           validateStatus: () => true,
         }),
       );
-      console.debug('next', next.data.next, next.data.offset);
       apidata = apidata.concat(next.data.data);
     }
-    console.debug('接口对象记录数', apidata.length);
     const dbdata: KongProjectEntity[] = await this.entityManager.findBy(
       KongProjectEntity,
       { hostId, project },
     );
-    console.debug('数据库对象记录数', dbdata.length);
-    // 开始对接口数据和数据库数据进行比对后同步
-    // 将接口中存在，但数据库中不存在的记录进行添加
-    const adddata: any[] = apidata.filter((apiitem) => true);
-
-    // 将数据库中存在，但接口中不存在的记录标记为删除
-
-    // for (const item of data) {
-    //   const single: KongProjectEntity = await this.entityManager.findOneBy(
-    //     KongProjectEntity,
-    //     {
-    //       hostId,
-    //       project,
-    //       id: item.id,
-    //     },
-    //   );
-    //   if (!single) {
-    //     const operateId = await this.operateService.insert('kong');
-    //     await this.entityManager.insert(KongProjectEntity, {
-    //       hostId,
-    //       project,
-    //       id: item.id,
-    //       config: item,
-    //       operateId,
-    //       reqId,
-    //       updateUserId,
-    //       updateAt: Date.now(),
-    //       createUserId: updateUserId,
-    //       createAt: Date.now(),
-    //     });
-    //   }
-    // }
+    /**数据库数据Map */
+    const dbMap = new Map<string, any>();
+    for (const dbitem of dbdata) {
+      dbMap.set(dbitem.id, dbitem);
+    }
+    apidata.map(async (apiitem) => {
+      const dbitem = dbMap.get(apiitem.id);
+      if (dbitem) {
+        // 当从数据库Map中找到接口记录时，判断更新时间是否一致
+        if (dbitem.config !== apiitem.config) {
+          // 当不一致时，执行更新记录
+          const operateId = await this.operateService.insert('kong');
+          await this.entityManager.update(
+            KongProjectEntity,
+            { hostId, project, id: apiitem.id },
+            {
+              config: apiitem,
+              status: 1,
+              operateId,
+              reqId,
+              updateUserId,
+              updateAt: Date.now(),
+            },
+          );
+        }
+      } else {
+        // 当从数据库Map中找不到接口记录时，则新增接口数据
+        const operateId = await this.operateService.insert('kong');
+        await this.entityManager.insert(KongProjectEntity, {
+          hostId,
+          project,
+          id: apiitem.id,
+          config: apiitem,
+          operateId,
+          reqId,
+          updateUserId,
+          updateAt: Date.now(),
+          createUserId: updateUserId,
+          createAt: Date.now(),
+        });
+      }
+    });
+    // 对接口中没有对应记录的数据库记录执行标记删除
+    dbdata
+      .filter((dbitem) => apidata.every((apiitem) => apiitem.id !== dbitem.id))
+      .map(async (dbitem) => {
+        // 当不一致时，执行更新记录
+        const operateId = await this.operateService.insert('kong');
+        await this.entityManager.update(
+          KongProjectEntity,
+          { hostId, project, id: dbitem.id },
+          {
+            status: 0,
+            operateId,
+            reqId,
+            updateUserId,
+            updateAt: Date.now(),
+          },
+        );
+      });
     return { code: 0, msg: 'ok' };
   }
 
