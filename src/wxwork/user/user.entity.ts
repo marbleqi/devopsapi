@@ -40,7 +40,7 @@ export class WxworkUserEntity extends WxworkUserBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  WxworkUserLoad() {
+  wxworkUserLoad() {
     this.userId = Number(this.userId);
     this.createUserId = Number(this.createUserId);
     this.createAt = Number(this.createAt);
@@ -64,7 +64,7 @@ export class WxworkUserLogEntity extends WxworkUserBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  WxworkUserLoad() {
+  wxworkUserLoad() {
     this.logId = Number(this.logId);
     this.userId = Number(this.userId);
   }

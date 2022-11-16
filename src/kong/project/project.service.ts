@@ -73,7 +73,7 @@ export class ProjectService {
    * 获取对象详情
    * @param hostId 站点ID
    * @param project 对象类型
-   * @param id 服务ID
+   * @param id 对象ID
    * @returns 响应消息
    */
   async show(
@@ -123,7 +123,7 @@ export class ProjectService {
    * 获取对象变更日志
    * @param hostId 站点ID
    * @param project 对象类型
-   * @param id 服务ID
+   * @param id 对象ID
    * @returns 响应消息
    */
   async log(hostId: number, project: string, id: string): Promise<Result> {
@@ -152,6 +152,8 @@ export class ProjectService {
    * 对象数据同步
    * @param hostId 站点ID
    * @param project 对象类型
+   * @param updateUserId 创建用户的用户ID
+   * @param reqId 请求ID
    * @returns 响应消息
    */
   async sync(
@@ -194,6 +196,7 @@ export class ProjectService {
     for (const dbitem of dbdata) {
       dbMap.set(dbitem.id, dbitem);
     }
+    // 遍历接口数据，以便做增量和变更同步
     apidata.map(async (apiitem) => {
       const dbitem = dbMap.get(apiitem.id);
       if (dbitem) {
@@ -283,25 +286,26 @@ export class ProjectService {
         validateStatus: () => true,
       }),
     );
+    console.debug('新增对象结果', result.data);
     if (result.status !== 201) {
       return { code: 403, msg: result.data.message };
     }
+    // 接口调用成功后，更新数据库
     const operateId = await this.operateService.insert(project);
-    result = await this.entityManager.insert(KongProjectEntity, {
+    await this.entityManager.insert(KongProjectEntity, {
       hostId,
       project,
-      ...value,
+      id: result.data.id,
+      config: result.data,
       operateId,
       reqId,
       updateUserId,
       updateAt: Date.now(),
       createUserId: updateUserId,
+      createAt: Date.now(),
     });
-    if (result.identifiers.length) {
-      return { code: 0, msg: '对象创建完成', operateId, reqId };
-    } else {
-      return { code: 400, msg: '对象创建失败', operateId, reqId };
-    }
+    this.eventEmitter.emit('kong_project', hostId, project, result.data.id);
+    return { code: 0, msg: '对象创建完成', operateId, reqId };
   }
 
   /**
@@ -336,29 +340,29 @@ export class ProjectService {
       return result;
     }
     result = await firstValueFrom(
-      this.clientService.patch(
-        `${result.data.url}/${project}/${id}`,
-        value.data,
-        {
-          validateStatus: () => true,
-        },
-      ),
+      this.clientService.patch(`${result.data.url}/${project}/${id}`, value, {
+        validateStatus: () => true,
+      }),
     );
+    console.debug('接口结果', result.data);
     if (result.status !== 200) {
       return { code: 403, msg: result.data.message };
     }
+    // 接口调用成功后，更新数据库
     const operateId = await this.operateService.insert(project);
-    result = await this.entityManager.update(
+    await this.entityManager.update(
       KongProjectEntity,
-      { id },
-      { ...value, operateId, reqId, updateUserId, updateAt: Date.now() },
+      { hostId, project, id },
+      {
+        config: result.data,
+        operateId,
+        reqId,
+        updateUserId,
+        updateAt: Date.now(),
+      },
     );
-    if (result.affected) {
-      this.eventEmitter.emit('kong_project', id);
-      return { code: 0, msg: '更新服务成功', operateId, reqId, id };
-    } else {
-      return { code: 400, msg: '更新服务失败', operateId, reqId };
-    }
+    this.eventEmitter.emit('kong_project', hostId, project, id);
+    return { code: 0, msg: '更新服务成功', operateId, reqId, id };
   }
 
   /**
@@ -396,19 +400,36 @@ export class ProjectService {
     if (result.status !== 204) {
       return { code: 404, msg: '未找到对象！' };
     }
-    console.debug(updateUserId, reqId);
+    // 接口调用成功后，更新数据库
+    const operateId = await this.operateService.insert(project);
+    await this.entityManager.update(
+      KongProjectEntity,
+      { hostId, project, id },
+      {
+        status: 0,
+        operateId,
+        reqId,
+        updateUserId,
+        updateAt: Date.now(),
+      },
+    );
+    this.eventEmitter.emit('kong_project', hostId, project, id);
     return { code: 0, msg: 'ok' };
   }
 
   /**
-   * 增加服务修改日志
+   * 增加KONG对象修改日志
    * @param id 服务ID
    */
   @OnEvent('kong_project')
-  async addLog(id: string) {
-    /**服务对象 */
-    const host = await this.entityManager.findOneBy(KongProjectEntity, { id });
-    /**添加日志 */
+  async addLog(hostId: number, project: string, id: string) {
+    /**KONG对象 */
+    const host = await this.entityManager.findOneBy(KongProjectEntity, {
+      hostId,
+      project,
+      id,
+    });
+    /**添加KONG对象日志 */
     this.entityManager.insert(KongProjectLogEntity, host);
   }
 }

@@ -22,7 +22,7 @@ export class OperateEntity {
 
   /**长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  afterLoad() {
+  operateLoad() {
     this.operateId = Number(this.operateId);
     this.createAt = Number(this.createAt);
   }

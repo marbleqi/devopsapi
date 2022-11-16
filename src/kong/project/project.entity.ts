@@ -50,7 +50,8 @@ export class KongProjectEntity extends KongProjectBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  userLoad() {
+  projectLoad() {
+    this.hostId = Number(this.hostId);
     this.createUserId = Number(this.createUserId);
     this.createAt = Number(this.createAt);
   }
@@ -81,7 +82,8 @@ export class KongProjectLogEntity extends KongProjectBaseEntity {
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
-  userLoad() {
+  projectLoad() {
     this.logId = Number(this.logId);
+    this.hostId = Number(this.hostId);
   }
 }

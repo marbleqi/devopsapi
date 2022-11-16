@@ -20,7 +20,7 @@ export class ServiceController {
   /**
    * 构造函数
    * @param abilityService 注入的权限点服务
-   * @param hostService 注入的服务服务
+   * @param projectService 注入的对象服务
    */
   constructor(
     private readonly abilityService: AbilityService,
@@ -49,7 +49,6 @@ export class ServiceController {
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
   ): Promise<void> {
-    console.debug('发起服务同步请求', hostId);
     res.locals.result = await this.projectService.sync(
       hostId,
       'services',
