@@ -255,7 +255,7 @@ export class ProjectService {
         );
         this.eventEmitter.emit('kong_project', hostId, project, dbitem.id);
       });
-    return { code: 0, msg: 'ok' };
+    return { code: 0, msg: '已完成同步' };
   }
 
   /**
@@ -365,7 +365,7 @@ export class ProjectService {
       },
     );
     this.eventEmitter.emit('kong_project', hostId, project, id);
-    return { code: 0, msg: '更新服务成功', operateId, reqId, id };
+    return { code: 0, msg: '对象更新成功', operateId, reqId, id };
   }
 
   /**
@@ -417,7 +417,7 @@ export class ProjectService {
       },
     );
     this.eventEmitter.emit('kong_project', hostId, project, id);
-    return { code: 0, msg: 'ok' };
+    return { code: 0, msg: '对象已删除' };
   }
 
   /**

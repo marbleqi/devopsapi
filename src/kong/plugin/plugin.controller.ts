@@ -13,7 +13,7 @@ import {
 import { Response } from 'express';
 // 内部依赖
 import { Ability, Abilities, AbilityService } from '../../auth';
-import { ProjectService } from '..';
+import { ProjectService, PluginService } from '..';
 
 @Controller('kong/plugin')
 export class PluginController {
@@ -25,6 +25,7 @@ export class PluginController {
   constructor(
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
+    private readonly pluginService: PluginService,
   ) {
     // 插件管理
     this.abilityService.add([
@@ -55,6 +56,21 @@ export class PluginController {
       res.locals.userId,
       res.locals.reqId,
     );
+    res.status(200).json(res.locals.result);
+  }
+
+  /**
+   * 获取可选的插件清单
+   * @param hostId 站点ID
+   * @param res 响应上下文
+   */
+  @Get(':hostId/plugin')
+  @Abilities(582)
+  async plugin(
+    @Param('hostId', new ParseIntPipe()) hostId: number,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.locals.result = await this.pluginService.plugin(hostId);
     res.status(200).json(res.locals.result);
   }
 
