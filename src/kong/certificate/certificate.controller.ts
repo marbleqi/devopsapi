@@ -186,7 +186,8 @@ export class CertificateController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.projectService.update(
+    console.debug('删除请求数据', hostId, id);
+    res.locals.result = await this.projectService.destroy(
       hostId,
       'certificates',
       id,

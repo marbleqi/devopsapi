@@ -182,7 +182,7 @@ export class PluginController {
     @Param('id') id: string,
     @Res() res: Response,
   ): Promise<void> {
-    res.locals.result = await this.projectService.update(
+    res.locals.result = await this.projectService.destroy(
       hostId,
       'plugins',
       id,

@@ -216,6 +216,7 @@ export class ProjectService {
               updateAt: Date.now(),
             },
           );
+          this.eventEmitter.emit('kong_project', hostId, project, apiitem.id);
         }
       } else {
         // 当从数据库Map中找不到接口记录时，则新增接口数据
@@ -232,6 +233,7 @@ export class ProjectService {
           createUserId: updateUserId,
           createAt: Date.now(),
         });
+        this.eventEmitter.emit('kong_project', hostId, project, apiitem.id);
       }
     });
     // 对接口中没有对应记录的数据库记录执行标记删除
@@ -251,6 +253,7 @@ export class ProjectService {
             updateAt: Date.now(),
           },
         );
+        this.eventEmitter.emit('kong_project', hostId, project, dbitem.id);
       });
     return { code: 0, msg: 'ok' };
   }
@@ -291,7 +294,7 @@ export class ProjectService {
       return { code: 403, msg: result.data.message };
     }
     // 接口调用成功后，更新数据库
-    const operateId = await this.operateService.insert(project);
+    const operateId = await this.operateService.insert('kong');
     await this.entityManager.insert(KongProjectEntity, {
       hostId,
       project,
@@ -349,7 +352,7 @@ export class ProjectService {
       return { code: 403, msg: result.data.message };
     }
     // 接口调用成功后，更新数据库
-    const operateId = await this.operateService.insert(project);
+    const operateId = await this.operateService.insert('kong');
     await this.entityManager.update(
       KongProjectEntity,
       { hostId, project, id },
@@ -401,7 +404,7 @@ export class ProjectService {
       return { code: 404, msg: '未找到对象！' };
     }
     // 接口调用成功后，更新数据库
-    const operateId = await this.operateService.insert(project);
+    const operateId = await this.operateService.insert('kong');
     await this.entityManager.update(
       KongProjectEntity,
       { hostId, project, id },
