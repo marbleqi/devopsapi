@@ -28,13 +28,13 @@ export class UpstreamController {
   ) {
     // 上游管理
     this.abilityService.add([
-      { id: 561, pid: 560, name: '上游同步', description: '上游同步' },
-      { id: 562, pid: 560, name: '上游列表', description: '上游列表' },
-      { id: 563, pid: 560, name: '上游详情', description: '上游详情' },
-      { id: 564, pid: 560, name: '上游变更历史', description: '创建上游' },
-      { id: 565, pid: 560, name: '创建上游', description: '创建上游' },
-      { id: 566, pid: 560, name: '修改上游', description: '修改上游' },
-      { id: 567, pid: 560, name: '删除上游', description: '删除上游' },
+      { id: 571, pid: 570, name: '上游同步', description: '上游同步' },
+      { id: 572, pid: 570, name: '上游列表', description: '上游列表' },
+      { id: 573, pid: 570, name: '上游详情', description: '上游详情' },
+      { id: 574, pid: 570, name: '上游变更历史', description: '创建上游' },
+      { id: 575, pid: 570, name: '创建上游', description: '创建上游' },
+      { id: 576, pid: 570, name: '修改上游', description: '修改上游' },
+      { id: 577, pid: 570, name: '删除上游', description: '删除上游' },
     ] as Ability[]);
   }
 
@@ -44,7 +44,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Post(':hostId/sync')
-  @Abilities(561)
+  @Abilities(571)
   async sync(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -65,7 +65,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Get(':hostId/index')
-  @Abilities(562)
+  @Abilities(572)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
@@ -87,7 +87,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/show')
-  @Abilities(563)
+  @Abilities(573)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -110,7 +110,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(564)
+  @Abilities(574)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -127,7 +127,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Post(':hostId/create')
-  @Abilities(565)
+  @Abilities(575)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
@@ -151,7 +151,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/update')
-  @Abilities(566)
+  @Abilities(576)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -176,7 +176,7 @@ export class UpstreamController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id')
-  @Abilities(567)
+  @Abilities(577)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,

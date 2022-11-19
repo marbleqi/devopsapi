@@ -29,7 +29,7 @@ export class HostController {
     this.abilityService.add([
       { id: 512, pid: 510, name: '站点列表', description: '站点列表' },
       { id: 513, pid: 510, name: '站点详情', description: '站点详情' },
-      { id: 514, pid: 510, name: '站点变更历史', description: '创建站点' },
+      { id: 514, pid: 510, name: '站点变更历史', description: '站点变更历史' },
       { id: 515, pid: 510, name: '创建站点', description: '创建站点' },
       { id: 516, pid: 510, name: '修改站点', description: '修改站点' },
       { id: 517, pid: 510, name: '站点排序', description: '站点排序' },

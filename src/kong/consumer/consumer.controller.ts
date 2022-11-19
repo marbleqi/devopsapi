@@ -28,13 +28,13 @@ export class ConsumerController {
   ) {
     // 服务管理
     this.abilityService.add([
-      { id: 541, pid: 540, name: '服务同步', description: '服务同步' },
-      { id: 542, pid: 540, name: '服务列表', description: '服务列表' },
-      { id: 543, pid: 540, name: '服务详情', description: '服务详情' },
-      { id: 544, pid: 540, name: '服务变更历史', description: '创建服务' },
-      { id: 545, pid: 540, name: '创建服务', description: '创建服务' },
-      { id: 546, pid: 540, name: '修改服务', description: '修改服务' },
-      { id: 547, pid: 540, name: '删除服务', description: '删除服务' },
+      { id: 551, pid: 550, name: '服务同步', description: '服务同步' },
+      { id: 552, pid: 550, name: '服务列表', description: '服务列表' },
+      { id: 553, pid: 550, name: '服务详情', description: '服务详情' },
+      { id: 554, pid: 550, name: '服务变更历史', description: '创建服务' },
+      { id: 555, pid: 550, name: '创建服务', description: '创建服务' },
+      { id: 556, pid: 550, name: '修改服务', description: '修改服务' },
+      { id: 557, pid: 550, name: '删除服务', description: '删除服务' },
     ] as Ability[]);
   }
 
@@ -44,7 +44,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Post(':hostId/sync')
-  @Abilities(541)
+  @Abilities(551)
   async sync(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -65,7 +65,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Get(':hostId/index')
-  @Abilities(542)
+  @Abilities(552)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
@@ -87,7 +87,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/show')
-  @Abilities(543)
+  @Abilities(553)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -110,7 +110,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(544)
+  @Abilities(554)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -127,7 +127,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Post(':hostId/create')
-  @Abilities(545)
+  @Abilities(555)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
@@ -151,7 +151,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/update')
-  @Abilities(546)
+  @Abilities(556)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -176,7 +176,7 @@ export class ConsumerController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id')
-  @Abilities(547)
+  @Abilities(557)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,

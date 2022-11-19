@@ -29,13 +29,13 @@ export class PluginController {
   ) {
     // 插件管理
     this.abilityService.add([
-      { id: 581, pid: 580, name: '插件同步', description: '插件同步' },
-      { id: 582, pid: 580, name: '插件列表', description: '插件列表' },
-      { id: 583, pid: 580, name: '插件详情', description: '插件详情' },
-      { id: 584, pid: 580, name: '插件变更历史', description: '创建插件' },
-      { id: 585, pid: 580, name: '创建插件', description: '创建插件' },
-      { id: 586, pid: 580, name: '修改插件', description: '修改插件' },
-      { id: 587, pid: 580, name: '删除插件', description: '删除插件' },
+      { id: 591, pid: 590, name: '插件同步', description: '插件同步' },
+      { id: 592, pid: 590, name: '插件列表', description: '插件列表' },
+      { id: 593, pid: 590, name: '插件详情', description: '插件详情' },
+      { id: 594, pid: 590, name: '插件变更历史', description: '创建插件' },
+      { id: 595, pid: 590, name: '创建插件', description: '创建插件' },
+      { id: 596, pid: 590, name: '修改插件', description: '修改插件' },
+      { id: 597, pid: 590, name: '删除插件', description: '删除插件' },
     ] as Ability[]);
   }
 
@@ -45,7 +45,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Post(':hostId/sync')
-  @Abilities(581)
+  @Abilities(591)
   async sync(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -65,7 +65,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Get(':hostId/plugin')
-  @Abilities(582)
+  @Abilities(592)
   async plugin(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -81,7 +81,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Get(':hostId/index')
-  @Abilities(582)
+  @Abilities(592)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
@@ -103,7 +103,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/show')
-  @Abilities(583)
+  @Abilities(593)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -126,7 +126,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(584)
+  @Abilities(594)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -143,7 +143,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Post(':hostId/create')
-  @Abilities(585)
+  @Abilities(595)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
@@ -167,7 +167,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/update')
-  @Abilities(586)
+  @Abilities(596)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -192,7 +192,7 @@ export class PluginController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id')
-  @Abilities(587)
+  @Abilities(597)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,

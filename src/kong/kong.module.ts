@@ -9,13 +9,17 @@ import {
   KongService,
   KongHostEntity,
   KongHostLogEntity,
+  KongGrantEntity,
+  KongGrantLogEntity,
   KongProjectEntity,
   KongProjectLogEntity,
   HostService,
+  GrantService,
   ProjectService,
   TargetService,
   PluginService,
   HostController,
+  GrantController,
   TargetController,
   ConsumerController,
   ServiceController,
@@ -24,7 +28,6 @@ import {
   PluginController,
   UpstreamController,
 } from '.';
-import {} from './project/project.service';
 
 @Module({
   imports: [
@@ -34,12 +37,15 @@ import {} from './project/project.service';
     TypeOrmModule.forFeature([
       KongHostEntity,
       KongHostLogEntity,
+      KongGrantEntity,
+      KongGrantLogEntity,
       KongProjectEntity,
       KongProjectLogEntity,
     ]),
   ],
   providers: [
     HostService,
+    GrantService,
     KongService,
     TargetService,
     PluginService,
@@ -47,6 +53,7 @@ import {} from './project/project.service';
   ],
   controllers: [
     HostController,
+    GrantController,
     RouteController,
     ServiceController,
     ConsumerController,

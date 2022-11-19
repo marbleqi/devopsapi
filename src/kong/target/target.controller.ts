@@ -27,10 +27,10 @@ export class TargetController {
   ) {
     // 目标管理
     this.abilityService.add([
-      { id: 572, pid: 570, name: '目标列表', description: '目标列表' },
-      { id: 574, pid: 570, name: '目标变更历史', description: '目标变更历史' },
-      { id: 575, pid: 570, name: '创建目标', description: '创建目标' },
-      { id: 577, pid: 570, name: '删除目标', description: '删除目标' },
+      { id: 582, pid: 580, name: '目标列表', description: '目标列表' },
+      { id: 584, pid: 580, name: '目标变更历史', description: '目标变更历史' },
+      { id: 585, pid: 580, name: '创建目标', description: '创建目标' },
+      { id: 587, pid: 580, name: '删除目标', description: '删除目标' },
     ] as Ability[]);
   }
 
@@ -41,7 +41,7 @@ export class TargetController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/index')
-  @Abilities(572)
+  @Abilities(582)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -58,7 +58,7 @@ export class TargetController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(574)
+  @Abilities(584)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -75,7 +75,7 @@ export class TargetController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/create')
-  @Abilities(575)
+  @Abilities(585)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -99,7 +99,7 @@ export class TargetController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id/:targetId')
-  @Abilities(577)
+  @Abilities(587)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,

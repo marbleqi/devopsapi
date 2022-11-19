@@ -140,7 +140,7 @@ export class HostService {
     if (!hostId) {
       return { code: 400, msg: '传入的站点ID无效' };
     }
-    const operateId = await this.operateService.insert('user');
+    const operateId = await this.operateService.insert('kong_host');
     const result = await this.entityManager.update(
       KongHostEntity,
       { hostId },

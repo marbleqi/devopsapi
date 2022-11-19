@@ -28,13 +28,13 @@ export class RouteController {
   ) {
     // 路由管理
     this.abilityService.add([
-      { id: 521, pid: 520, name: '路由同步', description: '路由同步' },
-      { id: 522, pid: 520, name: '路由列表', description: '路由列表' },
-      { id: 523, pid: 520, name: '路由详情', description: '路由详情' },
-      { id: 524, pid: 520, name: '路由变更历史', description: '创建路由' },
-      { id: 525, pid: 520, name: '创建路由', description: '创建路由' },
-      { id: 526, pid: 520, name: '修改路由', description: '修改路由' },
-      { id: 527, pid: 520, name: '删除路由', description: '删除路由' },
+      { id: 531, pid: 530, name: '路由同步', description: '路由同步' },
+      { id: 532, pid: 530, name: '路由列表', description: '路由列表' },
+      { id: 533, pid: 530, name: '路由详情', description: '路由详情' },
+      { id: 534, pid: 530, name: '路由变更历史', description: '创建路由' },
+      { id: 535, pid: 530, name: '创建路由', description: '创建路由' },
+      { id: 536, pid: 530, name: '修改路由', description: '修改路由' },
+      { id: 537, pid: 530, name: '删除路由', description: '删除路由' },
     ] as Ability[]);
   }
 
@@ -44,7 +44,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Post(':hostId/sync')
-  @Abilities(521)
+  @Abilities(531)
   async sync(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -65,7 +65,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Get(':hostId/index')
-  @Abilities(522)
+  @Abilities(532)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
@@ -87,7 +87,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/show')
-  @Abilities(523)
+  @Abilities(533)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -110,7 +110,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(524)
+  @Abilities(534)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -127,7 +127,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Post(':hostId/create')
-  @Abilities(525)
+  @Abilities(535)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
@@ -151,7 +151,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/update')
-  @Abilities(526)
+  @Abilities(536)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -176,7 +176,7 @@ export class RouteController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id')
-  @Abilities(527)
+  @Abilities(537)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,

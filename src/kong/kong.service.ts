@@ -28,13 +28,14 @@ export class KongService implements OnApplicationBootstrap {
     this.abilityService.add([
       { id: 500, pid: 0, name: 'KONG管理', description: 'KONG管理' },
       { id: 510, pid: 500, name: '站点', description: '站点管理' },
-      { id: 520, pid: 500, name: '路由', description: '路由管理' },
-      { id: 530, pid: 500, name: '服务', description: '服务管理' },
-      { id: 540, pid: 500, name: '用户', description: '用户管理' },
-      { id: 550, pid: 500, name: '证书', description: '证书管理' },
-      { id: 560, pid: 500, name: '上游', description: '上游管理' },
-      { id: 570, pid: 500, name: '目标', description: '目标管理' },
-      { id: 580, pid: 500, name: '插件', description: '插件管理' },
+      { id: 520, pid: 500, name: '授权', description: '授权管理' },
+      { id: 530, pid: 500, name: '路由', description: '路由管理' },
+      { id: 540, pid: 500, name: '服务', description: '服务管理' },
+      { id: 550, pid: 500, name: '用户', description: '用户管理' },
+      { id: 560, pid: 500, name: '证书', description: '证书管理' },
+      { id: 570, pid: 500, name: '上游', description: '上游管理' },
+      { id: 580, pid: 500, name: '目标', description: '目标管理' },
+      { id: 590, pid: 500, name: '插件', description: '插件管理' },
     ] as Ability[]);
   }
 
@@ -83,6 +84,19 @@ export class KongService implements OnApplicationBootstrap {
       {
         ...params,
         pMenuId,
+        link: '/kong/grant',
+        config: {
+          text: '授权',
+          description: '授权',
+          reuse: true,
+          isLeaf: true,
+          icon: 'form',
+        } as MenuConfig,
+        abilities: [520],
+      },
+      {
+        ...params,
+        pMenuId,
         link: '/kong/new',
         config: {
           text: '新建代理',
@@ -91,7 +105,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'plus',
         } as MenuConfig,
-        abilities: [520],
+        abilities: [530],
       },
       {
         ...params,
@@ -104,7 +118,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'unordered-list',
         } as MenuConfig,
-        abilities: [520],
+        abilities: [530],
       },
       {
         ...params,
@@ -117,7 +131,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'ordered-list',
         } as MenuConfig,
-        abilities: [530],
+        abilities: [540],
       },
       {
         ...params,
@@ -130,7 +144,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'ordered-list',
         } as MenuConfig,
-        abilities: [540],
+        abilities: [550],
       },
       {
         ...params,
@@ -143,7 +157,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'ordered-list',
         } as MenuConfig,
-        abilities: [550],
+        abilities: [560],
       },
       {
         ...params,
@@ -169,7 +183,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'ordered-list',
         } as MenuConfig,
-        abilities: [570],
+        abilities: [580],
       },
       {
         ...params,
@@ -182,7 +196,7 @@ export class KongService implements OnApplicationBootstrap {
           isLeaf: true,
           icon: 'ordered-list',
         } as MenuConfig,
-        abilities: [580],
+        abilities: [590],
       },
     ];
     for (const menuItem of menuList) {

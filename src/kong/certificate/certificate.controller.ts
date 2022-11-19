@@ -28,13 +28,13 @@ export class CertificateController {
   ) {
     // 证书管理
     this.abilityService.add([
-      { id: 551, pid: 550, name: '证书同步', description: '证书同步' },
-      { id: 552, pid: 550, name: '证书列表', description: '证书列表' },
-      { id: 553, pid: 550, name: '证书详情', description: '证书详情' },
-      { id: 554, pid: 550, name: '证书变更历史', description: '创建证书' },
-      { id: 555, pid: 550, name: '创建证书', description: '创建证书' },
-      { id: 556, pid: 550, name: '修改证书', description: '修改证书' },
-      { id: 557, pid: 550, name: '删除证书', description: '删除证书' },
+      { id: 561, pid: 560, name: '证书同步', description: '证书同步' },
+      { id: 562, pid: 560, name: '证书列表', description: '证书列表' },
+      { id: 563, pid: 560, name: '证书详情', description: '证书详情' },
+      { id: 564, pid: 560, name: '证书变更历史', description: '创建证书' },
+      { id: 565, pid: 560, name: '创建证书', description: '创建证书' },
+      { id: 566, pid: 560, name: '修改证书', description: '修改证书' },
+      { id: 567, pid: 560, name: '删除证书', description: '删除证书' },
     ] as Ability[]);
   }
 
@@ -44,7 +44,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Post(':hostId/sync')
-  @Abilities(551)
+  @Abilities(561)
   async sync(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Res() res: Response,
@@ -65,7 +65,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Get(':hostId/index')
-  @Abilities(552)
+  @Abilities(562)
   async index(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Query('operateId', new ParseIntPipe()) operateId: number,
@@ -87,7 +87,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/show')
-  @Abilities(553)
+  @Abilities(563)
   async show(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -110,7 +110,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Get(':hostId/:id/log')
-  @Abilities(554)
+  @Abilities(564)
   async log(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -131,7 +131,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Post(':hostId/create')
-  @Abilities(555)
+  @Abilities(565)
   async create(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Body() value: any,
@@ -155,7 +155,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Post(':hostId/:id/update')
-  @Abilities(556)
+  @Abilities(566)
   async update(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
@@ -180,7 +180,7 @@ export class CertificateController {
    * @param res 响应上下文
    */
   @Delete(':hostId/:id')
-  @Abilities(557)
+  @Abilities(567)
   async destroy(
     @Param('hostId', new ParseIntPipe()) hostId: number,
     @Param('id') id: string,
