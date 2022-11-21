@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('host')
+@Controller('nacos/host')
 export class HostController {}

@@ -36,10 +36,41 @@ export class PassportService {
 
   /**
    * 申请令牌
-   * @param userId 待申请令牌的用户ID
+   * @param user 待申请令牌的用户实体
+   * @param loginIp 登陆IP
    * @returns 响应消息
    */
-  private async create(userId: number): Promise<Result> {
+  private async create(user: UserEntity, loginIp: string): Promise<Result> {
+    // 验证通过后，更新用户登陆信息
+    if (user.firstLoginAt) {
+      this.entityManager.update(
+        UserEntity,
+        { userId: user.userId },
+        {
+          lastLoginIp: loginIp,
+          lastLoginAt: Date.now(),
+          lastSessionAt: Date.now(),
+        },
+      );
+    } else {
+      this.entityManager.update(
+        UserEntity,
+        { userId: user.userId },
+        {
+          firstLoginAt: Date.now(),
+          lastLoginIp: loginIp,
+          lastLoginAt: Date.now(),
+          lastSessionAt: Date.now(),
+        },
+      );
+    }
+    // 增加登陆次数
+    this.entityManager.increment(
+      UserEntity,
+      { userId: user.userId },
+      'loginTimes',
+      1,
+    );
     /**系统配置参数 */
     const setting: object = this.settingService.read('sys');
     /**令牌 */
@@ -58,7 +89,7 @@ export class PassportService {
       'token',
       token,
       'userId',
-      userId,
+      user.userId,
       'expired',
       expired,
       'createAt',
@@ -180,37 +211,8 @@ export class PassportService {
         };
       }
     }
-    // 验证通过后，更新用户登陆信息
-    if (user.firstLoginAt) {
-      this.entityManager.update(
-        UserEntity,
-        { userId: user.userId },
-        {
-          lastLoginIp: loginIp,
-          lastLoginAt: Date.now(),
-          lastSessionAt: Date.now(),
-        },
-      );
-    } else {
-      this.entityManager.update(
-        UserEntity,
-        { userId: user.userId },
-        {
-          firstLoginAt: Date.now(),
-          lastLoginIp: loginIp,
-          lastLoginAt: Date.now(),
-          lastSessionAt: Date.now(),
-        },
-      );
-    }
-    // 增加登陆次数
-    this.entityManager.increment(
-      UserEntity,
-      { userId: user.userId },
-      'loginTimes',
-      1,
-    );
-    return await this.create(user.userId);
+
+    return await this.create(user, loginIp);
   }
 
   /**
@@ -344,32 +346,7 @@ export class PassportService {
     if (!user.config.qrlogin) {
       return { code: 401, msg: '该用户不允许使用扫码登陆方式！' };
     }
-    // 验证通过后，更新用户登陆信息
-    if (user.firstLoginAt) {
-      this.entityManager.update(
-        UserEntity,
-        { userId: user.userId },
-        {
-          lastLoginIp: loginIp,
-          lastLoginAt: Date.now(),
-          lastSessionAt: Date.now(),
-        },
-      );
-    } else {
-      this.entityManager.update(
-        UserEntity,
-        { userId: user.userId },
-        {
-          firstLoginAt: Date.now(),
-          lastLoginIp: loginIp,
-          lastLoginAt: Date.now(),
-          lastSessionAt: Date.now(),
-        },
-      );
-    }
-    // 增加登陆次数
-    this.entityManager.increment(UserEntity, { userId }, 'loginTimes', 1);
     // 创建令牌
-    return await this.create(userId);
+    return await this.create(user, loginIp);
   }
 }

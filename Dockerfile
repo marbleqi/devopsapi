@@ -10,18 +10,12 @@ WORKDIR /data
 RUN curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - \
   # 安装nodejs
   && yum install -y nodejs python3 make gcc gcc-c++ \
-  # 设置使用npm淘宝源，在国外服务器上构建镜像时，可考虑注释
-  && npm config set registry https://registry.npmmirror.com \
-  && npm config set sass_binary_site=https://npmmirror.com/mirrors/node-sass/ \
   # 升级npm包
-  && npm install -g npm \
+  && npm i -g npm \
   # 安装yarn包
-  && npm install -g yarn \
-  # 设置yarn的源为淘宝源
-  && yarn config set registry https://registry.npmmirror.com -g \
-  && yarn config set sass_binary_site http://cdn.npmmirror.com/dist/node-sass -g
+  && npm i -g yarn
 COPY package.json .
-RUN yarn install
+RUN yarn
 
 # 源码构建
 FROM base AS build

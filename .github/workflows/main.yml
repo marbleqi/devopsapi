@@ -1,0 +1,49 @@
+name: 制作镜像并推送到私有仓库
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 拉取代码
+      uses: actions/checkout@v2.5.0
+    - name: 制作镜像并推送到私有仓库
+      run: |
+        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD registry.cn-beijing.aliyuncs.com
+        docker build -t registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi .
+        docker push registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi
+      env: 
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    - name: 连接演示服务器，并启动服务
+      uses: cross-the-world/ssh-pipeline@v1.2.0
+      with:
+        # ssh remote host
+        host: ${{ secrets.DEMO_HOST }}
+        # ssh remote port
+        port: 22
+        # ssh remote user
+        user: root
+        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
+        key: ${{ secrets.DEMO_KEY }}
+        # execute commands on ssh
+        script: |
+          docker pull registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi
+          for containerid in $(docker ps --format 'table {{.ID}}\t{{.Names}}' | grep 'demo-devopsapi' | awk '{print $1}'); do docker rm -f ${containerid} done;
+          docker run \
+          -dit \
+          --name demo-devopsapi \
+          --hostname demo-devopsapi \
+          -e NODE_ENV=demo \
+          -e POSTGRES_HOST=172.18.88.2 \
+          -e POSTGRES_DB=devops \
+          -e POSTGRES_USER=devops \
+          -e POSTGRES_PSW=devops \
+          -e REDIS_HOST=172.18.88.3 \
+          --network demo-net \
+          --ip 172.18.88.111 \
+          registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi

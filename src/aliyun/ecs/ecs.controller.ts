@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('ecs')
+@Controller('aliyun/ecs')
 export class EcsController {}

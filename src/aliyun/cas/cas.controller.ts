@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('cas')
+@Controller('aliyun/cas')
 export class CasController {}

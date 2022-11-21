@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('dns')
+@Controller('aliyun/dns')
 export class DnsController {}

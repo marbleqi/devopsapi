@@ -96,6 +96,7 @@ export class SysService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/sys/setting',
+        orderId: 1,
         config: {
           text: '参数设置',
           description: '参数设置',
@@ -109,6 +110,7 @@ export class SysService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/sys/req',
+        orderId: 2,
         config: {
           text: '日志管理',
           description: '日志管理',
@@ -122,6 +124,7 @@ export class SysService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/sys/queue',
+        orderId: 3,
         config: {
           text: '队列管理',
           description: '队列管理',

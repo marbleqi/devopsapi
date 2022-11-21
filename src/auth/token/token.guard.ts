@@ -1,5 +1,4 @@
 // 外部依赖
-import { networkInterfaces, NetworkInterfaceInfo } from 'os';
 import {
   CanActivate,
   ExecutionContext,
@@ -8,10 +7,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { networkInterfaces, NetworkInterfaceInfo } from 'os';
+import { EntityManager } from 'typeorm';
 import { Request, Response } from 'express';
 // 内部依赖
 import { Result, ReqService } from '../../shared';
-import { Auth, TokenService } from '..';
+import { Auth, UserEntity, TokenService } from '..';
 
 /**全局用路由守卫，完成token令牌认证和权限点认证 */
 @Injectable()
@@ -21,6 +23,7 @@ export class TokenGuard implements CanActivate {
    * @param reflector 反射器
    */
   constructor(
+    @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly reflector: Reflector,
     private readonly reqService: ReqService,
     private readonly tokenService: TokenService,
@@ -97,6 +100,12 @@ export class TokenGuard implements CanActivate {
       let result: Result;
       if (auth.userId) {
         result = { code: HttpStatus.FORBIDDEN, msg: '用户未授权使用该接口' };
+        // 更新用户的最后会话时间
+        this.entityManager.update(
+          UserEntity,
+          { userId: auth.userId },
+          { lastSessionAt: Date.now() },
+        );
       } else {
         status = HttpStatus.UNAUTHORIZED;
         result = { code: HttpStatus.UNAUTHORIZED, msg: '令牌验证失败' };
@@ -110,6 +119,12 @@ export class TokenGuard implements CanActivate {
       // 抛出异常。注：路由守卫抛出异常后，将不会再调用拦截器
       throw new HttpException(result, status);
     }
+    // 更新用户的最后会话时间
+    this.entityManager.update(
+      UserEntity,
+      { userId: auth.userId },
+      { lastSessionAt: Date.now() },
+    );
     res.locals.userId = auth.userId;
     res.locals.reqId = await this.reqService.insert({
       ...params,

@@ -87,7 +87,7 @@ export class RoleController {
 
   /**
    * 获取角色变更日志
-   * @param id 角色ID
+   * @param roleId 角色ID
    * @param res 响应上下文
    */
   @Get(':roleId/log')

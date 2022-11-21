@@ -25,6 +25,22 @@ export class AuthService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
+    const moduleName = '认证';
+    const objectName = '模块';
+    let type = '模块';
+    // 认证模块权限点
+    this.abilityService.add([
+      {
+        id: 100,
+        pid: 0,
+        name: '访问控制',
+        description: '访问控制',
+        type,
+        moduleName,
+        objectName,
+      },
+    ] as Ability[]);
+    type = '菜单';
     // 认证模块权限点
     this.abilityService.add([
       {
@@ -115,6 +131,7 @@ export class AuthService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/auth/ability',
+        orderId: 1,
         config: {
           text: '权限点管理',
           description: '权限点管理',
@@ -128,6 +145,7 @@ export class AuthService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/auth/menu',
+        orderId: 2,
         config: {
           text: '菜单管理',
           description: '菜单管理',
@@ -141,6 +159,7 @@ export class AuthService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/auth/role',
+        orderId: 3,
         config: {
           text: '角色管理',
           description: '角色管理',
@@ -154,6 +173,7 @@ export class AuthService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/auth/user',
+        orderId: 4,
         config: {
           text: '用户管理',
           description: '用户管理',
@@ -167,6 +187,7 @@ export class AuthService implements OnApplicationBootstrap {
         ...params,
         pMenuId,
         link: '/auth/token',
+        orderId: 5,
         config: {
           text: '令牌管理',
           description: '令牌管理',

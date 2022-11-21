@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SharedModule } from '../shared/shared.module';
 import { AuthModule } from '../auth/auth.module';
 import {
-  KongService,
   KongHostEntity,
   KongHostLogEntity,
   KongGrantEntity,
@@ -14,6 +13,7 @@ import {
   KongProjectEntity,
   KongProjectLogEntity,
   HostService,
+  KongService,
   GrantService,
   ProjectService,
   TargetService,

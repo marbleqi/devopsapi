@@ -9,6 +9,10 @@ export class MenuDto {
   @IsNotEmpty({ message: '上级菜单ID不能为空' })
   pMenuId: number;
 
+  /**菜单链接 */
+  @IsNotEmpty({ message: '菜单链接不能为空' })
+  link: string;
+
   /**菜单配置 */
   @IsNotEmpty({ message: '菜单配置不能为空' })
   config: MenuConfig;

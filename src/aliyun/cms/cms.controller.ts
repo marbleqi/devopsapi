@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('cms')
+@Controller('aliyun/cms')
 export class CmsController {}
