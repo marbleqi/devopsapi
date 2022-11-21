@@ -20,30 +20,15 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: 连接演示服务器，并启动服务
-      uses: cross-the-world/ssh-pipeline@v1.2.0
+      uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
       with:
-        # ssh remote host
         host: ${{ secrets.DEMO_HOST }}
-        # ssh remote port
         port: 22
-        # ssh remote user
         user: root
-        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
         key: ${{ secrets.DEMO_KEY }}
-        # execute commands on ssh
-        script: |
-          docker pull registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi
-          for containerid in $(docker ps --format 'table {{.ID}}\t{{.Names}}' | grep 'demo-devopsapi' | awk '{print $1}'); do docker rm -f ${containerid} done;
-          docker run \
-          -dit \
-          --name demo-devopsapi \
-          --hostname demo-devopsapi \
-          -e NODE_ENV=demo \
-          -e POSTGRES_HOST=172.18.88.2 \
-          -e POSTGRES_DB=devops \
-          -e POSTGRES_USER=devops \
-          -e POSTGRES_PSW=devops \
-          -e REDIS_HOST=172.18.88.3 \
-          --network demo-net \
-          --ip 172.18.88.111 \
-          registry.cn-beijing.aliyuncs.com/marbleqi/devopsapi
+        scp: |
+          './script/demo.sh' => /root/
+        last_ssh: |
+          cd /root/
+          chmod +x demo.sh
+          ./demo.sh
