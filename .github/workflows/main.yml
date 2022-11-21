@@ -20,15 +20,13 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: 连接演示服务器，并启动服务
-      uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+      uses: cross-the-world/ssh-pipeline@v1.2.0
       with:
         host: ${{ secrets.DEMO_HOST }}
         port: 22
         user: root
         key: ${{ secrets.DEMO_KEY }}
-        scp: |
-          './script/demo.sh' => /root/
-        last_ssh: |
+        script: |
           cd /root/
           chmod +x demo.sh
           ./demo.sh
