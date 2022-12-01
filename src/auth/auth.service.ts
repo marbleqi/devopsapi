@@ -25,6 +25,7 @@ export class AuthService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
+    console.debug('认证基础服务', this);
     const moduleName = '认证';
     const objectName = '模块';
     let type = '模块';

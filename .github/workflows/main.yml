@@ -28,5 +28,5 @@ jobs:
         key: ${{ secrets.DEMO_KEY }}
         script: |
           cd /root/
-          chmod +x demo.sh
-          ./demo.sh
+          chmod +x devopsapi.sh
+          ./devopsapi.sh

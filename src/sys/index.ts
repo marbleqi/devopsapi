@@ -4,4 +4,5 @@ export * from './sys.service';
 export * from './setting/setting.controller';
 export * from './req/req.dto';
 export * from './req/req.controller';
+export * from './about/about.controller';
 export * from './queue/queue.controller';

@@ -8,16 +8,19 @@ import {
   ReqModuleEntity,
   ReqControllerEntity,
   ReqActionEntity,
+  AboutEntity,
   OperateEntity,
   SettingEntity,
   SettingLogEntity,
   QueueService,
   RedisService,
   CommonService,
+  AboutService,
   ReqService,
   OperateService,
   SettingService,
 } from '.';
+import {} from './about/about.service';
 
 /**共享模块 */
 @Module({
@@ -27,6 +30,7 @@ import {
       ReqModuleEntity,
       ReqControllerEntity,
       ReqActionEntity,
+      AboutEntity,
       OperateEntity,
       SettingEntity,
       SettingLogEntity,
@@ -53,6 +57,7 @@ import {
     ReqService,
     OperateService,
     SettingService,
+    AboutService,
   ],
   exports: [
     QueueService,

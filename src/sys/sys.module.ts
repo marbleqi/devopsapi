@@ -7,12 +7,18 @@ import {
   SysService,
   SettingController,
   ReqController,
+  AboutController,
   QueueController,
 } from '.';
 
 @Module({
   imports: [SharedModule, AuthModule],
-  controllers: [SettingController, ReqController, QueueController],
+  controllers: [
+    SettingController,
+    AboutController,
+    ReqController,
+    QueueController,
+  ],
   providers: [SysService],
 })
 export class SysModule {}
