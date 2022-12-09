@@ -289,7 +289,6 @@ export class ProjectService {
         validateStatus: () => true,
       }),
     );
-    console.debug('新增对象结果', result.data);
     if (result.status !== 201) {
       return { code: 403, msg: result.data.message };
     }

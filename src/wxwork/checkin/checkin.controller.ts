@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('checkin')
+@Controller('wxwork/checkin')
 export class CheckinController {}

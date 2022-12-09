@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('config')
+@Controller('nacos/config')
 export class ConfigController {}
