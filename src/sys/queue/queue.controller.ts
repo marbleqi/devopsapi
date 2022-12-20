@@ -16,15 +16,18 @@ export class QueueController {
     private readonly abilityService: AbilityService,
     private readonly queueService: QueueService,
   ) {
-    const type = '接口';
-    const moduleName = '系统管理';
-    const objectName = '队列';
+    const main = {
+      pid: 230,
+      moduleName: '系统管理',
+      objectName: '队列',
+      type: '接口',
+    };
     // 队列管理
-    this.abilityService.add(
-      [
-        { id: 232, pid: 230, name: '任务列表', description: '查看任务列表' },
-        { id: 238, pid: 230, name: '删除任务', description: '删除任务' },
-      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    [
+      { id: 232, name: '任务列表', description: '查看任务列表' },
+      { id: 238, name: '删除任务', description: '删除任务' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
     );
   }
 

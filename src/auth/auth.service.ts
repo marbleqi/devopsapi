@@ -25,78 +25,29 @@ export class AuthService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    const moduleName = '认证';
-    const objectName = '模块';
-    let type = '模块';
+    const main = { pid: 100, moduleName: '认证', type: '菜单' };
     // 认证模块权限点
     this.abilityService.add([
       {
-        id: 100,
+        id: main.pid,
         pid: 0,
-        name: '访问控制',
-        description: '访问控制',
-        type,
-        moduleName,
-        objectName,
-      },
-    ] as Ability[]);
-    type = '菜单';
-    // 认证模块权限点
-    this.abilityService.add([
-      {
-        id: 100,
-        pid: 0,
-        name: '访问控制',
-        description: '访问控制',
-        moduleName: '认证',
+        name: main.moduleName,
+        description: '认证模块，访问控制',
         type: '模块',
-      },
-      {
-        id: 110,
-        pid: 100,
-        name: '权限点',
-        description: '权限点管理',
-        moduleName: '认证',
-        objectName: '权限点',
-        type: '菜单',
-      },
-      {
-        id: 120,
-        pid: 100,
-        name: '菜单',
-        description: '菜单管理',
-        moduleName: '认证',
-        objectName: '菜单',
-        type: '菜单',
-      },
-      {
-        id: 130,
-        pid: 100,
-        name: '角色',
-        description: '角色管理',
-        moduleName: '认证',
-        objectName: '角色',
-        type: '菜单',
-      },
-      {
-        id: 140,
-        pid: 100,
-        name: '用户',
-        description: '用户管理',
-        moduleName: '认证',
-        objectName: '用户',
-        type: '菜单',
-      },
-      {
-        id: 150,
-        pid: 100,
-        name: '令牌',
-        description: '令牌管理',
-        moduleName: '认证',
-        objectName: '令牌',
-        type: '菜单',
+        moduleName: main.moduleName,
       },
     ] as Ability[]);
+    [
+      { id: 110, name: '权限点', description: '权限点管理' },
+      { id: 120, name: '菜单', description: '菜单管理' },
+      { id: 130, name: '角色', description: '角色管理' },
+      { id: 140, name: '用户', description: '用户管理' },
+      { id: 150, name: '令牌', description: '令牌管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
+    );
   }
 
   async onApplicationBootstrap() {
@@ -117,8 +68,8 @@ export class AuthService implements OnApplicationBootstrap {
         pMenuId: 0,
         link: 'auth',
         config: {
-          text: '访问控制',
-          description: '访问控制',
+          text: '认证',
+          description: '认证',
           reuse: true,
           isLeaf: false,
           icon: 'form',
@@ -134,7 +85,7 @@ export class AuthService implements OnApplicationBootstrap {
         link: '/auth/ability',
         orderId: 1,
         config: {
-          text: '权限点管理',
+          text: '权限点',
           description: '权限点管理',
           reuse: true,
           isLeaf: true,
@@ -148,7 +99,7 @@ export class AuthService implements OnApplicationBootstrap {
         link: '/auth/menu',
         orderId: 2,
         config: {
-          text: '菜单管理',
+          text: '菜单',
           description: '菜单管理',
           reuse: true,
           isLeaf: true,
@@ -162,7 +113,7 @@ export class AuthService implements OnApplicationBootstrap {
         link: '/auth/role',
         orderId: 3,
         config: {
-          text: '角色管理',
+          text: '角色',
           description: '角色管理',
           reuse: true,
           isLeaf: true,
@@ -176,7 +127,7 @@ export class AuthService implements OnApplicationBootstrap {
         link: '/auth/user',
         orderId: 4,
         config: {
-          text: '用户管理',
+          text: '用户',
           description: '用户管理',
           reuse: true,
           isLeaf: true,
@@ -190,7 +141,7 @@ export class AuthService implements OnApplicationBootstrap {
         link: '/auth/token',
         orderId: 5,
         config: {
-          text: '令牌管理',
+          text: '令牌',
           description: '令牌管理',
           reuse: true,
           isLeaf: true,

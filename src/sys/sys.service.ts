@@ -24,44 +24,27 @@ export class SysService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    // 用户管理
+    const main = { pid: 200, moduleName: '系统', type: '菜单' };
+    // 系统管理
     this.abilityService.add([
       {
-        id: 200,
+        id: main.pid,
         pid: 0,
-        name: '系统',
-        description: '系统管理',
-        moduleName: '系统',
+        name: main.moduleName,
+        description: '系统模块',
         type: '模块',
-      },
-      {
-        id: 210,
-        pid: 200,
-        name: '配置',
-        description: '系统参数配置',
-        moduleName: '系统',
-        objectName: '配置',
-        type: '菜单',
-      },
-      {
-        id: 220,
-        pid: 200,
-        name: '请求日志',
-        description: '请求日志',
-        moduleName: '系统',
-        objectName: '请求日志',
-        type: '菜单',
-      },
-      {
-        id: 230,
-        pid: 200,
-        name: '队列',
-        description: '队列管理',
-        moduleName: '系统',
-        objectName: '队列',
-        type: '菜单',
+        moduleName: main.moduleName,
       },
     ] as Ability[]);
+    [
+      { id: 210, name: '配置', description: '配置管理' },
+      { id: 220, name: '请求', description: '请求日志管理' },
+      { id: 230, name: '队列', description: '队列管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
+    );
   }
 
   async onApplicationBootstrap() {

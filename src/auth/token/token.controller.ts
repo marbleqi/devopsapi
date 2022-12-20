@@ -15,16 +15,19 @@ export class TokenController {
     private readonly abilityService: AbilityService,
     private readonly tokenService: TokenService,
   ) {
-    const type = '接口';
-    const moduleName = '认证';
-    const objectName = '令牌';
+    const main = {
+      pid: 150,
+      moduleName: '认证',
+      objectName: '令牌',
+      type: '接口',
+    };
     // 令牌管理
-    this.abilityService.add(
-      [
-        { id: 152, pid: 150, name: '令牌列表', description: '查看令牌列表' },
-        { id: 154, pid: 150, name: '缓存令牌', description: '重新缓存令牌' },
-        { id: 158, pid: 150, name: '作废令牌', description: '作废单个令牌' },
-      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    [
+      { id: 152, name: '令牌列表', description: '查看令牌列表' },
+      { id: 154, name: '缓存令牌', description: '重新缓存令牌' },
+      { id: 158, name: '作废令牌', description: '对菜单进行排序' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
     );
   }
 

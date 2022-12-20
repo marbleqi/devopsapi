@@ -24,19 +24,33 @@ export class KongService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    // 用户管理
+    const main = { pid: 500, moduleName: 'KONG', type: '菜单' };
+    // KONG管理
     this.abilityService.add([
-      { id: 500, pid: 0, name: 'KONG管理', description: 'KONG管理' },
-      { id: 510, pid: 500, name: '站点', description: '站点管理' },
-      { id: 520, pid: 500, name: '授权', description: '授权管理' },
-      { id: 530, pid: 500, name: '路由', description: '路由管理' },
-      { id: 540, pid: 500, name: '服务', description: '服务管理' },
-      { id: 550, pid: 500, name: '用户', description: '用户管理' },
-      { id: 560, pid: 500, name: '证书', description: '证书管理' },
-      { id: 570, pid: 500, name: '上游', description: '上游管理' },
-      { id: 580, pid: 500, name: '目标', description: '目标管理' },
-      { id: 590, pid: 500, name: '插件', description: '插件管理' },
+      {
+        id: main.pid,
+        pid: 0,
+        name: main.moduleName,
+        description: 'KONG管理',
+        type: '模块',
+        moduleName: main.moduleName,
+      },
     ] as Ability[]);
+    [
+      { id: 510, name: '站点', description: '站点管理' },
+      { id: 520, name: '授权', description: '授权管理' },
+      { id: 530, name: '路由', description: '路由管理' },
+      { id: 540, name: '服务', description: '服务管理' },
+      { id: 550, name: '用户', description: '用户管理' },
+      { id: 560, name: '证书', description: '证书管理' },
+      { id: 570, name: '上游', description: '上游管理' },
+      { id: 580, name: '目标', description: '目标管理' },
+      { id: 590, name: '插件', description: '插件管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
+    );
   }
 
   /**初始化 */

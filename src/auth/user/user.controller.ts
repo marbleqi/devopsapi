@@ -24,25 +24,23 @@ export class UserController {
     private readonly abilityService: AbilityService,
     private readonly userService: UserService,
   ) {
-    const type = '接口';
-    const moduleName = '认证';
-    const objectName = '用户';
+    const main = {
+      pid: 140,
+      moduleName: '认证',
+      objectName: '用户',
+      type: '接口',
+    };
     // 用户管理
-    this.abilityService.add(
-      [
-        { id: 142, pid: 140, name: '用户列表', description: '查看用户列表' },
-        { id: 143, pid: 140, name: '用户详情', description: '查看用户详情' },
-        {
-          id: 144,
-          pid: 140,
-          name: '用户更新历史',
-          description: '用户更新历史',
-        },
-        { id: 145, pid: 140, name: '创建用户', description: '创建新的用户' },
-        { id: 146, pid: 140, name: '更新用户', description: '更新用户信息' },
-        { id: 148, pid: 140, name: '用户解锁', description: '对用户进行解锁' },
-        { id: 149, pid: 140, name: '重置密码', description: '重置用户密码' },
-      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    [
+      { id: 142, name: '用户列表', description: '查看用户列表' },
+      { id: 143, name: '用户详情', description: '查看用户详情' },
+      { id: 144, name: '用户历史', description: '用户更新历史' },
+      { id: 145, name: '创建用户', description: '创建新的用户' },
+      { id: 146, name: '更新用户', description: '更新用户信息' },
+      { id: 148, name: '用户解锁', description: '对用户进行解锁' },
+      { id: 149, name: '重置密码', description: '重置用户密码' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
     );
   }
 

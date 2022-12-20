@@ -14,18 +14,21 @@ export class SettingController {
    * @param setting 注入的配置服务
    */
   constructor(
-    private readonly ability: AbilityService,
+    private readonly abilityService: AbilityService,
     private readonly setting: SettingService,
   ) {
-    const type = '接口';
-    const moduleName = '系统管理';
-    const objectName = '配置';
+    const main = {
+      pid: 210,
+      moduleName: '系统管理',
+      objectName: '配置',
+      type: '接口',
+    };
     // 系统配置
-    this.ability.add(
-      [
-        { id: 213, pid: 210, name: '查看配置', description: '查看系统配置' },
-        { id: 215, pid: 210, name: '修改配置', description: '修改系统配置' },
-      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    [
+      { id: 213, name: '查看配置', description: '查看系统配置' },
+      { id: 215, name: '修改配置', description: '修改系统配置' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
     );
   }
   /**
