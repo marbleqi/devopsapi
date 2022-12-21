@@ -20,10 +20,18 @@ export class SettingController {
     private readonly settingService: SettingService,
     private readonly wxworkService: WxworkService,
   ) {
-    this.abilityService.add([
-      { id: 313, pid: 310, name: '查企业微信配置', description: '查配置信息' },
-      { id: 316, pid: 310, name: '改企业微信配置', description: '改配置信息' },
-    ] as Ability[]);
+    const main = {
+      pid: 310,
+      moduleName: '企业微信',
+      objectName: '配置',
+      type: '接口',
+    };
+    [
+      { id: 313, name: '查询配置', description: '查企业微信配置' },
+      { id: 316, name: '修改配置', description: '修改企业微信配置' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
   /**
    * 获取企业微信配置

@@ -26,16 +26,24 @@ export class ServiceController {
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
   ) {
+    const main = {
+      pid: 540,
+      moduleName: 'KONG',
+      objectName: '服务',
+      type: '接口',
+    };
     // 服务管理
-    this.abilityService.add([
-      { id: 541, pid: 540, name: '服务同步', description: '服务同步' },
-      { id: 542, pid: 540, name: '服务列表', description: '服务列表' },
-      { id: 543, pid: 540, name: '服务详情', description: '服务详情' },
-      { id: 544, pid: 540, name: '服务变更历史', description: '创建服务' },
-      { id: 545, pid: 540, name: '创建服务', description: '创建服务' },
-      { id: 546, pid: 540, name: '修改服务', description: '修改服务' },
-      { id: 547, pid: 540, name: '删除服务', description: '删除服务' },
-    ] as Ability[]);
+    [
+      { id: 541, name: '服务同步', description: '服务同步' },
+      { id: 542, name: '服务列表', description: '服务列表' },
+      { id: 543, name: '服务详情', description: '服务详情' },
+      { id: 544, name: '服务变更历史', description: '创建服务' },
+      { id: 545, name: '创建服务', description: '创建服务' },
+      { id: 546, name: '修改服务', description: '修改服务' },
+      { id: 547, name: '删除服务', description: '删除服务' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

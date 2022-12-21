@@ -25,14 +25,22 @@ export class GrantController {
     private readonly abilityService: AbilityService,
     private readonly grantService: GrantService,
   ) {
+    const main = {
+      pid: 520,
+      moduleName: 'KONG',
+      objectName: '授权',
+      type: '接口',
+    };
     // 授权管理
-    this.abilityService.add([
-      { id: 522, pid: 520, name: '授权列表', description: '授权列表' },
-      { id: 523, pid: 520, name: '授权详情', description: '授权详情' },
-      { id: 524, pid: 520, name: '授权变更历史', description: '授权变更历史' },
-      { id: 525, pid: 520, name: '创建授权', description: '创建授权' },
-      { id: 526, pid: 520, name: '修改授权', description: '修改授权' },
-    ] as Ability[]);
+    [
+      { id: 522, name: '授权列表', description: '授权列表' },
+      { id: 523, name: '授权详情', description: '授权详情' },
+      { id: 524, name: '授权变更历史', description: '授权变更历史' },
+      { id: 525, name: '创建授权', description: '创建授权' },
+      { id: 526, name: '修改授权', description: '修改授权' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

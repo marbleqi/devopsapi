@@ -24,7 +24,7 @@ export class KongService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    const main = { pid: 500, moduleName: 'KONG', type: '菜单' };
+    const main = { pid: 500, moduleName: 'KONG', type: '对象' };
     // KONG管理
     this.abilityService.add([
       {

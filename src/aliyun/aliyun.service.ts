@@ -27,32 +27,32 @@ export class AliyunService implements OnApplicationBootstrap {
     private readonly menuService: MenuService,
     private readonly accesskeyService: AccesskeyService,
   ) {
-    const moduleName = '阿里云';
-    const objectName = '密钥';
-    // 阿里云管理模块
+    const main = { pid: 1000, moduleName: '阿里云', type: '对象' };
+    // 阿里云
     this.abilityService.add([
       {
-        id: 1000,
+        id: main.pid,
         pid: 0,
-        name: '阿里云管理',
-        description: '阿里云管理',
+        name: main.moduleName,
+        description: '阿里云',
         type: '模块',
+        moduleName: main.moduleName,
       },
     ] as Ability[]);
-    // 阿里云管理对象
-    const type = '对象';
-    this.abilityService.add(
-      [
-        { id: 1010, pid: 1000, name: '密钥', description: '密钥管理' },
-        { id: 1020, pid: 1000, name: '授权', description: '授权管理' },
-        { id: 1030, pid: 1000, name: '域名', description: '域名管理' },
-        { id: 1040, pid: 1000, name: 'DNS', description: 'DNS管理' },
-        { id: 1050, pid: 1000, name: 'SSL证书', description: 'SSL证书管理' },
-        { id: 1060, pid: 1000, name: '镜像', description: '镜像仓库管理' },
-        { id: 1070, pid: 1000, name: '监控', description: '监控管理' },
-        { id: 1080, pid: 1000, name: 'ECS', description: '云服务管理' },
-        { id: 1090, pid: 1000, name: '财务', description: '财务管理' },
-      ].map((item) => ({ ...item, type, moduleName, objectName })) as Ability[],
+    [
+      { id: 1010, name: '密钥', description: '密钥管理' },
+      { id: 1020, name: '授权', description: '授权管理' },
+      { id: 1030, name: '域名', description: '域名管理' },
+      { id: 1040, name: 'DNS', description: 'DNS管理' },
+      { id: 1050, name: 'SSL证书', description: 'SSL证书管理' },
+      { id: 1060, name: '镜像', description: '镜像仓库管理' },
+      { id: 1070, name: '监控', description: '监控管理' },
+      { id: 1080, name: 'ECS', description: '云服务管理' },
+      { id: 1090, name: '财务', description: '财务管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
     );
   }
   /**初始化 */

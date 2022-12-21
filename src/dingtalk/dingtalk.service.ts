@@ -31,12 +31,26 @@ export class DingtalkService implements OnApplicationBootstrap {
     private readonly settingService: SettingService,
     private readonly menuService: MenuService,
   ) {
-    // 系统管理
+    const main = { pid: 400, moduleName: '钉钉', type: '对象' };
+    // 钉钉
     this.abilityService.add([
-      { id: 400, pid: 0, name: '钉钉', description: '钉钉管理' },
-      { id: 410, pid: 400, name: '钉钉配置', description: '配置钉钉参数' },
-      { id: 430, pid: 400, name: '钉钉用户管理', description: '钉钉用户管理' },
+      {
+        id: main.pid,
+        pid: 0,
+        name: main.moduleName,
+        description: '钉钉',
+        type: '模块',
+        moduleName: main.moduleName,
+      },
     ] as Ability[]);
+    [
+      { id: 410, name: '钉钉配置', description: '配置钉钉参数' },
+      { id: 430, name: '钉钉用户管理', description: '钉钉用户管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
+    );
   }
 
   async onApplicationBootstrap() {

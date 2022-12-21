@@ -25,12 +25,20 @@ export class UserController {
     private readonly abilityService: AbilityService,
     private readonly userService: UserService,
   ) {
+    const main = {
+      pid: 430,
+      moduleName: '钉钉',
+      objectName: '用户',
+      type: '接口',
+    };
     // 用户管理
-    this.abilityService.add([
-      { id: 432, pid: 430, name: '钉钉用户列表', description: '钉钉用户列表' },
-      { id: 435, pid: 430, name: '创建关联用户', description: '创建关联用户' },
-      { id: 436, pid: 430, name: '更新关联用户', description: '更新关联用户' },
-    ] as Ability[]);
+    [
+      { id: 432, name: '钉钉用户列表', description: '钉钉用户列表' },
+      { id: 435, name: '创建关联用户', description: '创建关联用户' },
+      { id: 436, name: '更新关联用户', description: '更新关联用户' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   @Get('depart/:dept_id')

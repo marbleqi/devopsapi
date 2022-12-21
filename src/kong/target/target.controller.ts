@@ -25,13 +25,21 @@ export class TargetController {
     private readonly abilityService: AbilityService,
     private readonly targetService: TargetService,
   ) {
+    const main = {
+      pid: 580,
+      moduleName: 'KONG',
+      objectName: '目标',
+      type: '接口',
+    };
     // 目标管理
-    this.abilityService.add([
-      { id: 582, pid: 580, name: '目标列表', description: '目标列表' },
-      { id: 584, pid: 580, name: '目标变更历史', description: '目标变更历史' },
-      { id: 585, pid: 580, name: '创建目标', description: '创建目标' },
-      { id: 587, pid: 580, name: '删除目标', description: '删除目标' },
-    ] as Ability[]);
+    [
+      { id: 582, name: '目标列表', description: '目标列表' },
+      { id: 584, name: '目标变更历史', description: '目标变更历史' },
+      { id: 585, name: '创建目标', description: '创建目标' },
+      { id: 587, name: '删除目标', description: '删除目标' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

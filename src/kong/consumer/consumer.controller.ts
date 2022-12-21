@@ -26,16 +26,24 @@ export class ConsumerController {
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
   ) {
-    // 服务管理
-    this.abilityService.add([
-      { id: 551, pid: 550, name: '服务同步', description: '服务同步' },
-      { id: 552, pid: 550, name: '服务列表', description: '服务列表' },
-      { id: 553, pid: 550, name: '服务详情', description: '服务详情' },
-      { id: 554, pid: 550, name: '服务变更历史', description: '创建服务' },
-      { id: 555, pid: 550, name: '创建服务', description: '创建服务' },
-      { id: 556, pid: 550, name: '修改服务', description: '修改服务' },
-      { id: 557, pid: 550, name: '删除服务', description: '删除服务' },
-    ] as Ability[]);
+    const main = {
+      pid: 550,
+      moduleName: 'KONG',
+      objectName: '用户',
+      type: '接口',
+    };
+    // 用户管理
+    [
+      { id: 551, name: '用户同步', description: '用户同步' },
+      { id: 552, name: '用户列表', description: '用户列表' },
+      { id: 553, name: '用户详情', description: '用户详情' },
+      { id: 554, name: '用户变更历史', description: '创建用户' },
+      { id: 555, name: '创建用户', description: '创建用户' },
+      { id: 556, name: '修改用户', description: '修改用户' },
+      { id: 557, name: '删除用户', description: '删除用户' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

@@ -26,16 +26,24 @@ export class CertificateController {
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
   ) {
+    const main = {
+      pid: 560,
+      moduleName: 'KONG',
+      objectName: '证书',
+      type: '接口',
+    };
     // 证书管理
-    this.abilityService.add([
-      { id: 561, pid: 560, name: '证书同步', description: '证书同步' },
-      { id: 562, pid: 560, name: '证书列表', description: '证书列表' },
-      { id: 563, pid: 560, name: '证书详情', description: '证书详情' },
-      { id: 564, pid: 560, name: '证书变更历史', description: '创建证书' },
-      { id: 565, pid: 560, name: '创建证书', description: '创建证书' },
-      { id: 566, pid: 560, name: '修改证书', description: '修改证书' },
-      { id: 567, pid: 560, name: '删除证书', description: '删除证书' },
-    ] as Ability[]);
+    [
+      { id: 561, name: '证书同步', description: '证书同步' },
+      { id: 562, name: '证书列表', description: '证书列表' },
+      { id: 563, name: '证书详情', description: '证书详情' },
+      { id: 564, name: '证书变更历史', description: '创建证书' },
+      { id: 565, name: '创建证书', description: '创建证书' },
+      { id: 566, name: '修改证书', description: '修改证书' },
+      { id: 567, name: '删除证书', description: '删除证书' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

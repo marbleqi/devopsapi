@@ -26,16 +26,24 @@ export class UpstreamController {
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
   ) {
+    const main = {
+      pid: 570,
+      moduleName: 'KONG',
+      objectName: '上游',
+      type: '接口',
+    };
     // 上游管理
-    this.abilityService.add([
-      { id: 571, pid: 570, name: '上游同步', description: '上游同步' },
-      { id: 572, pid: 570, name: '上游列表', description: '上游列表' },
-      { id: 573, pid: 570, name: '上游详情', description: '上游详情' },
-      { id: 574, pid: 570, name: '上游变更历史', description: '创建上游' },
-      { id: 575, pid: 570, name: '创建上游', description: '创建上游' },
-      { id: 576, pid: 570, name: '修改上游', description: '修改上游' },
-      { id: 577, pid: 570, name: '删除上游', description: '删除上游' },
-    ] as Ability[]);
+    [
+      { id: 571, name: '上游同步', description: '上游同步' },
+      { id: 572, name: '上游列表', description: '上游列表' },
+      { id: 573, name: '上游详情', description: '上游详情' },
+      { id: 574, name: '上游变更历史', description: '创建上游' },
+      { id: 575, name: '创建上游', description: '创建上游' },
+      { id: 576, name: '修改上游', description: '修改上游' },
+      { id: 577, name: '删除上游', description: '删除上游' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

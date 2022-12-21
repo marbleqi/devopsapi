@@ -32,16 +32,30 @@ export class WxworkService implements OnApplicationBootstrap {
     private readonly settingService: SettingService,
     private readonly menuService: MenuService,
   ) {
-    // 系统管理
+    const main = { pid: 300, moduleName: '企业微信', type: '对象' };
+    // 企业微信
     this.abilityService.add([
-      { id: 300, pid: 0, name: '企业微信', description: '企业微信管理' },
-      { id: 310, pid: 300, name: '企业微信配置', description: '企业微信配置' },
-      { id: 320, pid: 300, name: '企业微信部门', description: '企业微信部门' },
-      { id: 330, pid: 300, name: '企业微信用户', description: '企业微信用户' },
-      { id: 340, pid: 300, name: '工作日管理', description: '工作日管理' },
-      { id: 350, pid: 300, name: '打卡管理', description: '打卡管理' },
-      { id: 360, pid: 300, name: '机器人管理', description: '机器人管理' },
+      {
+        id: main.pid,
+        pid: 0,
+        name: main.moduleName,
+        description: '企业微信',
+        type: '模块',
+        moduleName: main.moduleName,
+      },
     ] as Ability[]);
+    [
+      { id: 310, name: '企业微信配置', description: '企业微信配置' },
+      { id: 320, name: '企业微信部门', description: '企业微信部门' },
+      { id: 330, name: '企业微信用户', description: '企业微信用户' },
+      { id: 340, name: '工作日管理', description: '工作日管理' },
+      { id: 350, name: '打卡管理', description: '打卡管理' },
+      { id: 360, name: '机器人管理', description: '机器人管理' },
+    ].map((item) =>
+      this.abilityService.add([
+        { ...main, ...item, objectName: item.name },
+      ] as Ability[]),
+    );
   }
 
   async onApplicationBootstrap() {

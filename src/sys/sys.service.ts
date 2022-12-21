@@ -24,7 +24,7 @@ export class SysService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    const main = { pid: 200, moduleName: '系统', type: '菜单' };
+    const main = { pid: 200, moduleName: '系统', type: '对象' };
     // 系统管理
     this.abilityService.add([
       {

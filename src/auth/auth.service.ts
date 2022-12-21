@@ -25,8 +25,8 @@ export class AuthService implements OnApplicationBootstrap {
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
   ) {
-    const main = { pid: 100, moduleName: '认证', type: '菜单' };
-    // 认证模块权限点
+    const main = { pid: 100, moduleName: '认证', type: '对象' };
+    // 认证
     this.abilityService.add([
       {
         id: main.pid,

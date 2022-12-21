@@ -26,16 +26,24 @@ export class RouteController {
     private readonly abilityService: AbilityService,
     private readonly projectService: ProjectService,
   ) {
+    const main = {
+      pid: 530,
+      moduleName: 'KONG',
+      objectName: '路由',
+      type: '接口',
+    };
     // 路由管理
-    this.abilityService.add([
-      { id: 531, pid: 530, name: '路由同步', description: '路由同步' },
-      { id: 532, pid: 530, name: '路由列表', description: '路由列表' },
-      { id: 533, pid: 530, name: '路由详情', description: '路由详情' },
-      { id: 534, pid: 530, name: '路由变更历史', description: '创建路由' },
-      { id: 535, pid: 530, name: '创建路由', description: '创建路由' },
-      { id: 536, pid: 530, name: '修改路由', description: '修改路由' },
-      { id: 537, pid: 530, name: '删除路由', description: '删除路由' },
-    ] as Ability[]);
+    [
+      { id: 531, name: '路由同步', description: '路由同步' },
+      { id: 532, name: '路由列表', description: '路由列表' },
+      { id: 533, name: '路由详情', description: '路由详情' },
+      { id: 534, name: '路由变更历史', description: '创建路由' },
+      { id: 535, name: '创建路由', description: '创建路由' },
+      { id: 536, name: '修改路由', description: '修改路由' },
+      { id: 537, name: '删除路由', description: '删除路由' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

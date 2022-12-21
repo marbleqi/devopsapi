@@ -27,16 +27,24 @@ export class PluginController {
     private readonly projectService: ProjectService,
     private readonly pluginService: PluginService,
   ) {
+    const main = {
+      pid: 590,
+      moduleName: 'KONG',
+      objectName: '插件',
+      type: '接口',
+    };
     // 插件管理
-    this.abilityService.add([
-      { id: 591, pid: 590, name: '插件同步', description: '插件同步' },
-      { id: 592, pid: 590, name: '插件列表', description: '插件列表' },
-      { id: 593, pid: 590, name: '插件详情', description: '插件详情' },
-      { id: 594, pid: 590, name: '插件变更历史', description: '创建插件' },
-      { id: 595, pid: 590, name: '创建插件', description: '创建插件' },
-      { id: 596, pid: 590, name: '修改插件', description: '修改插件' },
-      { id: 597, pid: 590, name: '删除插件', description: '删除插件' },
-    ] as Ability[]);
+    [
+      { id: 591, name: '插件同步', description: '插件同步' },
+      { id: 592, name: '插件列表', description: '插件列表' },
+      { id: 593, name: '插件详情', description: '插件详情' },
+      { id: 594, name: '插件变更历史', description: '创建插件' },
+      { id: 595, name: '创建插件', description: '创建插件' },
+      { id: 596, name: '修改插件', description: '修改插件' },
+      { id: 597, name: '删除插件', description: '删除插件' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**

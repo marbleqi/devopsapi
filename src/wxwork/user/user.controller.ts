@@ -25,13 +25,21 @@ export class UserController {
     private readonly abilityService: AbilityService,
     private readonly userService: UserService,
   ) {
+    const main = {
+      pid: 330,
+      moduleName: '企业微信',
+      objectName: '用户',
+      type: '接口',
+    };
     // 用户管理
-    this.abilityService.add([
-      { id: 331, pid: 330, name: '部门列表', description: '部门列表' },
-      { id: 332, pid: 330, name: '用户列表', description: '用户列表' },
-      { id: 335, pid: 330, name: '创建用户', description: '创建新的用户' },
-      { id: 336, pid: 330, name: '更新用户', description: '更新用户' },
-    ] as Ability[]);
+    [
+      { id: 331, name: '部门列表', description: '部门列表' },
+      { id: 332, name: '用户列表', description: '用户列表' },
+      { id: 335, name: '创建用户', description: '创建新的用户' },
+      { id: 336, name: '更新用户', description: '更新用户' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   @Get('depart')

@@ -20,10 +20,18 @@ export class SettingController {
     private readonly settingService: SettingService,
     private readonly dingtalkService: DingtalkService,
   ) {
-    this.abilityService.add([
-      { id: 413, pid: 410, name: '查看钉钉配置', description: '查看钉钉配置' },
-      { id: 416, pid: 410, name: '修改钉钉配置', description: '修改钉钉配置' },
-    ] as Ability[]);
+    const main = {
+      pid: 410,
+      moduleName: '钉钉',
+      objectName: '配置',
+      type: '接口',
+    };
+    [
+      { id: 413, name: '查询配置', description: '查看钉钉配置' },
+      { id: 416, name: '修改配置', description: '修改钉钉配置' },
+    ].map((item) =>
+      this.abilityService.add([{ ...main, ...item }] as Ability[]),
+    );
   }
 
   /**
