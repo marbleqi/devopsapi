@@ -10,14 +10,22 @@ import {
 import { CommonBaseEntity } from '../../shared';
 
 /**微信商户企业微信基类 */
-export abstract class WechatCompanyBaseEntity extends CommonBaseEntity {
-  /**企业微信密钥 */
-  @Column({ type: 'text', name: 'corp_secret', comment: '企业微信密钥' })
-  corpsecret: string;
+export abstract class WechatMerchantBaseEntity extends CommonBaseEntity {
+  /**企业微信ID */
+  @Column({ type: 'text', name: 'app_id', comment: '企业微信ID' })
+  appid: string;
 
-  /**说明 */
-  @Column({ type: 'text', name: 'description', comment: '说明' })
-  description: string;
+  /**证书cert */
+  @Column({ type: 'text', name: 'cert', comment: '证书cert' })
+  cert: string;
+
+  /**证书key */
+  @Column({ type: 'text', name: 'key', comment: '证书key' })
+  key: string;
+
+  /**企业微信密钥 */
+  @Column({ type: 'text', name: 'secret', comment: '企业微信密钥' })
+  secret: string;
 
   /**状态，1表示可用，0表示禁用 */
   @Column({ type: 'int', name: 'status', default: 1, comment: '状态' })
@@ -25,11 +33,11 @@ export abstract class WechatCompanyBaseEntity extends CommonBaseEntity {
 }
 
 /**微信商户企业微信表 */
-@Entity('wechat_companys')
-export class WechatCompanyEntity extends WechatCompanyBaseEntity {
-  /**企业微信ID */
-  @PrimaryColumn({ type: 'text', name: 'corp_id', comment: '企业微信ID' })
-  corpid: string;
+@Entity('wechat_merchants')
+export class WechatMerchantEntity extends WechatMerchantBaseEntity {
+  /**商户ID */
+  @PrimaryColumn({ type: 'text', name: 'mch_id', comment: '商户ID' })
+  mchid: string;
 
   /**排序ID */
   @Column({ type: 'bigint', name: 'order_id', default: 0, comment: '排序ID' })
@@ -57,8 +65,8 @@ export class WechatCompanyEntity extends WechatCompanyBaseEntity {
 }
 
 /**KONG站点日志表 */
-@Entity('wechat_companys_logs')
-export class WechatCompanyLogEntity extends WechatCompanyBaseEntity {
+@Entity('wechat_merchants_logs')
+export class WechatMerchantLogEntity extends WechatMerchantBaseEntity {
   /**日志ID */
   @PrimaryGeneratedColumn({
     type: 'bigint',
@@ -67,9 +75,9 @@ export class WechatCompanyLogEntity extends WechatCompanyBaseEntity {
   })
   logId: number;
 
-  /**企业微信ID */
-  @Column({ type: 'text', name: 'corp_id', comment: '企业微信ID' })
-  corpid: string;
+  /**商户ID */
+  @Column({ type: 'text', name: 'mch_id', comment: '商户ID' })
+  mchid: string;
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()

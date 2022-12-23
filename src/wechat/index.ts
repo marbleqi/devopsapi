@@ -1,7 +1,9 @@
 // 注：需要按照依赖关系顺序导入
 // 导入DTO
+export * from './company/company.dto';
 
 // 导入实体
+export * from './company/company.entity';
 
 // 导入服务
 export * from './refund/refund.service';

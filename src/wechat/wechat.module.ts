@@ -10,6 +10,8 @@ import {
   OrderController,
   RefundController,
 } from '.';
+import { MerchantController } from './merchant/merchant.controller';
+import { MerchantService } from './merchant/merchant.service';
 
 @Module({
   providers: [
@@ -18,12 +20,14 @@ import {
     ComplaintService,
     OrderService,
     RefundService,
+    MerchantService,
   ],
   controllers: [
     CompanyController,
     ComplaintController,
     OrderController,
     RefundController,
+    MerchantController,
   ],
 })
 export class WechatModule {}
