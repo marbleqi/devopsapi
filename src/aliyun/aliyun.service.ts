@@ -83,7 +83,7 @@ export class AliyunService implements OnApplicationBootstrap {
       });
       pMenuId = Number(result.identifiers[0].menuId);
     }
-    console.debug('阿里云主菜单ID', pMenuId);
+    // console.debug('阿里云主菜单ID', pMenuId);
     const menuList = [
       {
         ...params,

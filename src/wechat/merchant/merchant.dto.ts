@@ -1,9 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
 
-/**微信商户DTO */
-export class CompanyDto {
-  /**商户ID */
-  @IsNotEmpty({ message: '商户ID不能为空' })
+/**微信商家DTO */
+export class MerchantDto {
+  /**商家ID */
+  @IsNotEmpty({ message: '商家ID不能为空' })
   mchid: string;
 
   /**企业微信ID */

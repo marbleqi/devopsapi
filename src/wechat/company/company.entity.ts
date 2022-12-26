@@ -9,14 +9,14 @@ import {
 // 内部依赖
 import { CommonBaseEntity } from '../../shared';
 
-/**微信商户企业微信基类 */
+/**微信商家企业微信基类 */
 export abstract class WechatCompanyBaseEntity extends CommonBaseEntity {
   /**企业微信密钥 */
   @Column({ type: 'text', name: 'corp_secret', comment: '企业微信密钥' })
   corpsecret: string;
 
   /**说明 */
-  @Column({ type: 'text', name: 'description', comment: '说明' })
+  @Column({ type: 'text', name: 'description', comment: '企业微信说明' })
   description: string;
 
   /**状态，1表示可用，0表示禁用 */
@@ -24,7 +24,7 @@ export abstract class WechatCompanyBaseEntity extends CommonBaseEntity {
   status: number;
 }
 
-/**微信商户企业微信表 */
+/**微信商家企业微信表 */
 @Entity('wechat_companys')
 export class WechatCompanyEntity extends WechatCompanyBaseEntity {
   /**企业微信ID */

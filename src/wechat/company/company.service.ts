@@ -37,6 +37,7 @@ export class CompanyService {
       'corpid',
       'description',
       'status',
+      'orderId',
       'updateUserId',
       'updateAt',
       'operateId',
@@ -55,7 +56,7 @@ export class CompanyService {
    */
   async show(corpid: string): Promise<Result> {
     if (!corpid) {
-      return { code: 400, msg: '传入的企业ID无效' };
+      return { code: 400, msg: '传入的企业微信ID无效' };
     }
     /**用户对象 */
     const data: WechatCompanyEntity = await this.entityManager.findOneBy(
@@ -65,7 +66,7 @@ export class CompanyService {
     if (data) {
       return { code: 0, msg: 'ok', data };
     } else {
-      return { code: 404, msg: '未找到企业' };
+      return { code: 404, msg: '未找到企业微信' };
     }
   }
 
@@ -76,7 +77,7 @@ export class CompanyService {
    */
   async log(corpid: string): Promise<Result> {
     if (!corpid) {
-      return { code: 400, msg: '传入的企业ID无效' };
+      return { code: 400, msg: '传入的企业微信ID无效' };
     }
     /**用户对象 */
     const data: WechatCompanyLogEntity[] = await this.entityManager.findBy(
@@ -177,10 +178,10 @@ export class CompanyService {
   @OnEvent('wechat_company')
   async addLog(corpid: string) {
     /**企业对象 */
-    const host = await this.entityManager.findOneBy(WechatCompanyEntity, {
+    const company = await this.entityManager.findOneBy(WechatCompanyEntity, {
       corpid,
     });
     /**添加日志 */
-    this.entityManager.insert(WechatCompanyLogEntity, host);
+    this.entityManager.insert(WechatCompanyLogEntity, company);
   }
 }

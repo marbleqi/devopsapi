@@ -9,7 +9,7 @@ import {
 // 内部依赖
 import { CommonBaseEntity } from '../../shared';
 
-/**微信商户企业微信基类 */
+/**微信商家企业微信基类 */
 export abstract class WechatMerchantBaseEntity extends CommonBaseEntity {
   /**企业微信ID */
   @Column({ type: 'text', name: 'app_id', comment: '企业微信ID' })
@@ -32,11 +32,11 @@ export abstract class WechatMerchantBaseEntity extends CommonBaseEntity {
   status: number;
 }
 
-/**微信商户企业微信表 */
+/**微信商家企业微信表 */
 @Entity('wechat_merchants')
 export class WechatMerchantEntity extends WechatMerchantBaseEntity {
-  /**商户ID */
-  @PrimaryColumn({ type: 'text', name: 'mch_id', comment: '商户ID' })
+  /**商家ID */
+  @PrimaryColumn({ type: 'text', name: 'mch_id', comment: '商家ID' })
   mchid: string;
 
   /**排序ID */
@@ -75,8 +75,8 @@ export class WechatMerchantLogEntity extends WechatMerchantBaseEntity {
   })
   logId: number;
 
-  /**商户ID */
-  @Column({ type: 'text', name: 'mch_id', comment: '商户ID' })
+  /**商家ID */
+  @Column({ type: 'text', name: 'mch_id', comment: '商家ID' })
   mchid: string;
 
   /**对长整型数据返回时，进行数据转换 */

@@ -39,7 +39,7 @@ export class SettingService implements OnApplicationBootstrap {
 
   /**配置初始化 */
   async onApplicationBootstrap() {
-    console.debug('配置服务初始化');
+    // console.debug('配置服务初始化');
     await this.init();
     await this.reload();
     this.queueService.apiSub.subscribe(async (res) => {
