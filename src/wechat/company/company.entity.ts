@@ -56,7 +56,7 @@ export class WechatCompanyEntity extends WechatCompanyBaseEntity {
   }
 }
 
-/**KONG站点日志表 */
+/**微信商家企业微信日志表 */
 @Entity('wechat_companys_logs')
 export class WechatCompanyLogEntity extends WechatCompanyBaseEntity {
   /**日志ID */

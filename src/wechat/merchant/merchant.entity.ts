@@ -9,11 +9,15 @@ import {
 // 内部依赖
 import { CommonBaseEntity } from '../../shared';
 
-/**微信商家企业微信基类 */
+/**微信商家表基类 */
 export abstract class WechatMerchantBaseEntity extends CommonBaseEntity {
   /**企业微信ID */
   @Column({ type: 'text', name: 'app_id', comment: '企业微信ID' })
   appid: string;
+
+  /**证书序列号 */
+  @Column({ type: 'text', name: 'serial_no', comment: '证书序列号' })
+  serial_no: string;
 
   /**证书cert */
   @Column({ type: 'text', name: 'cert', comment: '证书cert' })
@@ -32,7 +36,7 @@ export abstract class WechatMerchantBaseEntity extends CommonBaseEntity {
   status: number;
 }
 
-/**微信商家企业微信表 */
+/**微信商家表 */
 @Entity('wechat_merchants')
 export class WechatMerchantEntity extends WechatMerchantBaseEntity {
   /**商家ID */
@@ -64,7 +68,7 @@ export class WechatMerchantEntity extends WechatMerchantBaseEntity {
   }
 }
 
-/**KONG站点日志表 */
+/**微信商家日志表 */
 @Entity('wechat_merchants_logs')
 export class WechatMerchantLogEntity extends WechatMerchantBaseEntity {
   /**日志ID */

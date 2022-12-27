@@ -22,8 +22,6 @@ import {
   OrderController,
   RefundController,
 } from '.';
-import {} from './merchant/merchant.controller';
-import {} from './merchant/merchant.service';
 
 @Module({
   imports: [

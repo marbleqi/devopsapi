@@ -2,7 +2,10 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
+import { createSign } from 'crypto';
+import { format } from 'date-fns';
 // 内部依赖
+import { CommonService } from '../shared';
 import {
   Ability,
   MenuConfig,
@@ -10,6 +13,7 @@ import {
   AbilityService,
   MenuService,
 } from '../auth';
+import { MerchantService } from '.';
 
 @Injectable()
 export class WechatService implements OnApplicationBootstrap {
@@ -21,8 +25,10 @@ export class WechatService implements OnApplicationBootstrap {
    */
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly commonService: CommonService,
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
+    private readonly merchantService: MerchantService,
   ) {
     const main = { pid: 600, moduleName: '微信', type: '对象' };
     // KONG管理
@@ -147,5 +153,39 @@ export class WechatService implements OnApplicationBootstrap {
     for (const menuItem of menuList) {
       await this.menuService.set(menuItem);
     }
+  }
+
+  /**
+   * 签名生产算法
+   * @param value
+   * @returns
+   */
+  async sign(value: {
+    mchid: string;
+    method: 'GET' | 'POST';
+    url: string;
+    body: any;
+  }) {
+    const mch: any = await this.merchantService.show(value.mchid);
+    if (mch.code !== 0) {
+      return { code: 403, msg: '未配置证书！' };
+    }
+    const date = format(new Date(), 't');
+    const nonce_str = this.commonService.random(32);
+    const sign = createSign('RSA-SHA256');
+    let source = value.method + '\n';
+    source += value.url + '\n';
+    source += date + '\n';
+    source += nonce_str + '\n';
+    if (typeof value.body === 'object') {
+      source += JSON.stringify(value.body) + '\n';
+    } else {
+      source += value.body + '\n';
+    }
+    sign.write(source);
+    sign.end();
+    const signature = sign.sign(mch.data.key, 'base64');
+    const Authorization = `WECHATPAY2-SHA256-RSA2048 mchid="${value.mchid}",serial_no="${mch.data.serial_no}",nonce_str="${nonce_str}",timestamp="${date}",signature="${signature}"`;
+    return { code: 0, msg: 'ok', data: Authorization };
   }
 }

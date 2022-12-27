@@ -10,6 +10,10 @@ export class MerchantDto {
   @IsNotEmpty({ message: '企业微信ID不能为空' })
   appid: string;
 
+  /**证书序列号 */
+  @IsNotEmpty({ message: 'API密钥不能为空' })
+  serial_no: string;
+
   /**证书cert */
   @IsNotEmpty({ message: '证书cert不能为空' })
   cert: string;

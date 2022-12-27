@@ -1,3 +1,4 @@
+// 外部依赖
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
@@ -114,7 +115,7 @@ export class MerchantService {
       createAt: Date.now(),
     });
     if (result.identifiers.length) {
-      this.eventEmitter.emit('wechat_company', value.mchid);
+      this.eventEmitter.emit('wechat_merchant', value.mchid);
       return { code: 0, msg: '商家创建完成', operateId, reqId };
     } else {
       return { code: 400, msg: '商家创建失败', operateId, reqId };
@@ -145,8 +146,14 @@ export class MerchantService {
       { ...value, operateId, reqId, updateUserId, updateAt: Date.now() },
     );
     if (result.affected) {
-      this.eventEmitter.emit('wechat_company', mchid);
-      return { code: 0, msg: '更新商家成功', operateId, reqId, mchid };
+      this.eventEmitter.emit('wechat_merchant', value.mchid);
+      return {
+        code: 0,
+        msg: '更新商家成功',
+        operateId,
+        reqId,
+        mchid: value.mchid,
+      };
     } else {
       return { code: 400, msg: '更新商家失败', operateId, reqId };
     }
