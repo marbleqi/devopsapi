@@ -1,12 +1,17 @@
 // 外部依赖
-import { Entity, Column, PrimaryColumn, AfterLoad } from 'typeorm';
+import { Entity, PrimaryColumn, Column, Index, AfterLoad } from 'typeorm';
 
 /**微信商家退款记录表 */
 @Entity('wechat_refunds')
+@Index(['mchid', 'create_at'])
 export class WechatRefundEntity {
   /**微信退款单号 */
   @PrimaryColumn({ type: 'text', name: 'refund_id', comment: '微信退款单号' })
   refund_id: string;
+
+  /**商家ID */
+  @Column({ type: 'text', name: 'mchid', comment: '商家ID' })
+  mchid: string;
 
   /**商家退款单号 */
   @Column({ type: 'text', name: 'out_refund_no', comment: '商家退款单号' })
@@ -32,10 +37,6 @@ export class WechatRefundEntity {
   })
   user_received_account: string;
 
-  /**退款成功时间 */
-  @Column({ type: 'text', name: 'success_time', comment: '退款成功时间' })
-  success_time: string;
-
   /**退款创建时间 */
   @Column({ type: 'text', name: 'create_time', comment: '退款创建时间' })
   create_time: string;
@@ -48,13 +49,9 @@ export class WechatRefundEntity {
   @Column({ type: 'text', name: 'funds_account', comment: '资金账户' })
   funds_account: string;
 
-  /**订单金额 */
-  @Column({ type: 'int', name: 'total', comment: '订单金额' })
-  total: number;
-
-  /**退款金额 */
-  @Column({ type: 'int', name: 'refund', comment: '退款金额' })
-  refund: number;
+  /**金额信息 */
+  @Column({ type: 'jsonb', name: 'amount', comment: '金额信息' })
+  amount: any;
 
   /**操作序号 */
   @Column({

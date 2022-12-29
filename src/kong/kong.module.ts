@@ -12,12 +12,20 @@ import {
   KongGrantLogEntity,
   KongProjectEntity,
   KongProjectLogEntity,
+  KongLogEntity,
+  KongLogCountEntity,
+  KongLogYearEntity,
+  KongLogMonthEntity,
+  KongLogDayEntity,
+  KongLogHourEntity,
+  KongLogMinuteEntity,
   HostService,
   KongService,
   GrantService,
   ProjectService,
   TargetService,
   PluginService,
+  LogService,
   HostController,
   GrantController,
   TargetController,
@@ -27,6 +35,7 @@ import {
   RouteController,
   PluginController,
   UpstreamController,
+  LogController,
 } from '.';
 
 @Module({
@@ -41,6 +50,13 @@ import {
       KongGrantLogEntity,
       KongProjectEntity,
       KongProjectLogEntity,
+      KongLogEntity,
+      KongLogCountEntity,
+      KongLogYearEntity,
+      KongLogMonthEntity,
+      KongLogDayEntity,
+      KongLogHourEntity,
+      KongLogMinuteEntity,
     ]),
   ],
   providers: [
@@ -50,6 +66,7 @@ import {
     TargetService,
     PluginService,
     ProjectService,
+    LogService,
   ],
   controllers: [
     HostController,
@@ -61,6 +78,7 @@ import {
     UpstreamController,
     TargetController,
     PluginController,
+    LogController,
   ],
 })
 export class KongModule {}

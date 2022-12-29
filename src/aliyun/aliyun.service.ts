@@ -22,7 +22,7 @@ import { AccesskeyService } from '.';
 export class AliyunService implements OnApplicationBootstrap {
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
-    private readonly http: HttpService,
+    private readonly clientService: HttpService,
     private readonly abilityService: AbilityService,
     private readonly menuService: MenuService,
     private readonly accesskeyService: AccesskeyService,
@@ -309,7 +309,7 @@ export class AliyunService implements OnApplicationBootstrap {
       Accept: accept,
     };
     return await firstValueFrom(
-      this.http.request({
+      this.clientService.request({
         url: `https://cr.${regionId}.aliyuncs.com${value.url}`,
         method: value.method,
         data: value.body,

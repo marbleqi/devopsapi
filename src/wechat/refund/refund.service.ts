@@ -1,5 +1,8 @@
 // 外部依赖
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { format } from 'date-fns';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import {
   EntityManager,
@@ -9,7 +12,12 @@ import {
 } from 'typeorm';
 // 内部依赖
 import { Result, OperateService, CommonService } from '../../shared';
-import { RefundDto, WechatRefundEntity } from '..';
+import {
+  RefundDto,
+  WechatRefundEntity,
+  MerchantService,
+  WechatService,
+} from '..';
 
 @Injectable()
 export class RefundService {
@@ -21,8 +29,11 @@ export class RefundService {
    */
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
+    private readonly clientService: HttpService,
     private readonly operateService: OperateService,
     private readonly commonService: CommonService,
+    private readonly merchantService: MerchantService,
+    private readonly wechatService: WechatService,
   ) {}
 
   /**
@@ -33,12 +44,12 @@ export class RefundService {
   async index(operateId: number): Promise<Result> {
     /**返回字段 */
     const select = [
-      'mchid',
-      'appid',
+      'refund_id',
+      'out_refund_no',
+      'amount',
       'status',
-      'orderId',
-      'updateUserId',
-      'updateAt',
+      'createUserId',
+      'createAt',
       'operateId',
     ] as FindOptionsSelect<WechatRefundEntity>;
     /**搜索条件 */
@@ -81,18 +92,59 @@ export class RefundService {
     updateUserId: number,
     reqId = 0,
   ): Promise<Result> {
+    const mch: any = await this.merchantService.show(value.mchid);
+    if (mch.code) {
+      return { code: 403, msg: '无效商家！' };
+    }
+    const method: 'GET' | 'POST' = 'POST';
+    const url = `/v3/refund/domestic/refunds`;
+    const body: any = {
+      out_trade_no: value.out_trade_no,
+      out_refund_no: value.mchid + format(new Date(), 'yyyyMMddHHmmssSSSS'),
+      amount: {
+        total: value.amount,
+        refund: value.refund,
+        currency: 'CNY',
+      },
+    };
+    const params = { mchid: value.mchid, method, url, body };
+    let result: any = await this.wechatService.sign(params);
+    if (result.code) {
+      return result;
+    }
+    // 签名成功，调用微信接口，发起退款
+    const Authorization: string = result.data;
+    result = await firstValueFrom(
+      this.clientService.post(`https://api.mch.weixin.qq.com${url}`, body, {
+        headers: { Authorization },
+        validateStatus: () => true,
+      }),
+    );
+    if (result.status !== 200) {
+      return { code: result.status, msg: result.data.message };
+    }
+    const data = result.data;
+    console.debug('退款结果', data);
     const operateId = await this.operateService.insert('wechat_refund');
-    const result = await this.entityManager.insert(WechatRefundEntity, {
-      ...value,
+    result = await this.entityManager.insert(WechatRefundEntity, {
+      refund_id: data.refund_id,
+      mchid: value.mchid,
+      out_refund_no: data.out_refund_no,
+      transaction_id: data.transaction_id,
+      out_trade_no: data.out_trade_no,
+      channel: data.channel,
+      user_received_account: data.user_received_account,
+      create_time: data.create_time,
+      status: data.status,
+      funds_account: data.funds_account,
+      amount: data.amount,
       operateId,
       reqId,
       createUserId: updateUserId,
       createAt: Date.now(),
     });
     if (result.identifiers.length) {
-      return { code: 0, msg: '商家创建完成', operateId, reqId };
-    } else {
-      return { code: 400, msg: '商家创建失败', operateId, reqId };
+      return { code: 0, msg: '退款成功', operateId, reqId };
     }
   }
 }

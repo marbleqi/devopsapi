@@ -3,6 +3,7 @@
 export * from './company/company.dto';
 export * from './merchant/merchant.dto';
 export * from './refund/refund.dto';
+export * from './complaint/complaint.dto';
 
 // 导入实体
 export * from './company/company.entity';

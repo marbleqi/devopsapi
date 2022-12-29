@@ -19,7 +19,7 @@ export class RefundController {
   /**
    * 构造函数
    * @param abilityService 注入的权限点服务
-   * @param merchantService 注入的商家服务
+   * @param RefundService 注入的退款服务
    */
   constructor(
     private readonly abilityService: AbilityService,

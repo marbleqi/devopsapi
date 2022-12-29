@@ -167,8 +167,8 @@ export class WechatService implements OnApplicationBootstrap {
     body: any;
   }) {
     const mch: any = await this.merchantService.show(value.mchid);
-    if (mch.code !== 0) {
-      return { code: 403, msg: '未配置证书！' };
+    if (mch.code) {
+      return { code: 403, msg: '无效商家！' };
     }
     const date = format(new Date(), 't');
     const nonce_str = this.commonService.random(32);

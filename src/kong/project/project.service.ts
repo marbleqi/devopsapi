@@ -284,6 +284,7 @@ export class ProjectService {
     if (result.code) {
       return result;
     }
+    console.debug('提交信息', hostId, project, value);
     result = await firstValueFrom(
       this.clientService.post(`${result.data.url}/${project}`, value, {
         validateStatus: () => true,
@@ -341,6 +342,7 @@ export class ProjectService {
     if (result.code) {
       return result;
     }
+    console.debug('提交信息', hostId, project, id, value);
     result = await firstValueFrom(
       this.clientService.patch(`${result.data.url}/${project}/${id}`, value, {
         validateStatus: () => true,

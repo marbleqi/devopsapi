@@ -11,11 +11,11 @@ import { WechatService } from '..';
 export class OrderService {
   /**
    * 构造函数
-   * @param HttpService http服务
+   * @param clientService http服务
    * @param WechatService 微信服务
    */
   constructor(
-    private readonly httpService: HttpService,
+    private readonly clientService: HttpService,
     private readonly wechatService: WechatService,
   ) {}
 
@@ -45,7 +45,7 @@ export class OrderService {
     // 签名成功，调用微信接口，查询订单
     const Authorization: string = result.data;
     result = await firstValueFrom(
-      this.httpService.get(`https://api.mch.weixin.qq.com${url}`, {
+      this.clientService.get(`https://api.mch.weixin.qq.com${url}`, {
         headers: { Authorization },
         validateStatus: () => true,
       }),
