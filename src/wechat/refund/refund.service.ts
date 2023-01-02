@@ -145,6 +145,8 @@ export class RefundService {
     });
     if (result.identifiers.length) {
       return { code: 0, msg: '退款成功', operateId, reqId };
+    } else {
+      return { code: 204, msg: '退款记录失败', operateId, reqId };
     }
   }
 }

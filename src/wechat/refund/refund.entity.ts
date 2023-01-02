@@ -3,7 +3,7 @@ import { Entity, PrimaryColumn, Column, Index, AfterLoad } from 'typeorm';
 
 /**微信商家退款记录表 */
 @Entity('wechat_refunds')
-@Index(['mchid', 'create_at'])
+@Index(['mchid', 'createAt'])
 export class WechatRefundEntity {
   /**微信退款单号 */
   @PrimaryColumn({ type: 'text', name: 'refund_id', comment: '微信退款单号' })
